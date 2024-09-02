@@ -1,4 +1,4 @@
-# Octal Time Format Converter
+# Octal Time Format
 
 ## Overview: The Octal Time Format
 - A unique system that transforms standard time into a compact octal representation.
