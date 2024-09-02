@@ -237,7 +237,15 @@
     </div>
 </div>
 
+<div class="copyright">
+    © <span id="currentYear"></span> Pat Bierkortte. All rights reserved.
+</div>
+
 <script>
+// Update copyright year
+const currentYear = new Date().getFullYear();
+document.getElementById('currentYear').textContent = currentYear;
+
 function decimalToOctal(decimal) {
     const integerPart = Math.floor(decimal);
     const fractionalPart = decimal - integerPart;
