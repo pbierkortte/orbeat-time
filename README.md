@@ -6,7 +6,7 @@ Orbeat is a octal time system. It gets its name from a combination of octal, orb
 
 ## Background
 
-Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998. Swatch Internet Time was used as a reference on ICQ and in the online game Phantasy Star Online to facilitate cross-continent gaming.
+Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming.
 
 ## Design Decisions
 
