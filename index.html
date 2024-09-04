@@ -205,14 +205,14 @@
         <h2>Implementation</h2>
         <p>Steps:</p>
         <ul class="octal-list">
-          <li>Fetch the current time</li>
-          <li>Calculate the Unix timestamp in milliseconds</li>
-          <li>Determine the year</li>
-          <li>Convert the timestamp to fractional days since the Unix epoch</li>
-          <li>Transform fractional days to octal format, preserving the fractional part</li>
-          <li>Extract specific digits from the octal representation</li>
-          <li>Combine these elements with the last digit of the current year</li>
-          <li>Reverse the sequence to get the Orbeat time</li>
+          <li>0. Fetch the current time</li>
+          <li>1. Calculate the Unix timestamp in milliseconds</li>
+          <li>2. Determine the year</li>
+          <li>3. Convert the timestamp to fractional days since the Unix epoch</li>
+          <li>4. Transform fractional days to octal format, preserving the fractional part</li>
+          <li>5. Extract specific digits from the octal representation</li>
+          <li>6. Combine these elements with the last digit of the current year</li>
+          <li>7. Reverse the sequence to get the Orbeat time</li>
         </ul>
       </div>
       <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
