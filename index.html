@@ -173,17 +173,19 @@
       </circle>
     </svg>
     <div class="container">
-      <h1>Octal Time Format</h1>
+      <h1>Orbeat</h1>
       <div class="time-display">
         <div id="human-time"></div>
       </div>
-      <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Octal Time☵</div>
+      <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Orbeat Time</div>
       <button onclick="updateTime()">Refresh Time</button>
       <div class="documentation">
         <h2>Summary</h2>
-        <p>The Octal Time Format is a timekeeping method that uses the octal number system to represent time in a compact manner that is timezone-independent.</p>
+        <p>Orbeat is a octal time system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle.</p>
+    
         <h2>Background</h2>
-        <p>The Octal Time Format is loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998. Swatch Internet Time was used as a reference on ICQ and in the online game Phantasy Star Online to facilitate cross-continent gaming.</p>
+        <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998. Swatch Internet Time was used as a reference on ICQ and in the online game Phantasy Star Online to facilitate cross-continent gaming.</p>
+    
         <h2>Design Decisions</h2>
         <p>Key design decisions include:</p>
         <ul>
@@ -192,39 +194,30 @@
           <li>Appending the year digit at the end, following the convention of units being placed after quantities</li>
           <li>Avoiding timezones to simplify global time representation</li>
           <li>Using the Unix epoch for convenience and to avoid leap second complications</li>
+          <li>The full year was omitted in favor of brevity and due to space constraints</li>
+          <li>The precision ~21 seconds roughly in the scale of seconds</li>
         </ul>
         <h2>Format</h2>
-        <p>An 8-character string followed by a space and the ☵ symbol, where:</p>
+        <p>An 8-character string, where:</p>
         <ul>
-          <li>The 8th digit is the last digit of the current UTC year</li>
-          <li>Digits 5-7 are extracted from the integer part of octal days (reversed)</li>
           <li>The first 4 digits are from the fractional part of octal days (reversed)</li>
-          <li>A space and the ☵ symbol are appended at the end</li>
+          <li>Digits 5-7 are extracted from the integer part of octal days (reversed)</li>
+          <li>The 8th digit is the last digit of the current year</li>
         </ul>
         <h2>Implementation</h2>
         <p>Steps:</p>
         <ul class="octal-list">
-          <li>0. Fetch the current time</li>
-          <li>1. Calculate the Unix timestamp in milliseconds</li>
-          <li>2. Determine the UTC year</li>
-          <li>3. Convert the timestamp to fractional days since the Unix epoch</li>
-          <li>4. Transform fractional days to octal format, preserving the fractional part</li>
-          <li>5. Extract specific digits from the octal representation</li>
-          <li>6. Combine these elements with the last digit of the current year</li>
-          <li>7. Reverse the sequence and append the space and ☵ symbol to create the final Octal DateTime</li>
-        </ul>
-        <h2>Symbol</h2>
-        <p>The symbol was chosen for several reasons:</p>
-        <ul>
-          <li>The ☵ symbol is appended to the end of the Octal Time Format, separated by a space</li>
-          <li>It resembles dots-dash-dots (☵), symbolizing a middle or central standard</li>
-          <li>The format represents a balanced approach: using more digits would result in a barcode-like representation, while fewer would reduce it to a simple symbol</li>
-          <li>In some traditions, ☵ is associated with water, which aligns with the concept of time "flowing" like water</li>
-          <li>It serves as a unique identifier for this time format, distinguishing it from other numerical strings</li>
-          <li>Placed a space between the number portion as is typical with SI measurements and to improve readability</li>
+          <li>Fetch the current time</li>
+          <li>Calculate the Unix timestamp in milliseconds</li>
+          <li>Determine the year</li>
+          <li>Convert the timestamp to fractional days since the Unix epoch</li>
+          <li>Transform fractional days to octal format, preserving the fractional part</li>
+          <li>Extract specific digits from the octal representation</li>
+          <li>Combine these elements with the last digit of the current year</li>
+          <li>Reverse the sequence to get the Orbeat time</li>
         </ul>
       </div>
-      <div class="copyright"> © <span id="currentYear"></span> Pat Bierkortte. All rights reserved. </div>
+      <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
     </div>
     <script>
       function calculateOctalTime() {
