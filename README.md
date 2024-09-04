@@ -14,10 +14,9 @@ Key design decisions include:
 
 - Using little-endian ordering, which is more common in modern computing systems
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems
-- Appending the year digit at the end, following the convention of units being placed after quantities
+- Full year was omitted in favor of brevity and due to space constraints
 - Avoiding timezones to simplify global time representation
 - Using the Unix epoch for convenience and to avoid leap second complications
-- The full year was omitted in favor of brevity and due to space constraints
 - The precision ~21 seconds roughly in the scale of seconds
 
 ## Format
