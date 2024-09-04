@@ -1,313 +1,266 @@
 <html>
-<head>
-<title>Octal Time Format</title>
-<style>
-    body {
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Octal Time Format</title>
+    <style>
+      body {
         font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        margin: 0;
         background: linear-gradient(135deg, #1c2331 0%, #24344d 100%);
         color: #e0e0e0;
         position: relative;
-    }
-    .container {
+        overflow-x: hidden;
+      }
+
+      .container {
         background-color: rgba(44, 62, 80, 0.9);
-        padding: 2rem;
         border-radius: 10px;
+        padding: 20px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        max-width: 800px;
+        max-width: 600px;
         width: 100%;
-        height: 100%;
-        position: relative;
         z-index: 1;
-    }
-    h1, h2 {
+      }
+
+      h1,
+      h2 {
+        text-align: center;
         color: #ecf0f1;
-        margin-bottom: 1rem;
-    }
-    .result {
-        font-size: 1rem;
-        margin: 0.5rem 0;
-        padding: 0.5rem;
+      }
+
+      .time-display {
+        font-size: 1.5em;
+        text-align: center;
+        margin: 20px 0;
         background-color: #34495e;
+        padding: 10px;
         border-radius: 5px;
-    }
-    .copyable {
-        font-size: 1.2rem;
+      }
+
+      .copyable {
+        background-color: #2c3e50;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        margin: 10px 0;
+        font-size: 1.2em;
         font-weight: bold;
         color: #2ecc71;
-        background-color: #2c3e50;
-        padding: 1rem;
-        margin-top: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        position: relative;
         border: 1px solid #3498db;
-    }
-    .copyable:hover {
+        transition: background-color 0.3s;
+      }
+
+      .copyable:hover {
         background-color: #34495e;
-    }
-    button {
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
+      }
+
+      button {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 1em;
         background-color: #3498db;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s;
-    }
-    button:hover {
+      }
+
+      button:hover {
         background-color: #2980b9;
-    }
-    .tooltip {
-        visibility: hidden;
-        background-color: #555;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -75px;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-    .tooltip.show {
-        visibility: visible;
-        opacity: 1;
-    }
-    .documentation {
+      }
+
+      .documentation {
+        margin-top: 30px;
         text-align: left;
-        margin-top: 2rem;
-        padding: 1rem;
         background-color: #34495e;
+        padding: 15px;
         border-radius: 5px;
-    }
-    .documentation h3 {
+      }
+
+      .documentation h2 {
         color: #3498db;
-    }
-    .documentation p, .documentation ul {
-        font-size: 0.9rem;
-    }
-    #background-art {
+        text-align: left;
+      }
+
+      .copyright {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #bdc3c7;
+      }
+
+      #background-art {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         z-index: 0;
-    }
-</style>
-</head>
-<body>
-<svg id="background-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
-    <defs>
+      }
+
+      .octal-list {
+        list-style-type: none;
+        padding-left: 20px;
+      }
+
+      .octal-list li {
+        text-indent: -20px;
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <svg id="background-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+      <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#1a2a3a" stroke-width="0.5"/>
+          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#1a2a3a" stroke-width="0.5" />
         </pattern>
         <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-            <rect width="100" height="100" fill="url(#smallGrid)"/>
-            <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#1a2a3a" stroke-width="1"/>
+          <rect width="100" height="100" fill="url(#smallGrid)" />
+          <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#1a2a3a" stroke-width="1" />
         </pattern>
         <radialGradient id="alienGlow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-            <stop offset="0%" style="stop-color:rgb(0,255,150);stop-opacity:0.3"/>
-            <stop offset="100%" style="stop-color:rgb(0,100,50);stop-opacity:0"/>
+          <stop offset="0%" style="stop-color:rgb(0,255,150);stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:rgb(0,100,50);stop-opacity:0" />
         </radialGradient>
-    </defs>
-    
-    <!-- Background -->
-    <rect width="100%" height="100%" fill="#0a0a1a"/>
-    <rect width="100%" height="100%" fill="url(#grid)" opacity="0.4"/>
-
-    <!-- Central geometric pattern -->
-    <g transform="translate(500,500)">
+      </defs>
+      <rect width="100%" height="100%" fill="#0a0a1a" />
+      <rect width="100%" height="100%" fill="url(#grid)" opacity="0.4" />
+      <g transform="translate(500,500)">
         <g transform="scale(1.5)">
-            <!-- Outer octagon -->
-            <polygon points="0,-100 70.7,-70.7 100,0 70.7,70.7 0,100 -70.7,70.7 -100,0 -70.7,-70.7" 
-                     fill="none" stroke="#2ecc71" stroke-width="2"/>
-            
-            <!-- Inner octagon -->
-            <polygon points="0,-50 35.4,-35.4 50,0 35.4,35.4 0,50 -35.4,35.4 -50,0 -35.4,-35.4" 
-                     fill="none" stroke="#3498db" stroke-width="2"/>
-            
-            <!-- Connecting lines -->
-            <line x1="0" y1="-100" x2="0" y2="-50" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="70.7" y1="-70.7" x2="35.4" y2="-35.4" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="100" y1="0" x2="50" y2="0" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="70.7" y1="70.7" x2="35.4" y2="35.4" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="0" y1="100" x2="0" y2="50" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="-70.7" y1="70.7" x2="-35.4" y2="35.4" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="-100" y1="0" x2="-50" y2="0" stroke="#2ecc71" stroke-width="1"/>
-            <line x1="-70.7" y1="-70.7" x2="-35.4" y2="-35.4" stroke="#2ecc71" stroke-width="1"/>
-
+          <polygon points="0,-100 70.7,-70.7 100,0 70.7,70.7 0,100 -70.7,70.7 -100,0 -70.7,-70.7" fill="none" stroke="#2ecc71" stroke-width="2" />
+          <polygon points="0,-50 35.4,-35.4 50,0 35.4,35.4 0,50 -35.4,35.4 -50,0 -35.4,-35.4" fill="none" stroke="#3498db" stroke-width="2" />
+          <line x1="0" y1="-100" x2="0" y2="-50" stroke="#2ecc71" stroke-width="1" />
+          <line x1="70.7" y1="-70.7" x2="35.4" y2="-35.4" stroke="#2ecc71" stroke-width="1" />
+          <line x1="100" y1="0" x2="50" y2="0" stroke="#2ecc71" stroke-width="1" />
+          <line x1="70.7" y1="70.7" x2="35.4" y2="35.4" stroke="#2ecc71" stroke-width="1" />
+          <line x1="0" y1="100" x2="0" y2="50" stroke="#2ecc71" stroke-width="1" />
+          <line x1="-70.7" y1="70.7" x2="-35.4" y2="35.4" stroke="#2ecc71" stroke-width="1" />
+          <line x1="-100" y1="0" x2="-50" y2="0" stroke="#2ecc71" stroke-width="1" />
+          <line x1="-70.7" y1="-70.7" x2="-35.4" y2="-35.4" stroke="#2ecc71" stroke-width="1" />
         </g>
-    </g>
-
-    <!-- Orbiting structures -->
-    <g>
-        <animateTransform attributeName="transform" type="rotate" from="0 500 500" to="360 500 500" dur="120s" repeatCount="indefinite"/>
-        
-        <!-- Structure 1 -->
+      </g>
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0 500 500" to="360 500 500" dur="480s" repeatCount="indefinite" />
         <g transform="translate(200,200)">
-            <rect x="-20" y="-20" width="40" height="40" fill="none" stroke="#9b59b6" stroke-width="2" transform="rotate(45)"/>
-            <circle cx="0" cy="0" r="15" fill="none" stroke="#9b59b6" stroke-width="2"/>
+          <rect x="-20" y="-20" width="40" height="40" fill="none" stroke="#9b59b6" stroke-width="2" transform="rotate(45)" />
+          <circle cx="0" cy="0" r="15" fill="none" stroke="#9b59b6" stroke-width="2" />
         </g>
-        
-        <!-- Structure 2 -->
         <g transform="translate(800,800)">
-            <polygon points="0,-20 17.3,-10 17.3,10 0,20 -17.3,10 -17.3,-10" fill="none" stroke="#f1c40f" stroke-width="2"/>
-            <circle cx="0" cy="0" r="10" fill="none" stroke="#f1c40f" stroke-width="2"/>
+          <polygon points="0,-20 17.3,-10 17.3,10 0,20 -17.3,10 -17.3,-10" fill="none" stroke="#f1c40f" stroke-width="2" />
+          <circle cx="0" cy="0" r="10" fill="none" stroke="#f1c40f" stroke-width="2" />
         </g>
-        
-        <!-- Structure 3 -->
         <g transform="translate(800,200)">
-            <rect x="-15" y="-15" width="30" height="30" fill="none" stroke="#1abc9c" stroke-width="2"/>
-            <circle cx="0" cy="0" r="20" fill="none" stroke="#1abc9c" stroke-width="2"/>
+          <rect x="-15" y="-15" width="30" height="30" fill="none" stroke="#1abc9c" stroke-width="2" />
+          <circle cx="0" cy="0" r="20" fill="none" stroke="#1abc9c" stroke-width="2" />
         </g>
-        
-        <!-- Structure 4 -->
         <g transform="translate(200,800)">
-            <polygon points="0,-25 21.7,-12.5 21.7,12.5 0,25 -21.7,12.5 -21.7,-12.5" fill="none" stroke="#e67e22" stroke-width="2"/>
-            <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#e67e22" stroke-width="2" transform="rotate(45)"/>
+          <polygon points="0,-25 21.7,-12.5 21.7,12.5 0,25 -21.7,12.5 -21.7,-12.5" fill="none" stroke="#e67e22" stroke-width="2" />
+          <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#e67e22" stroke-width="2" transform="rotate(45)" />
         </g>
-    </g>
-
-    <!-- Alien glow -->
-    <circle cx="500" cy="500" r="400" fill="url(#alienGlow)">
-        <animate attributeName="opacity" values="0.5;0.7;0.5" dur="10s" repeatCount="indefinite"/>
-    </circle>
-</svg>
-
-<div class="container">
-    <h1>Octal Time Format</h1>
-    <h2>Standard Time Components</h2>
-    <div id="timestamp" class="result"></div>
-    <div id="utcYear" class="result"></div>
-    <div id="lastDigit" class="result"></div>
-    <div id="fractionalDays" class="result"></div>
-    <div id="octalDays" class="result"></div>
-    <div id="extractedParts" class="result"></div>
-    
-    <h2>Octal Time Components</h2>
-    <div id="datePart" class="copyable" onclick="copyToClipboard('datePart')">
-        <span id="datePartValue"></span>
-        <span class="tooltip">Copied to clipboard!</span>
-    </div>
-    <div id="timePart" class="copyable" onclick="copyToClipboard('timePart')">
-        <span id="timePartValue"></span>
-        <span class="tooltip">Copied to clipboard!</span>
-    </div>
-    <div id="shortDateTime" class="copyable" onclick="copyToClipboard('shortDateTime')">
-        <span id="shortDateTimeValue"></span>
-        <span class="tooltip">Copied to clipboard!</span>
-    </div>
-    
-    <button id="refresh">Refresh</button>
-
-    <div class="documentation">
-        <h3>How It Works</h3>
-        <p>The Octal Time Format transforms standard time into a compact octal representation. Here's the process:</p>
-        <ol>
-            <li>Calculate the Unix timestamp in milliseconds and extract the UTC year.</li>
-            <li>Convert the timestamp to fractional days since the Unix epoch.</li>
-            <li>Transform fractional days to octal format, preserving the fractional part.</li>
-            <li>Extract specific digits from the octal representation.</li>
-            <li>Combine these elements with the last digit of the current year to create the Octal DateTime.</li>
-        </ol>
-        <h3>Octal DateTime Format</h3>
-        <p>The final format is an 8-character string:</p>
+      </g>
+      <circle cx="500" cy="500" r="500" fill="url(#alienGlow)">
+        <animate attributeName="opacity" values="0.6;0.8;0.6" dur="10s" repeatCount="indefinite" />
+      </circle>
+    </svg>
+    <div class="container">
+      <h1>Octal Time Format</h1>
+      <div class="time-display">
+        <div id="human-time"></div>
+      </div>
+      <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Octal Time☵</div>
+      <button onclick="updateTime()">Refresh Time</button>
+      <div class="documentation">
+        <h2>Summary</h2>
+        <p>The Octal Time Format is a timekeeping method that uses the octal number system to represent time in a compact manner that is timezone-independent.</p>
+        <h2>Background</h2>
+        <p>The Octal Time Format is loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998. Swatch Internet Time was used as a reference on ICQ and in the online game Phantasy Star Online to facilitate cross-continent gaming.</p>
+        <h2>Design Decisions</h2>
+        <p>Key design decisions include:</p>
         <ul>
-            <li>1st digit: Last digit of the current UTC year</li>
-            <li>Next 3 digits: Extracted from the integer part of octal days</li>
-            <li>Last 4 digits: Extracted from the fractional part of octal days</li>
+          <li>Using little-endian ordering, which is more common in modern computing systems</li>
+          <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems</li>
+          <li>Appending the year digit at the end, following the convention of units being placed after quantities</li>
+          <li>Avoiding timezones to simplify global time representation</li>
+          <li>Using the Unix epoch for convenience and to avoid leap second complications</li>
         </ul>
-        <p>Note: The 4th digit (last digit of the date part) represents the octal day of the week. This system uses an 8-day week.</p>
-        <p>This format provides a unique, compact representation of the current moment in time, using base-8 (octal) numbering system.</p>
+        <h2>Format</h2>
+        <p>An 8-character string followed by a space and the ☵ symbol, where:</p>
+        <ul>
+          <li>The 8th digit is the last digit of the current UTC year</li>
+          <li>Digits 5-7 are extracted from the integer part of octal days (reversed)</li>
+          <li>The first 4 digits are from the fractional part of octal days (reversed)</li>
+          <li>A space and the ☵ symbol are appended at the end</li>
+        </ul>
+        <h2>Implementation</h2>
+        <p>Steps:</p>
+        <ul class="octal-list">
+          <li>0. Fetch the current time</li>
+          <li>1. Calculate the Unix timestamp in milliseconds</li>
+          <li>2. Determine the UTC year</li>
+          <li>3. Convert the timestamp to fractional days since the Unix epoch</li>
+          <li>4. Transform fractional days to octal format, preserving the fractional part</li>
+          <li>5. Extract specific digits from the octal representation</li>
+          <li>6. Combine these elements with the last digit of the current year</li>
+          <li>7. Reverse the sequence and append the space and ☵ symbol to create the final Octal DateTime</li>
+        </ul>
+        <h2>Symbol</h2>
+        <p>The symbol was chosen for several reasons:</p>
+        <ul>
+          <li>The ☵ symbol is appended to the end of the Octal Time Format, separated by a space</li>
+          <li>It resembles dots-dash-dots (☵), symbolizing a middle or central standard</li>
+          <li>The format represents a balanced approach: using more digits would result in a barcode-like representation, while fewer would reduce it to a simple symbol</li>
+          <li>In some traditions, ☵ is associated with water, which aligns with the concept of time "flowing" like water</li>
+          <li>It serves as a unique identifier for this time format, distinguishing it from other numerical strings</li>
+          <li>Placed a space between the number portion as is typical with SI measurements and to improve readability</li>
+        </ul>
+      </div>
+      <div class="copyright"> © <span id="currentYear"></span> Pat Bierkortte. All rights reserved. </div>
     </div>
+    <script>
+      function calculateOctalTime() {
+        const now = new Date();
+        const unixMilliseconds = now.getTime();
+        const utcYear = now.getUTCFullYear();
+        const yearLastDigit = utcYear % 10;
+        const daysSinceEpoch = unixMilliseconds / (24 * 60 * 60 * 1000);
+        const octalDays = (daysSinceEpoch).toString(8);
+        const [integerPart, fractionalPart] = octalDays.split('.');
+        const reversedIntegerPart = integerPart.slice(-3).split('').reverse().join('');
+        const reversedFractionalPart = (fractionalPart + '0000').slice(0, 4).split('').reverse().join('');
+        return `${reversedFractionalPart}${reversedIntegerPart}${yearLastDigit} ☵`;
+      }
 
-    <div>
-        © <span id="currentYear"></span> Pat Bierkortte. All rights reserved.
-    </div>
-</div>
+      function updateTime() {
+        const now = new Date();
+        document.getElementById('human-time').textContent = `Human Date Time: ${now.toUTCString()}`;
+        const octalTime = calculateOctalTime();
+        document.getElementById('octal-time').textContent = octalTime;
+      }
 
+      function copyToClipboard() {
+        const text = document.getElementById('octal-time').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Copied to clipboard!');
+        });
+      }
 
-
-<script>
-// Update copyright year
-const currentYear = new Date().getFullYear();
-document.getElementById('currentYear').textContent = currentYear;
-
-function decimalToOctal(decimal) {
-    const integerPart = Math.floor(decimal);
-    const fractionalPart = decimal - integerPart;
-    
-    let octalInteger = integerPart.toString(8);
-    let octalFractional = '.';
-    
-    let currentFraction = fractionalPart;
-    for (let i = 0; i < 6; i++) {  // 6 octal places for fraction
-        currentFraction *= 8;
-        const digit = Math.floor(currentFraction);
-        octalFractional += digit.toString();
-        currentFraction -= digit;
-    }
-    
-    return octalInteger + octalFractional;
-}
-
-function extractParts(octalDays) {
-    const [integerPart, fractionalPart] = octalDays.split('.');
-    const beforeDot = integerPart.slice(-3).padStart(3, '0');
-    const afterDot = fractionalPart.slice(0, 4).padEnd(4, '0');
-    return beforeDot + afterDot;
-}
-
-function updateTime() {
-    const now = new Date();
-    const timestamp = now.getTime();
-    const utcYear = now.getUTCFullYear();
-    const lastDigit = utcYear % 10;
-    const fractionalDays = timestamp / 1000 / 60 / 60 / 24;
-    const octalDays = decimalToOctal(fractionalDays);
-    const extractedParts = extractParts(octalDays);
-    const shortDateTime = lastDigit + extractedParts;
-    
-    document.getElementById('timestamp').textContent = `Unix Timestamp (ms): ${timestamp}`;
-    document.getElementById('utcYear').textContent = `UTC Year: ${utcYear}`;
-    document.getElementById('lastDigit').textContent = `Last Digit of Year: ${lastDigit}`;
-    document.getElementById('fractionalDays').textContent = `Fractional Days: ${fractionalDays.toFixed(6)}`;
-    document.getElementById('octalDays').textContent = `Octal Days: ${octalDays}`;
-    document.getElementById('extractedParts').textContent = `Extracted Parts: ${extractedParts}`;
-    
-    // Update components
-    document.getElementById('datePartValue').textContent = `Octal Date: ${shortDateTime.slice(0, 4)}`;
-    document.getElementById('timePartValue').textContent = `Octal Time: ${shortDateTime.slice(4)}`;
-    document.getElementById('shortDateTimeValue').textContent = `Full Octal DateTime: ${shortDateTime}`;
-}
-
-function copyToClipboard(id) {
-    const element = document.getElementById(id);
-    const text = element.querySelector('span').textContent.split(': ')[1];
-    navigator.clipboard.writeText(text).then(() => {
-        const tooltip = element.querySelector('.tooltip');
-        tooltip.classList.add('show');
-        setTimeout(() => {
-            tooltip.classList.remove('show');
-        }, 2000);
-    });
-}
-
-document.getElementById('refresh').addEventListener('click', updateTime);
-
-// Initial update
-updateTime();
-</script>
-</body></html>
+      function setCurrentYear() {
+        const currentYear = new Date().getFullYear();
+        document.getElementById('currentYear').textContent = currentYear;
+      }
+      updateTime();
+      setCurrentYear();
+      window.onload = setCurrentYear;
+    </script>
+  </body>
+</html>

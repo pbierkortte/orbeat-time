@@ -1,60 +1,52 @@
 # Octal Time Format
 
-## Overview: The Octal Time Format
-- A unique system that transforms standard time into a compact octal representation.
-- This project provides a web-based tool to convert the current time into this novel format.
-- Offers a more efficient and information-rich alternative to traditional date-time representations.
+## Summary
 
-## Features
-- Real-time conversion of current timestamp to Octal Time Format.
-- Display of various time components (Unix timestamp, UTC year, fractional days, etc.).
-- Copyable Octal Date, Octal Time, and Full Octal DateTime.
-- Detailed explanation of the conversion process and format structure.
+The Octal Time Format is a timekeeping method that uses the octal number system to represent time in a compact manner that is timezone-independent.
 
-## How It Works
-The Octal Time Format transforms standard time into a compact octal representation through the following process:
-1. Calculate the Unix timestamp in milliseconds and extract the UTC year.
-2. Convert the timestamp to fractional days since the Unix epoch.
-3. Transform fractional days to octal format, preserving the fractional part.
-4. Extract specific digits from the octal representation.
-5. Combine these elements with the last digit of the current year to create the Octal DateTime.
+## Background
 
-## Octal DateTime Format
-The final format is an 8-character string:
-- **1st digit:** Last digit of the current UTC year.
-- **Next 3 digits:** Extracted from the integer part of octal days.
-- **Last 4 digits:** Extracted from the fractional part of octal days.
+The Octal Time Format is loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998. Swatch Internet Time was used as a reference on ICQ and in the online game Phantasy Star Online to facilitate cross-continent gaming.
 
-**Important Note:** The 4th digit (last digit of the date part) represents the octal day of the week. This system uses an 8-day week, providing information about the current day of the week within the date itself.
+## Design Decisions
 
-## Advantages Over Traditional Formats
-This format offers several advantages over common date formats like mm/yy:
-- Includes the relative year, day, day of the week, and time in a compact format.
-- The day of the week is inherently included, which is often omitted in other formats.
-- While it doesn't explicitly show the month, it provides a fair trade-off by including more comprehensive information in a concise manner.
+Key design decisions include:
 
-In this standard, we know:
-- The relative year (last digit).
-- The day (represented in the octal system).
-- The day of the week (4th digit).
-- The time (last 4 digits).
+- Using little-endian ordering, which is more common in modern computing systems
+- Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems
+- Appending the year digit at the end, following the convention of units being placed after quantities
+- Avoiding timezones to simplify global time representation
+- Using the Unix epoch for convenience and to avoid leap second complications
 
-Common formats like mm/yy cannot provide this level of information, particularly omitting the day of the week, which is arguably one of the most important elements for daily planning and scheduling.
+## Format
 
-## Trade-offs
-- While we lose the clear representation of the month, the trade-off is justified by the wealth of information packed into this compact format.
-- This octal system provides a unique, efficient representation of the current moment in time, using the base-8 (octal) numbering system, and offers more contextual information than many standard date formats.
+An 8-character string followed by a space and the ☵ symbol, where:
 
-## Usage
-To use the Octal Time Format Converter:
-1. Open the HTML file in a web browser.
-2. The current time will be automatically converted and displayed.
-3. Click the "Refresh" button to update the time.
-4. Click on any of the Octal Time components to copy them to the clipboard.
+- The 8th digit is the last digit of the current UTC year
+- Digits 5-7 are extracted from the integer part of octal days (reversed)
+- The first 4 digits are from the fractional part of octal days (reversed)
+- A space and the ☵ symbol are appended at the end
 
 ## Implementation
-The converter is implemented using HTML, CSS, and JavaScript. Key functions include:
-- `decimalToOctal()`: Converts decimal numbers to octal, including fractional parts.
-- `extractParts()`: Extracts relevant digits from the octal representation.
-- `updateTime()`: Updates all time components and displays them.
-- `copyToClipboard()`: Allows users to copy time components easily.
+
+Steps:
+
+0. Fetch the current time
+1. Calculate the Unix timestamp in milliseconds
+2. Determine the UTC year
+3. Convert the timestamp to fractional days since the Unix epoch
+4. Transform fractional days to octal format, preserving the fractional part
+5. Extract specific digits from the octal representation
+6. Combine these elements with the last digit of the current year
+7. Reverse the sequence and append the space and ☵ symbol to create the final Octal DateTime
+
+## Symbol
+
+The symbol was chosen for several reasons:
+
+- The ☵ symbol is appended to the end of the Octal Time Format, separated by a space
+- It resembles dots-dash-dots (☵), symbolizing a middle or central standard
+- The format represents a balanced approach: using more digits would result in a barcode-like representation, while fewer would reduce it to a simple symbol
+- In some traditions, ☵ is associated with water, which aligns with the concept of time "flowing" like water
+- It serves as a unique identifier for this time format, distinguishing it from other numerical strings
+- Placed a space between the number portion as is typical with SI measurements and to improve readability
