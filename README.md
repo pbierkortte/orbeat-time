@@ -15,20 +15,20 @@ I created this project out of intellectual curiosity and as a practical tool. It
 
 ## Design Decisions
 
-Key design decisions include:
+My design decisions include:
 
 - Using little-endian ordering, which is more common in modern computing systems
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems
-- Full year was omitted in favor of brevity and due to space constraints
+- Full-year was omitted in favor of brevity and due to space constraints
 - Avoiding timezones to simplify global time representation
-- Using the Unix epoch for convenience and to avoid leap second complications
-- The precision ~21 seconds roughly in the scale of seconds
+- Using the Unix epoch for convenience and to avoid leap-second complications
+- The precision is ~21 seconds roughly in the scale of seconds
 
 ## Format
 
 An 8-character string, where:
 
-- The first 4 digits are from the fractional part of octal days (reversed)
+- The first four digits are from the fractional part of octal days (reversed)
 - Digits 5-7 are extracted from the integer part of octal days (reversed)
 - The 8th digit is the last digit of the current year
 
