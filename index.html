@@ -278,121 +278,153 @@
     <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
   </div>
   <script>
+    // Get current Unix timestamp in milliseconds
+    let currentUnixMilliseconds = new Date().getTime();
+  
     function encodeOrbeatTime(unixMilliseconds) {
-      // Step 2: Determine the year
-      let now = new Date(unixMilliseconds);
-      let currentYear = now.getFullYear();
-      let lastDigitOfYear = currentYear.toString().slice(-1);
-    
-      // Step 3: Convert the timestamp to fractional days since the Unix epoch
-      let daysSinceUnixEpoch = unixMilliseconds / (1000 * 60 * 60 * 24);
-    
-      // Step 4: Transform fractional days to octal format, preserving the fractional part
-      let octalDays = daysSinceUnixEpoch.toString(8);
-    
-      // Step 5: Extract specific digits from the octal representation
-      let [integerPart, fractionalPart] = octalDays.split('.');
-      if (!fractionalPart) fractionalPart = ''; // Ensure fractionalPart is a string
-    
-      // Pad integerPart to at least 7 digits
-      integerPart = integerPart.padStart(7, '0');
-      // Pad fractionalPart to at least 4 digits
-      fractionalPart = fractionalPart.padEnd(4, '0');
-    
-      // Extract digits 5-7 from integer part (indices 4 to 6)
-      let digitsFromIntegerPart = integerPart.substring(4, 7);
-      // Extract first four digits from fractional part
-      let digitsFromFractionalPart = fractionalPart.substring(0, 4);
-    
-      // Step 6: Combine these elements with the last digit of the current year
-      let orbeatTime = digitsFromFractionalPart + digitsFromIntegerPart + lastDigitOfYear;
-    
-      // Step 7: Reverse the sequence to get the Orbeat time
-      let reversedOrbeatTime = orbeatTime.split('').reverse().join('');
-    
-      return reversedOrbeatTime;
+      // Calculate days since Unix epoch
+      let daysSinceEpoch = unixMilliseconds / 86400000;
+  
+      // Separate integer and fractional parts
+      let integerPart = Math.floor(daysSinceEpoch);
+      let fractionalPart = daysSinceEpoch - integerPart;
+  
+      // Convert integer part to octal and reverse digits
+      let integerOctal = integerPart.toString(8);
+      let integerOctalReversed = integerOctal.split('').reverse().join('');
+  
+      // Extract first three digits from reversed integer octal
+      let integerDigitsReversed = integerOctalReversed.substring(0, 3);
+  
+      // Convert fractional part to octal digits
+      let fractionalOctalDigits = '';
+      let fraction = fractionalPart;
+      for (let i = 0; i < 10; i++) {
+        fraction *= 8;
+        let digit = Math.floor(fraction);
+        fractionalOctalDigits += digit.toString();
+        fraction -= digit;
+      }
+  
+      // Extract first four digits and reverse them
+      let fractionalDigits = fractionalOctalDigits.substring(0, 4);
+      let fractionalDigitsReversed = fractionalDigits.split('').reverse().join('');
+  
+      // Get the last digit of the current year
+      let year = new Date(unixMilliseconds).getFullYear();
+      let lastDigitOfYear = (year % 10).toString();
+  
+      // Combine all parts to form Orbeat time
+      let orbeatTime = fractionalDigitsReversed + integerDigitsReversed + lastDigitOfYear;
+  
+      return orbeatTime;
     }
-    
+  
     function decodeOrbeatTime(orbeatTimeString) {
-      if (orbeatTimeString.length !== 8) return null;
-    
-      // Reverse the Orbeat time
-      let unreversedOrbeatTime = orbeatTimeString.split('').reverse().join('');
-    
-      // Extract components
-      let digitsFromFractionalPart = unreversedOrbeatTime.substring(0, 4);
-      let digitsFromIntegerPart = unreversedOrbeatTime.substring(4, 7);
-      let lastDigitOfYear = unreversedOrbeatTime.substring(7);
-    
-      // Reconstruct the integer part
-      let integerPart = '000' + digitsFromIntegerPart;
-      // Reconstruct the fractional part
-      let fractionalPart = digitsFromFractionalPart + '0000'; // Pad with zeros for better precision
-    
-      // Reassemble the octalDaysString
-      let octalDaysString = integerPart + '.' + fractionalPart;
-    
-      // Convert octalDaysString to decimal days
-      let daysSinceUnixEpoch = parseFloat(octalDaysString, 8);
-    
-      // Convert daysSinceUnixEpoch to milliseconds
-      let unixMilliseconds = daysSinceUnixEpoch * 24 * 60 * 60 * 1000;
-    
-      let date = new Date(unixMilliseconds);
-    
-      // Validate last digit of year
-      let currentYear = date.getFullYear().toString();
-      if (currentYear.slice(-1) !== lastDigitOfYear) {
-        return null; // Invalid Orbeat Time
+      // Extract the last digit (year's last digit)
+      let lastDigitOfYear = orbeatTimeString.slice(-1);
+  
+      // Extract digits 1-4 and reverse them back
+      let fractionalDigitsReversed = orbeatTimeString.substring(0, 4);
+      let fractionalDigits = fractionalDigitsReversed.split('').reverse().join('');
+  
+      // Extract digits 5-7 and reverse them back
+      let integerDigitsReversed = orbeatTimeString.substring(4, 7);
+      let integerDigits = integerDigitsReversed.split('').reverse().join('');
+  
+      // Reconstruct fractional part in decimal
+      let fractionalPartDecimal = 0;
+      for (let i = 0; i < fractionalDigits.length; i++) {
+        let digit = parseInt(fractionalDigits.charAt(i), 10);
+        fractionalPartDecimal += digit / Math.pow(8, i + 1);
       }
-    
-      return date;
+  
+      // Reconstruct integer part in decimal
+      let integerPartDecimal = parseInt(integerDigits, 8);
+  
+      // Total days since epoch
+      let daysSinceEpoch = integerPartDecimal + fractionalPartDecimal;
+  
+      // Convert days to milliseconds
+      let unixMilliseconds = daysSinceEpoch * 86400000;
+  
+      return unixMilliseconds;
     }
-    
+  
     function copyToClipboard() {
-      let orbeatTimeText = document.getElementById('octal-time').textContent;
-      navigator.clipboard
-        .writeText(orbeatTimeText)
-        .then(() => {
-          alert('Orbeat Time copied to clipboard!');
-        })
-        .catch((err) => {
-          console.error('Could not copy text: ', err);
-        });
+      let octalTimeText = document.getElementById('octal-time').textContent;
+  
+      // Create a temporary input to copy the text
+      let tempInput = document.createElement('input');
+      tempInput.value = octalTimeText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+  
+      // Provide feedback to the user
+      alert('Orbeat Time copied to clipboard!');
     }
-    
+  
     function updateTime() {
-      let unixMilliseconds = Date.now();
-    
-      let orbeatTimeString = encodeOrbeatTime(unixMilliseconds);
-    
-      // Update the octal-time element
-      document.getElementById('octal-time').textContent = orbeatTimeString;
-    
-      // Update the human-readable time
-      let now = new Date(unixMilliseconds);
-      document.getElementById('human-time').textContent = now.toUTCString();
+      // Update current Unix timestamp in milliseconds
+      currentUnixMilliseconds = new Date().getTime();
+  
+      // Get human-readable time
+      let humanTime = new Date(currentUnixMilliseconds).toUTCString();
+  
+      // Encode to Orbeat time
+      let orbeatTime = encodeOrbeatTime(currentUnixMilliseconds);
+  
+      // Decode back to Unix milliseconds
+      let decodedUnixMilliseconds = decodeOrbeatTime(orbeatTime);
+  
+      // Calculate the difference in seconds
+      let timeDifference = Math.abs(currentUnixMilliseconds - decodedUnixMilliseconds) / 1000;
+  
+      // Log the difference
+      console.log('Time difference after encoding and decoding:', timeDifference, 'seconds');
+  
+      // Update the DOM elements
+      document.getElementById('human-time').textContent = humanTime;
+      document.getElementById('octal-time').textContent = orbeatTime;
     }
-    
+  
     function updateDecodedOrbeatTime() {
-      let orbeatInput = document.getElementById('orbeat-input').value.trim();
-    
-      let decodedDate = decodeOrbeatTime(orbeatInput);
-    
-      if (decodedDate) {
-        document.getElementById('decoded-time-display').textContent = decodedDate.toUTCString();
-        document.getElementById('error-message').textContent = '';
-      } else {
-        document.getElementById('decoded-time-display').textContent = '';
-        document.getElementById('error-message').textContent = 'Invalid Orbeat Time.';
+      let orbeatInput = document.getElementById('orbeat-input').value;
+      let decodedTimeDisplay = document.getElementById('decoded-time-display');
+      let errorMessage = document.getElementById('error-message');
+  
+      if (orbeatInput.length !== 8 || !/^\d+$/.test(orbeatInput)) {
+        errorMessage.textContent = 'Invalid Orbeat Time format.';
+        decodedTimeDisplay.textContent = '';
+        return;
       }
+  
+      // Decode the Orbeat time
+      let decodedUnixMilliseconds = decodeOrbeatTime(orbeatInput);
+      let decodedDate = new Date(decodedUnixMilliseconds);
+  
+      // Check if the decoded date is valid
+      if (isNaN(decodedDate.getTime())) {
+        errorMessage.textContent = 'Invalid Orbeat Time.';
+        decodedTimeDisplay.textContent = '';
+        return;
+      }
+  
+      // Clear any previous error messages
+      errorMessage.textContent = '';
+  
+      // Display the decoded human-readable time
+      decodedTimeDisplay.textContent = decodedDate.toUTCString();
     }
-    
+  
     // Initialize time on page load
     updateTime();
-    
+  
     // Update the current year in the copyright section
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-    </script>    
+  </script>
+  
   </body>
 </html>
