@@ -305,13 +305,13 @@
     // Ensure the integer part has at least 4 digits
     integerDaysOctal = ('0000' + integerDaysOctal).slice(-4);
   
-    // Reverse the last three digits of the integer part
+    // Reverse the last 3 digits of integer part
     var reversedIntegerDigits = integerDaysOctal.slice(-3).split('').reverse().join('');
   
-    // Convert fractional part to octal digits
+    // Get fractional part octal digits
     var fractionalDigits = [];
     var tempFraction = fractionalDays;
-    for (var i = 0; i < 4; i++) { // Get exactly 4 digits
+    for (var i = 0; i < 4; i++) {
       tempFraction *= 8;
       var digit = Math.floor(tempFraction);
       fractionalDigits.push(digit);
@@ -319,13 +319,13 @@
     }
     var fractionalPartOctal = fractionalDigits.join('');
   
-    // Reverse the first four digits of the fractional part
+    // Reverse the 4 fractional digits
     var reversedFractionalDigits = fractionalPartOctal.split('').reverse().join('');
   
-    // Get the last digit of the year
+    // Get last digit of the year
     var lastDigitOfYear = (year % 10).toString();
   
-    // Combine the reversed digits and the last digit of the year
+    // Combine to form Orbeat Time code
     var orbeatTime = reversedFractionalDigits + reversedIntegerDigits + lastDigitOfYear;
   
     // Update the octal-time element
@@ -364,64 +364,66 @@
     var fractionalDigits = reversedFractionalDigits.split('').reverse();
     var integerDigits = reversedIntegerDigits.split('').reverse();
   
-    // Reconstruct integer and fractional parts in octal
-    var integerPartOctal = integerDigits.join('');
+    // Reconstruct fractional part in octal
     var fractionalPartOctal = fractionalDigits.join('');
+    // Reconstruct integer part in octal (we need to get the missing digit)
+    // Since we only have reversed last 3 digits, we need to find the leading digit
+    // We'll try to reconstruct the integerDaysOctal with possible leading digits (0-7)
   
-    // Convert integer part from octal to decimal
-    var integerPartDecimal = parseInt(integerPartOctal, 8);
-  
-    // Convert fractional part from octal to decimal
-    var fractionalPartDecimal = 0;
-    for (var i = 0; i < fractionalPartOctal.length; i++) {
-      var digit = parseInt(fractionalPartOctal.charAt(i),8);
-      fractionalPartDecimal += digit / Math.pow(8, i + 1);
-    }
-  
-    // Compute decimal days since epoch
-    var decimalDays = integerPartDecimal + fractionalPartDecimal;
-  
-    // Convert decimal days to timestamp
+    var possibleDates = [];
+    var foundMatch = false;
     var millisecondsPerDay = 1000 * 60 * 60 * 24;
-    var timestampMs = decimalDays * millisecondsPerDay;
   
-    // Create date object
-    var decodedDate = new Date(timestampMs);
-    var originalYear = decodedDate.getUTCFullYear();
+    for (var leadingDigit = 0; leadingDigit <= 7; leadingDigit++) {
+      var integerPartOctal = leadingDigit.toString() + integerDigits.join('');
+      var integerPartDecimal = parseInt(integerPartOctal, 8);
   
-    // Adjust year to match codeYearLastDigit
-    var desiredYearLastDigit = parseInt(codeYearLastDigit);
-    var maxOffset = 5; // Try up to +-5 years
-    var adjusted = false;
-    for (var offset = 0; offset <= maxOffset; offset++) {
-      var candidateYears = [];
-      if (offset === 0)
-        candidateYears = [originalYear];
-      else
-        candidateYears = [originalYear + offset, originalYear - offset];
+      // Convert fractional part from octal to decimal
+      var fractionalPartDecimal = 0;
+      for (var i = 0; i < fractionalPartOctal.length; i++) {
+        var digit = parseInt(fractionalPartOctal.charAt(i),8);
+        fractionalPartDecimal += digit / Math.pow(8, i + 1);
+      }
   
-      for (var j = 0; j < candidateYears.length; j++) {
-        var candidateYear = candidateYears[j];
-        var candidateYearLastDigit = (candidateYear % 10);
-        if (candidateYearLastDigit === desiredYearLastDigit) {
-          var candidateDate = new Date(decodedDate.getTime());
-          candidateDate.setUTCFullYear(candidateYear);
-          adjusted = true;
-          decodedDate = candidateDate;
+      // Compute decimal days since epoch
+      var decimalDays = integerPartDecimal + fractionalPartDecimal;
+  
+      // Convert decimal days to timestamp
+      var timestampMs = decimalDays * millisecondsPerDay;
+  
+      // Create date object
+      var decodedDate = new Date(timestampMs);
+      var decodedYear = decodedDate.getUTCFullYear();
+      var decodedYearLastDigit = (decodedYear % 10).toString();
+  
+      // Check if last digit of year matches
+      if (decodedYearLastDigit === codeYearLastDigit) {
+        // Found a possible match
+        decodedTimeElement.textContent = 'Decoded Date and Time (UTC): ' + decodedDate.toUTCString();
+        foundMatch = true;
+        break;
+      }
+  
+      // Try adjusting the year within a range
+      for (var yearOffset = -5; yearOffset <= 5; yearOffset++) {
+        var adjustedYear = decodedYear + yearOffset;
+        var adjustedYearLastDigit = (adjustedYear % 10).toString();
+        if (adjustedYearLastDigit === codeYearLastDigit) {
+          var adjustedDate = new Date(decodedDate.getTime());
+          adjustedDate.setUTCFullYear(adjustedYear);
+          decodedTimeElement.textContent = 'Decoded Date and Time (UTC): ' + adjustedDate.toUTCString();
+          foundMatch = true;
           break;
         }
       }
-      if (adjusted)
+      if (foundMatch) {
         break;
+      }
     }
   
-    if (!adjusted) {
+    if (!foundMatch) {
       errorMessageElement.textContent = 'Unable to decode date with matching year.';
-      return;
     }
-  
-    // Display the decoded date
-    decodedTimeElement.textContent = 'Decoded Date and Time (UTC): ' + decodedDate.toUTCString();
   }
   
   // Update the current year in the copyright section
