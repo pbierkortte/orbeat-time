@@ -224,40 +224,68 @@
       <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
     </div>
     <script>
-      function calculateOctalTime() {
-        const now = new Date();
-        const unixMilliseconds = now.getTime();
-        const utcYear = now.getUTCFullYear();
-        const yearLastDigit = utcYear % 10;
-        const daysSinceEpoch = unixMilliseconds / (24 * 60 * 60 * 1000);
-        const octalDays = (daysSinceEpoch).toString(8);
-        const [integerPart, fractionalPart] = octalDays.split('.');
-        const reversedIntegerPart = integerPart.slice(-3).split('').reverse().join('');
-        const reversedFractionalPart = (fractionalPart + '0000').slice(0, 4).split('').reverse().join('');
-        return `${reversedFractionalPart}${reversedIntegerPart}${yearLastDigit}`;
-      }
-
-      function updateTime() {
-        const now = new Date();
-        document.getElementById('human-time').textContent = `Human Date Time: ${now.toUTCString()}`;
-        const octalTime = calculateOctalTime();
-        document.getElementById('octal-time').textContent = octalTime;
-      }
-
-      function copyToClipboard() {
-        const text = document.getElementById('octal-time').textContent;
-        navigator.clipboard.writeText(text).then(() => {
-          alert('Copied to clipboard!');
-        });
-      }
-
-      function setCurrentYear() {
-        const currentYear = new Date().getFullYear();
-        document.getElementById('currentYear').textContent = currentYear;
-      }
-      updateTime();
-      setCurrentYear();
-      window.onload = setCurrentYear;
+    function updateTime() {
+      // Get current time
+      var now = new Date();
+    
+      // Display human-readable time
+      var humanTimeElement = document.getElementById('human-time');
+      humanTimeElement.textContent = now.toUTCString();
+    
+      // Get Unix timestamp in milliseconds
+      var timestampMs = now.getTime();
+    
+      // Get the current year
+      var year = now.getFullYear();
+    
+      // Calculate days since Unix epoch (including fractional days)
+      var daysSinceEpoch = timestampMs / (1000 * 60 * 60 * 24);
+    
+      // Convert daysSinceEpoch to octal, preserving fractional part
+      var octalDays = daysSinceEpoch.toString(8);
+    
+      // Split integer and fractional parts
+      var parts = octalDays.split('.');
+      var integerPart = parts[0];
+      var fractionalPart = parts[1] || '';
+    
+      // Ensure the fractional part has at least 4 digits
+      fractionalPart = (fractionalPart + '0000').substring(0, 4);
+    
+      // Reverse the first four digits of the fractional part
+      var reversedFractionalDigits = fractionalPart.split('').reverse().join('');
+    
+      // Ensure the integer part has at least 3 digits
+      integerPart = ('000' + integerPart).slice(-3);
+    
+      // Reverse the last three digits of the integer part
+      var reversedIntegerDigits = integerPart.split('').reverse().join('');
+    
+      // Get the last digit of the current year
+      var lastDigitOfYear = (year % 10).toString();
+    
+      // Combine the reversed digits and the last digit of the year
+      var orbeatTime = reversedFractionalDigits + reversedIntegerDigits + lastDigitOfYear;
+    
+      // Update the octal-time element
+      var octalTimeElement = document.getElementById('octal-time');
+      octalTimeElement.textContent = orbeatTime;
+    }
+    
+    function copyToClipboard() {
+      var copyText = document.getElementById('octal-time').textContent;
+      navigator.clipboard.writeText(copyText).then(function() {
+        alert('Copied Orbeat Time to clipboard: ' + copyText);
+      }, function(err) {
+        alert('Failed to copy text: ' + err);
+      });
+    }
+    
+    // Update the current year in the copyright section
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    
+    // Initialize time on page load
+    updateTime();
     </script>
   </body>
 </html>
