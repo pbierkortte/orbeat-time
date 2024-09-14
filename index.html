@@ -276,105 +276,136 @@
       </div>
       <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
     </div>
-    <script>
-        // Updated Functions
-        function decimalToOctal(num, fractionDigits) {
-            let integerPart = Math.floor(num);
-            let fractionalPart = num - integerPart;
+      <script>
+      // Updated Functions
+      function decimalToOctal(num, fractionDigits) {
+          let integerPart = Math.floor(num);
+          let fractionalPart = num - integerPart;
 
-            let integerOctal = integerPart.toString(8);
+          let integerOctal = integerPart.toString(8);
 
-            let fractionalOctal = '';
-            for (let i = 0; i < fractionDigits; i++) {
-                fractionalPart *= 8;
-                let digit = Math.floor(fractionalPart);
-                fractionalOctal += digit.toString();
-                fractionalPart -= digit;
-            }
+          let fractionalOctal = '';
+          for (let i = 0; i < fractionDigits; i++) {
+              fractionalPart *= 8;
+              let digit = Math.floor(fractionalPart);
+              fractionalOctal += digit.toString();
+              fractionalPart -= digit;
+          }
 
-            return { integerOctal: integerOctal, fractionalOctal: fractionalOctal };
-        }
+          return { integerOctal: integerOctal, fractionalOctal: fractionalOctal };
+      }
 
-        function encodeOrbeatTime(unixMilliseconds) {
-            let daysSinceEpoch = unixMilliseconds / 86400000;
-            let { integerOctal, fractionalOctal } = decimalToOctal(daysSinceEpoch, 8);
+      function encodeOrbeatTime(unixMilliseconds) {
+          let daysSinceEpoch = unixMilliseconds / 86400000;
+          let { integerOctal, fractionalOctal } = decimalToOctal(daysSinceEpoch, 8);
 
-            let reversedFractionalOctal = fractionalOctal.split('').reverse().join('');
-            let reversedIntegerOctal = integerOctal.split('').reverse().join('');
+          let reversedFractionalOctal = fractionalOctal.split('').reverse().join('');
+          let reversedIntegerOctal = integerOctal.split('').reverse().join('');
 
-            // Extract digits
-            let firstFourDigits = reversedFractionalOctal.substring(0, 4);
-            let digits5to7 = reversedIntegerOctal.substring(0, 3);
-            let lastDigitOfYear = new Date(unixMilliseconds).getUTCFullYear().toString().slice(-1);
+          // Extract digits
+          let firstFourDigits = reversedFractionalOctal.substring(0, 4);
+          let digits5to7 = reversedIntegerOctal.substring(0, 3);
+          let lastDigitOfYear = new Date(unixMilliseconds).getUTCFullYear().toString().slice(-1);
 
-            let orbeatTime = firstFourDigits + digits5to7 + lastDigitOfYear;
-            return orbeatTime;
-        }
+          let orbeatTime = firstFourDigits + digits5to7 + lastDigitOfYear;
+          return orbeatTime;
+      }
 
-        function decodeOrbeatTime(orbeatTimeString) {
-            if (orbeatTimeString.length !== 8) {
-                return { error: "Orbeat Time must be 8 digits." };
-            }
+      function decodeOrbeatTime(orbeatTimeString) {
+          if (orbeatTimeString.length !== 8) {
+              return { error: "Orbeat Time must be 8 digits." };
+          }
 
-            let firstFourDigitsReversed = orbeatTimeString.substring(0, 4).split('').reverse().join('');
-            let digits5to7Reversed = orbeatTimeString.substring(4, 7).split('').reverse().join('');
-            let lastDigitOfYear = orbeatTimeString.substring(7);
+          let firstFourDigitsReversed = orbeatTimeString.substring(0, 4).split('').reverse().join('');
+          let digits5to7Reversed = orbeatTimeString.substring(4, 7).split('').reverse().join('');
+          let lastDigitOfYear = orbeatTimeString.substring(7);
 
-            // Reconstruct octal parts
-            let fractionalOctalPartial = firstFourDigitsReversed;
-            let integerOctalPartial = digits5to7Reversed;
+          // Reconstruct octal parts
+          let fractionalOctalPartial = firstFourDigitsReversed;
+          let integerOctalPartial = digits5to7Reversed;
 
-            // Pad zeros appropriately
-            let fractionalOctal = fractionalOctalPartial.padEnd(8, '0');
-            let integerOctal = integerOctalPartial.padStart(8, '0');
+          // Pad zeros appropriately
+          let fractionalOctal = fractionalOctalPartial.padEnd(8, '0');
+          let integerOctal = integerOctalPartial.padStart(8, '0');
 
-            // Convert to decimal values
-            let fractionalDecimal = 0;
-            for (let i = 0; i < fractionalOctal.length; i++) {
-                fractionalDecimal += parseInt(fractionalOctal[i], 8) / Math.pow(8, i + 1);
-            }
+          // Convert to decimal values
+          let fractionalDecimal = 0;
+          for (let i = 0; i < fractionalOctal.length; i++) {
+              fractionalDecimal += parseInt(fractionalOctal[i], 8) / Math.pow(8, i + 1);
+          }
 
-            let integerDecimal = parseInt(integerOctal, 8);
+          let integerDecimal = parseInt(integerOctal, 8);
 
-            let daysSinceEpoch = integerDecimal + fractionalDecimal;
-            let unixMilliseconds = daysSinceEpoch * 86400000;
+          let daysSinceEpoch = integerDecimal + fractionalDecimal;
+          let unixMilliseconds = daysSinceEpoch * 86400000;
 
-            let decodedDate = new Date(unixMilliseconds);
+          let decodedDate = new Date(unixMilliseconds);
 
-            // Adjust the year
-            let currentYear = new Date().getUTCFullYear();
-            let baseYear = currentYear - (currentYear % 10);
-            let adjustedYear = baseYear + parseInt(lastDigitOfYear);
+          // Adjust the year
+          let currentYear = new Date().getUTCFullYear();
+          let baseYear = currentYear - (currentYear % 10);
+          let adjustedYear = baseYear + parseInt(lastDigitOfYear);
 
-            if (adjustedYear - currentYear > 5) {
-                adjustedYear -= 10;
-            }
-            if (currentYear - adjustedYear > 5) {
-                adjustedYear += 10;
-            }
+          if (adjustedYear - currentYear > 5) {
+              adjustedYear -= 10;
+          }
+          if (currentYear - adjustedYear > 5) {
+              adjustedYear += 10;
+          }
 
-            decodedDate.setUTCFullYear(adjustedYear);
+          decodedDate.setUTCFullYear(adjustedYear);
 
-            return { date: decodedDate };
-        }
+          return { date: decodedDate };
+      }
 
-        function copyToClipboard() {
-            // ... Existing code ...
-        }
+      // Function to copy Orbeat Time to clipboard
+      function copyToClipboard() {
+          const orbeatTimeElement = document.getElementById('octal-time');
+          const orbeatTime = orbeatTimeElement.textContent;
+          navigator.clipboard.writeText(orbeatTime).then(function() {
+              alert('Orbeat Time copied to clipboard!');
+          }, function(err) {
+              alert('Could not copy text: ', err);
+          });
+      }
 
-        function updateTime() {
-            // ... Existing code ...
-        }
+      // Function to update the displayed time
+      function updateTime() {
+          let currentUnixMilliseconds = new Date().getTime();
+          let orbeatTime = encodeOrbeatTime(currentUnixMilliseconds);
 
-        function updateDecodedOrbeatTime() {
-            // ... Existing code ...
-        }
+          let humanTime = new Date(currentUnixMilliseconds).toUTCString();
 
-        // Initialize time on page load
-        updateTime();
+          document.getElementById('human-time').textContent = humanTime;
+          document.getElementById('octal-time').textContent = orbeatTime;
+      }
 
-        // Update the current year in the copyright section
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+      // Function to update the decoded Orbeat Time
+      function updateDecodedOrbeatTime() {
+          let orbeatInput = document.getElementById('orbeat-input').value.trim();
+          if (orbeatInput.length === 0) {
+              document.getElementById('error-message').textContent = 'Please enter an Orbeat Time.';
+              document.getElementById('decoded-time-display').textContent = '';
+              return;
+          }
+
+          let result = decodeOrbeatTime(orbeatInput);
+
+          if (result.error) {
+              document.getElementById('error-message').textContent = result.error;
+              document.getElementById('decoded-time-display').textContent = '';
+          } else {
+              let decodedTimeString = result.date.toUTCString();
+              document.getElementById('decoded-time-display').textContent = decodedTimeString;
+              document.getElementById('error-message').textContent = '';
+          }
+      }
+
+      // Initialize time on page load
+      updateTime();
+
+      // Update the current year in the copyright section
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
   </body>
 </html>
