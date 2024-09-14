@@ -158,7 +158,6 @@
         font-size: 1em;
         margin-top: 10px;
       }
-
     </style>
     <title>Orbeat Time</title>
   </head>
@@ -228,8 +227,8 @@
       <div class="decoder-section">
         <h2>Decode Orbeat Time</h2>
         <input type="text" id="orbeat-input" placeholder="Enter Orbeat Time" maxlength="8" />
-        <button onclick="decodeOrbeatTime()">Decode</button>
-        <div id="decoded-time-display"></div>
+        <button onclick="updateDecodedOrbeatTime()">Decode</button>
+        <div id="decoded-time-display" class="decoded-time-display"></div>
         <div id="error-message" class="error-message"></div>
       </div>
 
@@ -275,16 +274,16 @@
           <li>7. Reverse the sequence to get the Orbeat time</li>
         </ul>
       </div>
-    <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
-  </div>
-  <script>
+      <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
+    </div>
+    <script>
       // Function to convert decimal number to octal including fractional part
       function decimalToOctal(num, fractionDigits) {
           let integerPart = Math.floor(num);
           let fractionalPart = num - integerPart;
-  
+
           let integerOctal = integerPart.toString(8);
-  
+
           let fractionalOctal = '';
           for (let i = 0; i < fractionDigits; i++) {
               fractionalPart *= 8;
@@ -292,68 +291,74 @@
               fractionalOctal += digit.toString();
               fractionalPart -= digit;
           }
-  
+
           return { integerOctal: integerOctal, fractionalOctal: fractionalOctal };
       }
-  
+
+      // Function to encode Unix milliseconds to Orbeat Time
       function encodeOrbeatTime(unixMilliseconds) {
           // Calculate days since Unix epoch
           let daysSinceEpoch = unixMilliseconds / 86400000;
-  
+
           // Convert daysSinceEpoch to octal
           let { integerOctal, fractionalOctal } = decimalToOctal(daysSinceEpoch, 8);
-  
+
           // Extract first four digits from reversed fractional part
           let firstFourDigits = fractionalOctal.substring(0, 4).split('').reverse().join('');
-  
+
           // Extract digits 5-7 from reversed integer part
           let reversedIntegerOctal = integerOctal.split('').reverse().join('');
           let digits5to7 = reversedIntegerOctal.substring(0, 3);
-  
+
           // Get the last digit of the current year
           let currentYear = new Date(unixMilliseconds).getFullYear();
           let lastDigitOfYear = currentYear.toString().slice(-1);
-  
+
           // Combine all parts to get Orbeat Time
           let orbeatTime = firstFourDigits + digits5to7 + lastDigitOfYear;
           return orbeatTime;
       }
-  
+
+      // Function to decode Orbeat Time to Date
       function decodeOrbeatTime(orbeatTimeString) {
           if (orbeatTimeString.length !== 8) {
               return { error: "Orbeat Time must be 8 digits." };
           }
-  
+
           // Reverse the steps of encoding
           let firstFourDigitsReversed = orbeatTimeString.substring(0, 4).split('').reverse().join('');
           let digits5to7Reversed = orbeatTimeString.substring(4, 7).split('').reverse().join('');
           let lastDigitOfYear = orbeatTimeString.substring(7);
-  
+
           // Reconstruct fractional and integer octal parts
           let fractionalOctal = firstFourDigitsReversed + '0000';
-          let integerOctal = digits5to7Reversed;
-  
+          let integerOctalPartial = digits5to7Reversed;
+
+          // Since we don't have the full integerOctal, we'll attempt to approximate
+          let integerOctal = integerOctalPartial + '0000000'; // Pad with zeros to match scale
+
           // Convert back to decimal
           let fractionalDecimal = 0;
           for (let i = 0; i < fractionalOctal.length; i++) {
               fractionalDecimal += parseInt(fractionalOctal[i], 8) / Math.pow(8, i + 1);
           }
-  
+
           let integerDecimal = parseInt(integerOctal, 8);
-  
+
           let daysSinceEpoch = integerDecimal + fractionalDecimal;
           let unixMilliseconds = daysSinceEpoch * 86400000;
-  
+
           let decodedDate = new Date(unixMilliseconds);
-  
+
           // Adjust the year based on the last digit
           let decodedYear = decodedDate.getFullYear().toString();
           decodedYear = decodedYear.substring(0, decodedYear.length - 1) + lastDigitOfYear;
           decodedDate.setFullYear(decodedYear);
-  
+
           return { date: decodedDate };
       }
-  
+
+      // Function to copy Orbeat Time to clipboard
       function copyToClipboard() {
           const orbeatTimeElement = document.getElementById('octal-time');
           const orbeatTime = orbeatTimeElement.textContent;
@@ -363,21 +368,29 @@
               alert('Could not copy text: ', err);
           });
       }
-  
+
+      // Function to update the displayed time
       function updateTime() {
           let currentUnixMilliseconds = new Date().getTime();
           let orbeatTime = encodeOrbeatTime(currentUnixMilliseconds);
-  
+
           let humanTime = new Date(currentUnixMilliseconds).toUTCString();
-  
+
           document.getElementById('human-time').textContent = humanTime;
           document.getElementById('octal-time').textContent = orbeatTime;
       }
-  
+
+      // Function to update the decoded Orbeat Time
       function updateDecodedOrbeatTime() {
-          let orbeatInput = document.getElementById('orbeat-input').value;
+          let orbeatInput = document.getElementById('orbeat-input').value.trim();
+          if (orbeatInput.length === 0) {
+              document.getElementById('error-message').textContent = 'Please enter an Orbeat Time.';
+              document.getElementById('decoded-time-display').textContent = '';
+              return;
+          }
+
           let result = decodeOrbeatTime(orbeatInput);
-  
+
           if (result.error) {
               document.getElementById('error-message').textContent = result.error;
               document.getElementById('decoded-time-display').textContent = '';
@@ -387,12 +400,12 @@
               document.getElementById('error-message').textContent = '';
           }
       }
-  
+
       // Initialize time on page load
       updateTime();
-  
+
       // Update the current year in the copyright section
       document.getElementById('currentYear').textContent = new Date().getFullYear();
-  </script>
+    </script>
   </body>
 </html>
