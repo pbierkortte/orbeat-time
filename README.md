@@ -39,9 +39,9 @@ Steps:
 
 0. Fetch the current time
 1. Calculate the Unix timestamp in milliseconds
-2. Determine the year
+2. Calculate years since 1970 modulo 8
 3. Convert the timestamp to fractional days since the Unix epoch
 4. Transform fractional days to octal format, preserving the fractional part
 5. Extract specific digits from the octal representation
-6. Combine these elements with the last digit of the current year
+6. Combine these elements with the last digit of the years
 7. Reverse the sequence to get the Orbeat time
