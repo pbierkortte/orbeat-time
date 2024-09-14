@@ -223,10 +223,12 @@
       </div>
       <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
     </div>
+    
     <script>
     function updateTime() {
       // Get current time
       var now = new Date();
+      console.log('Current Date and Time:', now);
     
       // Display human-readable time
       var humanTimeElement = document.getElementById('human-time');
@@ -234,38 +236,50 @@
     
       // Get Unix timestamp in milliseconds
       var timestampMs = now.getTime();
+      console.log('Unix Timestamp (ms):', timestampMs);
     
       // Get the current year
       var year = now.getFullYear();
+      console.log('Current Year:', year);
     
       // Calculate days since Unix epoch (including fractional days)
       var daysSinceEpoch = timestampMs / (1000 * 60 * 60 * 24);
+      console.log('Days Since Unix Epoch:', daysSinceEpoch);
     
       // Convert daysSinceEpoch to octal, preserving fractional part
       var octalDays = daysSinceEpoch.toString(8);
+      console.log('Octal Days:', octalDays);
     
       // Split integer and fractional parts
       var parts = octalDays.split('.');
       var integerPart = parts[0];
       var fractionalPart = parts[1] || '';
+      console.log('Integer Part:', integerPart);
+      console.log('Fractional Part:', fractionalPart);
     
       // Ensure the fractional part has at least 4 digits
       fractionalPart = (fractionalPart + '0000').substring(0, 4);
+      console.log('Adjusted Fractional Part (4 digits):', fractionalPart);
     
       // Reverse the first four digits of the fractional part
       var reversedFractionalDigits = fractionalPart.split('').reverse().join('');
+      console.log('Reversed Fractional Digits:', reversedFractionalDigits);
     
       // Ensure the integer part has at least 3 digits
       integerPart = ('000' + integerPart).slice(-3);
+      console.log('Adjusted Integer Part (3 digits):', integerPart);
     
       // Reverse the last three digits of the integer part
       var reversedIntegerDigits = integerPart.split('').reverse().join('');
+      console.log('Reversed Integer Digits:', reversedIntegerDigits);
     
       // Get the last digit of the current year
       var lastDigitOfYear = (year % 10).toString();
+      console.log('Last Digit of Year:', lastDigitOfYear);
     
       // Combine the reversed digits and the last digit of the year
       var orbeatTime = reversedFractionalDigits + reversedIntegerDigits + lastDigitOfYear;
+      console.log('Computed Orbeat Time:', orbeatTime);
     
       // Update the octal-time element
       var octalTimeElement = document.getElementById('octal-time');
@@ -287,5 +301,6 @@
     // Initialize time on page load
     updateTime();
     </script>
+
   </body>
 </html>
