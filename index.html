@@ -372,10 +372,12 @@
       // Function to update the displayed time
       function updateTime() {
           let currentUnixMilliseconds = new Date().getTime();
+        
           let orbeatTime = encodeOrbeatTime(currentUnixMilliseconds);
-          
           let humanTime = new Date(decodeOrbeatTime(orbeatTime)).toUTCString();
+
           document.getElementById('human-time').textContent = humanTime;
+          document.getElementById('octal-time').textContent = orbeatTime;
       }
 
       // Function to update the decoded Orbeat Time
