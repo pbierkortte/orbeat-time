@@ -19,6 +19,7 @@ My design decisions include:
 - Using little-endian ordering, which is more common in modern computing systems
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems
 - Full-year was omitted in favor of brevity and due to space constraints
+- Including a single fractional year digit to provide a month-like division of the year
 - Avoiding timezones to simplify global time representation
 - Using the Unix epoch for convenience and to avoid leap-second complications
 - The precision is ~21 seconds roughly in the scale of seconds
