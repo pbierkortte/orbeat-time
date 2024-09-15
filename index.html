@@ -223,30 +223,44 @@
   </div>
   <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
 </div>
-<script>
-  function decimalToOctal(num, digits = 0) {
-    let [octalInt, octalFrac] = num.toString(8).split('.');
-    octalFrac = octalFrac ? octalFrac.padEnd(digits, '0').slice(0, digits) : '0'.repeat(digits);
-    return { 
-      octalInt: octalInt, 
-      octalFrac: octalFrac
-    };
-  }
-  
-  function encodeOrbeatTime(unixMilliseconds) {
-    let unixDays = unixMilliseconds / 24 / 60 / 60 / 1000;
-    let unixYears = unixMilliseconds / 365.25 / 24 / 60 / 60 / 1000;
-    let { octalInt, octalFrac } = decimalToOctal(unixDays, 4);
-    let year = Math.floor(unixYears) % 8;
-    let days = octalInt.slice(-3);
-    let frac = octalFrac;
-    return `${year}${days}${frac}`.split('').reverse().join('');
+<script>  
+
+  const DAYS_PER_YEAR = 365.25;
+  const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+  const OCTAL_BASE = 8;
+
+  const digitCounts = {
+    yearsWhole: 1,
+    yearsFrac: 1,
+    daysWhole: 2,
+    daysFrac: 4
   };
+
+  function formatOctalPart(value, wholeDigits, fracDigits) {
+    let [whole, frac = ''] = value.toString(OCTAL_BASE).split('.');
+    let formattedWhole = whole.padStart(wholeDigits, '0').slice(-wholeDigits);
+    let formattedFrac = frac.padEnd(fracDigits, '0').slice(0, fracDigits);
+    return formattedWhole + formattedFrac;
+  };
+
+  function encodeOrbeatTime(unixMilliseconds) {
+    let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
+    console.log(unixDays);
+    let unixYears = unixDays / DAYS_PER_YEAR;
+    console.log(unixYears);
+
+
+    let encodedDays = formatOctalPart(unixDays, digitCounts.daysWhole, digitCounts.daysFrac);
+    console.log(encodedDays);
+    let encodedYears = formatOctalPart(unixYears, digitCounts.yearsWhole, digitCounts.yearsFrac);
+    console.log(encodedYears);
+
+    return `${encodedYears}${encodedDays}`.split('').reverse().join('');
+  }
   
   function calculateOctalTime() {
     let now = new Date();
     let unixMilliseconds = now.getTime();
-    let utcYear = now.getUTCFullYear();
     return encodeOrbeatTime(unixMilliseconds);
   }
 
