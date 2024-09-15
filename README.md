@@ -52,11 +52,11 @@ The encoding process:
   - Days: `1700000000000 / 86400000` ≈ `19675.925925925927` days
   - Years: `19675.9259259 / 365.25` ≈ `53.86974928384922` years
 - **Octal Formatting:** 
-  - Days: `19675.925925925927` → octal ≈ `46333.73204572646023651444`
-  - Years: `53.86974928384922` → octal ≈ `65.67523743463217625706`
+  - Days: `19675.925925925927` → octal ≈ `46333.7320`
+  - Years: `53.86974928384922` → octal ≈ `65.6`
 - **Formatting with Digit Counts:**
-  - Days: `46333.73204572646023651444` → `33` (whole) + `7320` (fraction) → `337320`
-  - Years: `65.67523743463217625706` → `5` (whole) + `6` (fraction) → `56`
+  - Days: `46333.7320` → `33` (whole) + `7320` (fraction) → `337320`
+  - Years: `65.6` → `5` (whole) + `6` (fraction) → `56`
 - **Concatenation and Reversal:**
   - Combined: Years + Days  → `56337320`
   - Reversed: `02373365`
