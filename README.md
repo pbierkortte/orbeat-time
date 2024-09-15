@@ -47,7 +47,8 @@ The encoding process involves the following steps:
 
 The encoding process:
 
-- **Input:** Unix timestamp in milliseconds (e.g., `1700000000000`)
+- **Input:**
+  - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Conversion:** 
   - Days: `1700000000000 / 86400000` ≈ `19675.925925925927` days
   - Years: `19675.9259259 / 365.25` ≈ `53.86974928384922` years
