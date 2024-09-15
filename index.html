@@ -80,14 +80,42 @@
     margin-top: 30px;
     text-align: left;
     background-color: #2c3e50;
-    padding: 15px;
+    padding: 20px;
     border-radius: 5px;
     color: #ecf0f1;
+  }
+
+  .documentation h1 {
+    color: #3498db;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
   .documentation h2 {
     color: #3498db;
     text-align: left;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .documentation p, .documentation ul, .documentation ol {
+    margin-bottom: 15px;
+  }
+
+  .documentation ul, .documentation ol {
+    padding-left: 20px;
+  }
+
+  .documentation code {
+    background-color: #34495e;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+
+  .documentation strong {
+    font-weight: bold;
+    color: #2ecc71;
   }
 
   .copyright {
@@ -177,15 +205,17 @@
   <div class="time-display">
     <div id="human-time"></div>
   </div>
-      <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Orbeat Time</div>
-      <button onclick="updateTime()">Refresh Time</button>
+  <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Orbeat Time</div>
+  <button onclick="updateTime()">Refresh Time</button>
   <div class="documentation">
+    <h1>Orbeat Time</h1>
+
     <h2>Summary</h2>
     <p>Orbeat is an octal time system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle.</p>
 
     <h2>Background</h2>
     <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming. It also draws inspiration from batch codes used in retail and manufacturing industries for date codes and competitive intelligence.</p>
-    
+
     <h2>Motivation</h2>
     <p>I created this project out of intellectual curiosity and as a practical tool. It was a stimulating exercise that allowed me to combine various concepts across multiple disciplines. I needed an efficient and cryptic timestamping method, like batch codes, to manage public-facing personal documents. I sought to devise an innovative way to balance precision with obscurity by crafting a compact yet noteworthy date time code, which would be meaningful to me while remaining ambiguous for others.</p>
 
@@ -194,31 +224,61 @@
     <ul>
       <li>Using little-endian ordering, which is more common in modern computing systems</li>
       <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems</li>
-      <li>The full-year was omitted in favor of brevity and due to space constraints</li>
+      <li>Full-year was omitted in favor of brevity and due to space constraints</li>
       <li>Avoiding timezones to simplify global time representation</li>
       <li>Using the Unix epoch for convenience and to avoid leap-second complications</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
     </ul>
-    
+
     <h2>Format</h2>
-    <p>An 8-character string, where:</p>
+    <p>A concatenated string consisting of:</p>
     <ul>
-      <li>The first four digits are from the fractional part of octal days (reversed)</li>
-      <li>Digits 5-7 are extracted from the integer part of octal days (reversed)</li>
-      <li>The 8th digit is the last digit of the current year</li>
+      <li>Days since Unix epoch formatted with specific digit counts and then reversed</li>
+      <li>Years since Unix epoch formatted with specific digit counts and then reversed</li>
     </ul>
-    
+
     <h2>Implementation</h2>
-    <p>Steps:</p>
-    <ul class="octal-list">
-      <li>0. Fetch the current time</li>
-      <li>1. Calculate the Unix timestamp in milliseconds</li>
-      <li>2. Calculate years since 1970 modulo 8</li>
-      <li>3. Convert the timestamp to fractional days since the Unix epoch</li>
-      <li>4. Transform fractional days to octal format, preserving the fractional part</li>
-      <li>5. Extract specific digits from the octal representation</li>
-      <li>6. Combine the last digit of the years with these elements</li>
-      <li>7. Reverse the sequence to get the Orbeat time</li>
+    <p>The encoding process involves the following steps:</p>
+    <ol start="0">
+      <li>Calculate the Unix timestamp in milliseconds</li>
+      <li>Convert the milliseconds to fractional days since the Unix epoch</li>
+      <li>Convert the milliseconds to fractional years since the Unix epoch</li>
+      <li>Transform both days to octal format, preserving the fractional parts</li>
+      <li>Transform both years to octal format, preserving the fractional parts</li>
+      <li>Format each part (days and years) with specific digit counts for whole and fractional parts</li>
+      <li>Combine the formatted years and days</li>
+      <li>Reverse the concatenated string to generate the Orbeat time</li>
+    </ol>
+
+    <h2>Example</h2>
+    <p>The encoding process:</p>
+    <ul>
+      <li><strong>Input:</strong> Unix timestamp in milliseconds (e.g., <code>1700000000000</code>).</li>
+      <li><strong>Conversion:</strong>
+        <ul>
+          <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.925925925927</code> days</li>
+          <li>Years: <code>19675.9259259 / 365.25</code> ≈ <code>53.86974928384922</code> years</li>
+        </ul>
+      </li>
+      <li><strong>Octal Formatting:</strong>
+        <ul>
+          <li>Days: <code>19675.925925925927</code> → octal ≈ <code>46333.73204572646023651444</code></li>
+          <li>Years: <code>53.86974928384922</code> → octal ≈ <code>65.67523743463217625706</code></li>
+        </ul>
+      </li>
+      <li><strong>Formatting with Digit Counts:</strong>
+        <ul>
+          <li>Days: <code>46333.73204572646023651444</code> → <code>33</code> (whole) + <code>7320</code> (fraction) → <code>337320</code></li>
+          <li>Years: <code>65.67523743463217625706</code> → <code>5</code> (whole) + <code>6</code> (fraction) → <code>56</code></li>
+        </ul>
+      </li>
+      <li><strong>Concatenation and Reversal:</strong>
+        <ul>
+          <li>Combined: Years + Days  → <code>56337320</code></li>
+          <li>Reversed: <code>02373365</code></li>
+        </ul>
+      </li>
+      <li><strong>Output:</strong> <code>02373365</code></li>
     </ul>
   </div>
   <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
