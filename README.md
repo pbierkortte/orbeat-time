@@ -48,15 +48,15 @@ The encoding process:
 
 - **Input:** Unix timestamp in milliseconds (e.g., `1700000000000`).
 - **Conversion:** 
-  - Days: `1700000000000 / 86400000 ≈ 19629.63 days`
-  - Years: `19629.63 / 365.25 ≈ 53.74 years`
+  - Days: `1700000000000 / 86400000 ≈ 19675.925925925927 days`
+  - Years: `19675.9259259 / 365.25 ≈ 53.86974928384922 years`
 - **Octal Formatting:** 
-  - Years: `53.74` → octal → `65.6`
-  - Days: `19629.63` → octal → `45525.476`
+  - Days: `19675.925925925927` → octal ≈ `46333.73204572646023651444`
+  - Years: `53.86974928384922` → octal ≈ `65.67523743463217625706`
 - **Formatting with Digit Counts:**
-  - Years: `65.6` → `65` (whole) + `6` (fraction) → `656`
-  - Days: `45525.476` → `25` (whole) + `4760` (fraction) → `254760`
+  - Days: `46333.73204572646023651444` → `33` (whole) + `7320` (fraction) → `337320`
+  - Years: `65.67523743463217625706` → `5` (whole) + `6` (fraction) → `56`
 - **Concatenation and Reversal:**
-  - Combined: `656254760`
-  - Reversed: `067452656`
-- **Output:** `067452656`
+  - Combined: Years + Days  → `56337320`
+  - Reversed: `02373365`
+- **Output:** `02373365`
