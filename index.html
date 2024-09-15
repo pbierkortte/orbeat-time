@@ -305,16 +305,9 @@
 
   function encodeOrbeatTime(unixMilliseconds) {
     let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
-    console.log(unixDays);
     let unixYears = unixDays / DAYS_PER_YEAR;
-    console.log(unixYears);
-
-
     let encodedDays = formatOctalPart(unixDays, digitCounts.daysWhole, digitCounts.daysFrac);
-    console.log(encodedDays);
     let encodedYears = formatOctalPart(unixYears, digitCounts.yearsWhole, digitCounts.yearsFrac);
-    console.log(encodedYears);
-
     return `${encodedYears}${encodedDays}`.split('').reverse().join('');
   }
   
