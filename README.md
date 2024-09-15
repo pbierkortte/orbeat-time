@@ -12,7 +12,6 @@ Loosely inspired by Swatch Internet Time (.beat time), a decimal time system int
 
 I created this project out of intellectual curiosity and as a practical tool. It was a stimulating exercise that allowed me to combine various concepts across multiple disciplines. I needed an efficient and cryptic timestamping method, like batch codes, to manage public-facing personal documents. I sought to devise an innovative way to balance precision with obscurity by crafting a compact yet noteworthy date time code, which would be meaningful to me while remaining ambiguous for others.
 
-
 ## Design Decisions
 
 My design decisions include:
@@ -26,22 +25,38 @@ My design decisions include:
 
 ## Format
 
-An 8-character string, where:
-
-- The first four digits are from the fractional part of octal days (reversed)
-- Digits 5-7 are extracted from the integer part of octal days (reversed)
-- The 8th digit is the last digit of the current year
-
+A concatenated string consisting of:
+- Days since Unix epoch formatted with specific digit counts and then reversed
+- Years since Unix epoch formatted with specific digit counts and then reversed
 
 ## Implementation
 
-Steps:
+The encoding process involves the following steps:
 
-0. Fetch the current time
-1. Calculate the Unix timestamp in milliseconds
-2. Calculate years since 1970 modulo 8
-3. Convert the timestamp to fractional days since the Unix epoch
-4. Transform fractional days to octal format, preserving the fractional part
-5. Extract specific digits from the octal representation
-6. Combine the last digit of the years with these elements
-7. Reverse the sequence to get the Orbeat time
+0. Calculate the Unix timestamp in milliseconds
+1. Convert the milliseconds to fractional days since the Unix epoch
+2. Convert the milliseconds to fractional years since the Unix epoch
+3. Transform both days to octal format, preserving the fractional parts
+4. Transform both years to octal format, preserving the fractional parts
+5. Format each part (days and years) with specific digit counts for whole and fractional parts
+6. Combine the formatted years and days
+7. Reverse the concatenated string to generate the Orbeat time
+
+## Example
+
+The encoding process:
+
+- **Input:** Unix timestamp in milliseconds (e.g., `1700000000000`).
+- **Conversion:** 
+  - Days: `1700000000000 / 86400000 ≈ 19629.63 days`
+  - Years: `19629.63 / 365.25 ≈ 53.74 years`
+- **Octal Formatting:** 
+  - Years: `53.74` → octal → `65.6`
+  - Days: `19629.63` → octal → `45525.476`
+- **Formatting with Digit Counts:**
+  - Years: `65.6` → `65` (whole) + `6` (fraction) → `656`
+  - Days: `45525.476` → `25` (whole) + `4760` (fraction) → `254760`
+- **Concatenation and Reversal:**
+  - Combined: `656254760`
+  - Reversed: `067452656`
+- **Output:** `067452656`
