@@ -298,16 +298,20 @@
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
     let [whole, frac = ''] = value.toString(OCTAL_BASE).split('.');
+    
     let formattedWhole = whole.padStart(wholeDigits, '0').slice(-wholeDigits);
     let formattedFrac = frac.padEnd(fracDigits, '0').slice(0, fracDigits);
+    
     return formattedWhole + formattedFrac;
   };
 
   function encodeOrbeatTime(unixMilliseconds) {
     let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
     let unixYears = unixDays / DAYS_PER_YEAR;
+    
     let encodedDays = formatOctalPart(unixDays, digitCounts.daysWhole, digitCounts.daysFrac);
     let encodedYears = formatOctalPart(unixYears, digitCounts.yearsWhole, digitCounts.yearsFrac);
+    
     return `${encodedYears}${encodedDays}`.split('').reverse().join('');
   }
   
