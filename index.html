@@ -231,6 +231,7 @@
       <li>Avoiding timezones to simplify global time representation</li>
       <li>Using the Unix epoch for convenience and to avoid leap-second complications</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
+      <li>Used 365.24219 days per year, which is the mean tropical year, to minimize long-term drift</li>
     </ul>
 
     <h2>Format</h2>
@@ -263,20 +264,20 @@
       </li>
       <li><strong>Conversion:</strong>
         <ul>
-          <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.925925925927</code> days</li>
-          <li>Years: <code>19675.9259259 / 365.25</code> ≈ <code>53.86974928384922</code> years</li>
+          <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.9259259</code> days</li>
+          <li>Years: <code>19675.9259259 / 365.24219</code> ≈ <code>53.8709011845</code> years</li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
         <ul>
-          <li>Days: <code>19675.925925925927</code> → octal ≈ <code>46333.7320</code></li>
-          <li>Years: <code>53.86974928384922</code> → octal ≈ <code>65.6</code></li>
+          <li>Days: <code>19675.9259259</code> → octal ≈ <code>46333.7320457</code></li>
+          <li>Years: <code>53.8709011845</code> → octal ≈ <code>65.6757154122</code></li>
         </ul>
       </li>
       <li><strong>Formatting with Digit Counts:</strong>
         <ul>
-          <li>Days: <code>46333.7320</code> → <code>33</code> (whole) + <code>7320</code> (fraction) → <code>337320</code></li>
-          <li>Years: <code>65.6</code> → <code>5</code> (whole) + <code>6</code> (fraction) → <code>56</code></li>
+          <li>Days: <code>46333.7320457</code> → <code>33</code> (whole) + <code>7320</code> (fraction) → <code>337320</code></li>
+          <li>Years: <code>65.6757154122</code> → <code>5</code> (whole) + <code>6</code> (fraction) → <code>56</code></li>
         </ul>
       </li>
       <li><strong>Concatenation and Reversal:</strong>
@@ -290,9 +291,9 @@
   </div>
   <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
 </div>
-<script>  
+<script>
 
-  const DAYS_PER_YEAR = 365.25;
+  const DAYS_PER_YEAR = 365.24219;
   const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
   const OCTAL_BASE = 8;
 
