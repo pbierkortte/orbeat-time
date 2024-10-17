@@ -23,6 +23,7 @@ My design decisions include:
 - Avoiding timezones to simplify global time representation
 - Using the Unix epoch for convenience and to avoid leap-second complications
 - The precision is ~21 seconds roughly in the scale of seconds
+- Used 365.24219 days per year, which is the mean tropical year, to minimize long-term drift
 
 ## Format
 
@@ -50,14 +51,14 @@ The encoding process:
 - **Input:**
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Conversion:** 
-  - Days: `1700000000000 / 86400000` ≈ `19675.925925925927` days
-  - Years: `19675.9259259 / 365.25` ≈ `53.86974928384922` years
+  - Days: `1700000000000 / 86400000` ≈ `19675.9259259` days
+  - Years: `19675.9259259 / 365.24219` ≈ `53.8709011845` years
 - **Octal Formatting:** 
-  - Days: `19675.925925925927` → octal ≈ `46333.7320`
-  - Years: `53.86974928384922` → octal ≈ `65.6`
+  - Days: `19675.9259259` → octal ≈ `46333.7320457`
+  - Years: `53.8709011845` → octal ≈ `65.6757154122`
 - **Formatting with Digit Counts:**
-  - Days: `46333.7320` → `33` (whole) + `7320` (fraction) → `337320`
-  - Years: `65.6` → `5` (whole) + `6` (fraction) → `56`
+  - Days: `46333.7320457` → `33` (whole) + `7320` (fraction) → `337320`
+  - Years: `65.6757154122` → `5` (whole) + `6` (fraction) → `56`
 - **Concatenation and Reversal:**
   - Combined: Years + Days  → `56337320`
   - Reversed: `02373365`
