@@ -226,6 +226,7 @@
     <ul>
       <li>Using little-endian ordering, which is more common in modern computing systems</li>
       <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems</li>
+      <li>Flooring the total days before calculating years to ensure accurate year representation</li>
       <li>Full-year was omitted in favor of brevity and due to space constraints</li>
       <li>Including a single fractional year digit to provide a month-like division of the year</li>
       <li>Avoiding timezones to simplify global time representation</li>
@@ -246,7 +247,7 @@
     <ol start="0">
       <li>Calculate the Unix timestamp in milliseconds</li>
       <li>Convert the milliseconds to fractional days since the Unix epoch</li>
-      <li>Convert the milliseconds to fractional years since the Unix epoch</li>
+      <li>Floor the total days and then convert the milliseconds to fractional years since the Unix epoch</li>
       <li>Transform both days to octal format, preserving the fractional parts</li>
       <li>Transform both years to octal format, preserving the fractional parts</li>
       <li>Format each part (days and years) with specific digit counts for whole and fractional parts</li>
@@ -265,19 +266,19 @@
       <li><strong>Conversion:</strong>
         <ul>
           <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.9259259</code> days</li>
-          <li>Years: <code>19675.9259259 / 365.24219</code> ≈ <code>53.8709011845</code> years</li>
+          <li>Years: <code>Math.floor(19675.9259259) / 365.24219</code> ≈ <code>53.86836608333775</code> years</li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
         <ul>
           <li>Days: <code>19675.9259259</code> → octal ≈ <code>46333.7320457</code></li>
-          <li>Years: <code>53.8709011845</code> → octal ≈ <code>65.6757154122</code></li>
+          <li>Years: <code>53.86836608333775</code> → octal ≈ <code>65.674464752616</code></li>
         </ul>
       </li>
       <li><strong>Formatting with Digit Counts:</strong>
         <ul>
           <li>Days: <code>46333.7320457</code> → <code>33</code> (whole) + <code>7320</code> (fraction) → <code>337320</code></li>
-          <li>Years: <code>65.6757154122</code> → <code>5</code> (whole) + <code>6</code> (fraction) → <code>56</code></li>
+          <li>Years: <code>65.674464752616</code> → <code>5</code> (whole) + <code>6</code> (fraction) → <code>56</code></li>
         </ul>
       </li>
       <li><strong>Concatenation and Reversal:</strong>
