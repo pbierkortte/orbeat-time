@@ -18,6 +18,7 @@ My design decisions include:
 
 - Using little-endian ordering, which is more common in modern computing systems
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems
+- Flooring the total days before calculating years to ensure accurate year representation
 - Full-year was omitted in favor of brevity and due to space constraints
 - Including a single fractional year digit to provide a month-like division of the year
 - Avoiding timezones to simplify global time representation
@@ -37,7 +38,7 @@ The encoding process involves the following steps:
 
 0. Calculate the Unix timestamp in milliseconds
 1. Convert the milliseconds to fractional days since the Unix epoch
-2. Convert the milliseconds to fractional years since the Unix epoch
+2. **Floor the total days and then convert the milliseconds to fractional years since the Unix epoch**
 3. Transform both days to octal format, preserving the fractional parts
 4. Transform both years to octal format, preserving the fractional parts
 5. Format each part (days and years) with specific digit counts for whole and fractional parts
@@ -52,10 +53,10 @@ The encoding process:
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Conversion:** 
   - Days: `1700000000000 / 86400000` ≈ `19675.9259259` days
-  - Years: `19675.9259259 / 365.24219` ≈ `53.8709011845` years
+  - Years: `Math.floor(19675.9259259) / 365.24219` ≈ `53.82` years
 - **Octal Formatting:** 
   - Days: `19675.9259259` → octal ≈ `46333.7320457`
-  - Years: `53.8709011845` → octal ≈ `65.6757154122`
+  - Years: `53.82` → octal ≈ `65.6757154122`
 - **Formatting with Digit Counts:**
   - Days: `46333.7320457` → `33` (whole) + `7320` (fraction) → `337320`
   - Years: `65.6757154122` → `5` (whole) + `6` (fraction) → `56`
