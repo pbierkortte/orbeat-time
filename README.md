@@ -53,13 +53,13 @@ The encoding process:
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Conversion:** 
   - Days: `1700000000000 / 86400000` ≈ `19675.9259259` days
-  - Years: `Math.floor(19675.9259259) / 365.24219` ≈ `53.82` years
+  - Years: `Math.floor(19675.9259259) / 365.24219` ≈ `53.86836608333775` years
 - **Octal Formatting:** 
   - Days: `19675.9259259` → octal ≈ `46333.7320457`
-  - Years: `53.82` → octal ≈ `65.6757154122`
+  - Years: `53.86836608333775` → octal ≈ `65.674464752616`
 - **Formatting with Digit Counts:**
   - Days: `46333.7320457` → `33` (whole) + `7320` (fraction) → `337320`
-  - Years: `65.6757154122` → `5` (whole) + `6` (fraction) → `56`
+  - Years: `65.674464752616` → `5` (whole) + `6` (fraction) → `56`
 - **Concatenation and Reversal:**
   - Combined: Years + Days  → `56337320`
   - Reversed: `02373365`
