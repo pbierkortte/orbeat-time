@@ -315,7 +315,7 @@
 
   function encodeOrbeatTime(unixMilliseconds) {
     let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
-    let unixYears = unixDays / DAYS_PER_YEAR;
+    let unixYears = Math.floor(unixDays) / DAYS_PER_YEAR;
     
     let encodedDays = formatOctalPart(unixDays, digitCounts.daysWhole, digitCounts.daysFrac);
     let encodedYears = formatOctalPart(unixYears, digitCounts.yearsWhole, digitCounts.yearsFrac);
