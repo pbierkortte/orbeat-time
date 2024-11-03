@@ -40,7 +40,9 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
     return "".join(reversed(encoded_years + encoded_days))
 
 def test_orbeat_time() -> None:
-    """Run test cases for Orbeat time encoding."""
+    """
+    Run test cases for Orbeat time encoding.
+    """
     test_cases = [
         ("2024-11-13T12:21:48+00:00", "67040166"),
         ("2024-11-14T02:36:02+00:00", "37601166"),
