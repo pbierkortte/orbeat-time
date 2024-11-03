@@ -36,7 +36,6 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
         raise ValueError("Timestamp must be non-negative")
         
     unix_days = unix_milliseconds / MILLISECONDS_PER_DAY
-    # Floor the days before calculating years to match JavaScript
     unix_years = int(unix_days) / DAYS_PER_YEAR  
     encoded_days = format_octal_part(unix_days, DAYS_WHOLE, DAYS_FRAC)
     encoded_years = format_octal_part(unix_years, YEARS_WHOLE, YEARS_FRAC)
