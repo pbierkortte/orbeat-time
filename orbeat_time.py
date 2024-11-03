@@ -85,7 +85,7 @@ def test_orbeat_time() -> None:
 if __name__ == "__main__":
     print("Demo Output:")
     current_date = datetime.now(timezone.utc).replace(microsecond=0)
-    for i in range(30):
+    for i in range(8):
         future_date = current_date + timedelta(days=i)
         unix_ms = int(future_date.timestamp() * 1000)
         print(future_date.isoformat(), encode_orbeat_time(unix_ms), sep=" | ")
