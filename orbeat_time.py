@@ -30,12 +30,14 @@ def format_octal_part(value: float, whole_digits: int, frac_digits: int) -> str:
 def encode_orbeat_time(unix_milliseconds: float) -> str:
     """
     Encode Unix milliseconds timestamp into Orbeat time format.
+    Updated to floor days before calculating years to match JavaScript.
     """
     if unix_milliseconds < 0:
         raise ValueError("Timestamp must be non-negative")
         
     unix_days = unix_milliseconds / MILLISECONDS_PER_DAY
-    unix_years = unix_days / DAYS_PER_YEAR
+    # Floor the days before calculating years to match JavaScript
+    unix_years = int(unix_days) / DAYS_PER_YEAR  
     encoded_days = format_octal_part(unix_days, DAYS_WHOLE, DAYS_FRAC)
     encoded_years = format_octal_part(unix_years, YEARS_WHOLE, YEARS_FRAC)
     return "".join(reversed(encoded_years + encoded_days))
@@ -47,7 +49,7 @@ def test_orbeat_time() -> None:
         ("2024-11-14T02:36:02+00:00", "37601166"),
         ("2024-11-14T16:50:16+00:00", "17451166"),
         ("2024-11-15T07:04:30+00:00", "76222166"),
-        ("2024-11-15T21:18:44+00:00", "56072176"),
+        ("2024-11-15T21:18:44+00:00", "56072166"),
         ("2024-11-16T11:32:58+00:00", "36633176"),
         ("2024-11-17T01:47:12+00:00", "06404176"),
         ("2024-11-17T16:01:26+00:00", "65254176"),
