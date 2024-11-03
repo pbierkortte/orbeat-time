@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from typing import Tuple
 
 DAYS_PER_YEAR = 365.24219
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
@@ -43,7 +42,7 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
 
 def test_orbeat_time() -> None:
     """Run test cases for Orbeat time encoding."""
-    test_cases: list[Tuple[str, str]] = [
+    test_cases = [
         ("2024-11-13T12:21:48+00:00", "67040166"),
         ("2024-11-14T02:36:02+00:00", "37601166"),
         ("2024-11-14T16:50:16+00:00", "17451166"),
