@@ -29,7 +29,6 @@ def format_octal_part(value: float, whole_digits: int, frac_digits: int) -> str:
 def encode_orbeat_time(unix_milliseconds: float) -> str:
     """
     Encode Unix milliseconds timestamp into Orbeat time format.
-    Updated to floor days before calculating years to match JavaScript.
     """
     if unix_milliseconds < 0:
         raise ValueError("Timestamp must be non-negative")
