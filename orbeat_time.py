@@ -1,3 +1,4 @@
+# orbeat_time.py
 from datetime import datetime, timedelta, timezone
 
 DAYS_PER_YEAR = 365.24219
@@ -10,6 +11,18 @@ DAYS_FRAC = 4
 def format_octal_part(value: float, whole_digits: int, frac_digits: int) -> str:
     """
     Format a number into octal with specified whole and fractional digits.
+    
+    Args:
+        value: The number to format
+        whole_digits: Number of digits before decimal
+        frac_digits: Number of digits after decimal
+        
+    Returns:
+        Formatted octal string
+        
+    Raises:
+        ValueError: If value is negative
+        OverflowError: If value is too large
     """
     if value < 0:
         raise ValueError("Value must be non-negative")
@@ -29,6 +42,15 @@ def format_octal_part(value: float, whole_digits: int, frac_digits: int) -> str:
 def encode_orbeat_time(unix_milliseconds: float) -> str:
     """
     Encode Unix milliseconds timestamp into Orbeat time format.
+    
+    Args:
+        unix_milliseconds: Unix timestamp in milliseconds
+        
+    Returns:
+        Encoded Orbeat time string
+        
+    Raises:
+        ValueError: If timestamp is negative
     """
     if unix_milliseconds < 0:
         raise ValueError("Timestamp must be non-negative")
@@ -39,50 +61,6 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
     encoded_years = format_octal_part(unix_years, YEARS_WHOLE, YEARS_FRAC)
     return "".join(reversed(encoded_years + encoded_days))
 
-def test_orbeat_time() -> None:
-    """
-    Run test cases for Orbeat time encoding.
-    """
-    test_cases = [
-        ("2024-11-13T12:21:48+00:00", "67040166"),
-        ("2024-11-14T02:36:02+00:00", "37601166"),
-        ("2024-11-14T16:50:16+00:00", "17451166"),
-        ("2024-11-15T07:04:30+00:00", "76222166"),
-        ("2024-11-15T21:18:44+00:00", "56072166"),
-        ("2024-11-16T11:32:58+00:00", "36633176"),
-        ("2024-11-17T01:47:12+00:00", "06404176"),
-        ("2024-11-17T16:01:26+00:00", "65254176"),
-    ]
-
-    passed = 0
-    failed = 0
-
-    for dt_str, expected in test_cases:
-        try:
-            dt = datetime.fromisoformat(dt_str)
-            unix_ms = dt.timestamp() * 1000
-            result = encode_orbeat_time(unix_ms)
-            
-            if result == expected:
-                passed += 1
-                print(f"✅ PASS: {dt_str} -> {result}")
-            else:
-                failed += 1
-                print(f"❌ FAIL: {dt_str}")
-                print(f"   Expected: {expected}")
-                print(f"   Got:      {result}")
-                print(f"   UTC time: {dt.isoformat()}")
-                print(f"   Unix ms:  {unix_ms}")
-        except Exception as e:
-            failed += 1
-            print(f"❌ FAIL: {dt_str}")
-            print(f"   Error: {str(e)}")
-
-    print(f"\nTest Summary:")
-    print(f"Passed: {passed}")
-    print(f"Failed: {failed}")
-    print(f"Total:  {passed + failed}")
-
 if __name__ == "__main__":
     print("Demo Output:")
     current_date = datetime.now(timezone.utc).replace(microsecond=0)
@@ -90,6 +68,3 @@ if __name__ == "__main__":
         future_date = current_date + timedelta(days=i)
         unix_ms = int(future_date.timestamp() * 1000)
         print(future_date.isoformat(), encode_orbeat_time(unix_ms), sep=" | ")
-
-    print("\nRunning Tests:")
-    test_orbeat_time()
