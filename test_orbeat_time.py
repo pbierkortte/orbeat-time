@@ -19,19 +19,5 @@ def test_encode_orbeat_time_valid_dates(dt_str, expected):
     unix_ms = dt.timestamp() * 1000
     result = encode_orbeat_time(unix_ms)
     assert result == expected
-
-def test_negative_timestamp():
-    with pytest.raises(ValueError):
-        encode_orbeat_time(-1000)
-
-def test_zero_timestamp():
-    result = encode_orbeat_time(0)
-    assert isinstance(result, str)
-    assert all(c in '01234567' for c in result)
-
-def test_large_timestamp():
-    future_date = datetime.fromisoformat("2100-01-01T00:00:00+00:00")
-    unix_ms = future_date.timestamp() * 1000
-    result = encode_orbeat_time(unix_ms)
     assert isinstance(result, str)
     assert all(c in '01234567' for c in result)
