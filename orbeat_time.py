@@ -1,4 +1,3 @@
-# orbeat_time.py
 from datetime import datetime, timedelta, timezone
 
 DAYS_PER_YEAR = 365.24219
