@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from math import floor
 
 DAYS_PER_YEAR = 365.24219
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
@@ -54,7 +53,7 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
         raise ValueError("Timestamp must be non-negative")
 
     unix_days = unix_milliseconds / MILLISECONDS_PER_DAY
-    unix_years = floor(unix_days) / DAYS_PER_YEAR
+    unix_years = int(unix_days) / DAYS_PER_YEAR
     encoded_days = format_octal_part(unix_days, DAYS_WHOLE, DAYS_FRAC)
     encoded_years = format_octal_part(unix_years, YEARS_WHOLE, YEARS_FRAC)
     return "".join(reversed(encoded_years + encoded_days))
