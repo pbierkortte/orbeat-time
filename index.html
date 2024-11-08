@@ -296,7 +296,6 @@
 
   const DAYS_PER_YEAR = 365.24219;
   const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-  const OCTAL_BASE = 8;
 
   const digitCounts = {
     yearsWhole: 1,
@@ -306,7 +305,7 @@
   };
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
-    let [whole, frac = ''] = value.toString(OCTAL_BASE).split('.');
+    let [whole, frac = ''] = value.toString(8).split('.');
     
     let formattedWhole = whole.padStart(wholeDigits, '0').slice(-wholeDigits);
     let formattedFrac = frac.padEnd(fracDigits, '0').slice(0, fracDigits);
