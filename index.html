@@ -297,12 +297,10 @@
   const DAYS_PER_YEAR = 365.24219;
   const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  const digitCounts = {
-    yearsWhole: 1,
-    yearsFrac: 1,
-    daysWhole: 2,
-    daysFrac: 4
-  };
+  const YEARS_WHOLE_DIGITS = 1;
+  const YEARS_FRAC_DIGITS = 1;
+  const DAYS_WHOLE_DIGITS = 2;
+  const DAYS_FRAC_DIGITS = 4;
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
     let [whole, frac = ''] = value.toString(8).split('.');
@@ -317,9 +315,9 @@
     let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
     let unixYears = Math.floor(unixDays) / DAYS_PER_YEAR;
     
-    let encodedDays = formatOctalPart(unixDays, digitCounts.daysWhole, digitCounts.daysFrac);
-    let encodedYears = formatOctalPart(unixYears, digitCounts.yearsWhole, digitCounts.yearsFrac);
-    
+    let encodedDays = formatOctalPart(unixDays, DAYS_WHOLE_DIGITS, DAYS_FRAC_DIGITS);
+    let encodedYears = formatOctalPart(unixYears, YEARS_WHOLE_DIGITS, YEARS_FRAC_DIGITS);
+
     return `${encodedYears}${encodedDays}`.split('').reverse().join('');
   }
   
