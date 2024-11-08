@@ -38,7 +38,7 @@ The encoding process involves the following steps:
 
 0. Calculate the Unix timestamp in milliseconds
 1. Convert the milliseconds to fractional days since the Unix epoch
-2. **Floor the total days and then convert the milliseconds to fractional years since the Unix epoch**
+2. Floor the total days and then convert the milliseconds to fractional years since the Unix epoch
 3. Transform both days to octal format, preserving the fractional parts
 4. Transform both years to octal format, preserving the fractional parts
 5. Format each part (days and years) with specific digit counts for whole and fractional parts
