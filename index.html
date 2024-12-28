@@ -232,7 +232,7 @@
       <li>Avoiding timezones to simplify global time representation</li>
       <li>Using the Unix epoch for convenience and to avoid leap-second complications</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
-      <li>Used 365.24219 days per year, which is the mean tropical year, to minimize long-term drift</li>
+      <li>Used 365.25 days per year, following the Julian calendar standard</li>
     </ul>
 
     <h2>Format</h2>
@@ -266,13 +266,13 @@
       <li><strong>Conversion:</strong>
         <ul>
           <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.9259259</code> days</li>
-          <li>Years: <code>Math.floor(19675.9259259) / 365.24219</code> ≈ <code>53.86836608333775</code> years</li>
+          <li>Years: <code>Math.floor(19675.9259259) / 365.25</code> ≈ <code>53.86802030456853</code> years</li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
         <ul>
           <li>Days: <code>19675.9259259</code> → octal ≈ <code>46333.7320457</code></li>
-          <li>Years: <code>53.86836608333775</code> → octal ≈ <code>65.674464752616</code></li>
+          <li>Years: <code>53.86802030456853</code> → octal ≈ <code>65.674464752616</code></li>
         </ul>
       </li>
       <li><strong>Formatting with Digit Counts:</strong>
@@ -294,7 +294,7 @@
 </div>
 <script>
 
-  const DAYS_PER_YEAR = 365.24219;
+  const DAYS_PER_YEAR = 365.25;
   const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
   const YEARS_WHOLE_DIGITS = 1;

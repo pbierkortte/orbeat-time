@@ -24,7 +24,7 @@ My design decisions include:
 - Avoiding timezones to simplify global time representation
 - Using the Unix epoch for convenience and to avoid leap-second complications
 - The precision is ~21 seconds roughly in the scale of seconds
-- Used 365.24219 days per year, which is the mean tropical year, to minimize long-term drift
+- Used 365.25 days per year, which is the Julian calendar standard
 
 ## Format
 
@@ -53,10 +53,10 @@ The encoding process:
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Conversion:** 
   - Days: `1700000000000 / 86400000` ≈ `19675.9259259` days
-  - Years: `Math.floor(19675.9259259) / 365.24219` ≈ `53.86836608333775` years
+  - Years: `Math.floor(19675.9259259) / 365.25` ≈ `53.86802030456853` years
 - **Octal Formatting:** 
   - Days: `19675.9259259` → octal ≈ `46333.7320457`
-  - Years: `53.86836608333775` → octal ≈ `65.674464752616`
+  - Years: `53.86802030456853` → octal ≈ `65.674464752616`
 - **Formatting with Digit Counts:**
   - Days: `46333.7320457` → `33` (whole) + `7320` (fraction) → `337320`
   - Years: `65.674464752616` → `5` (whole) + `6` (fraction) → `56`
