@@ -303,18 +303,18 @@
   const DAYS_FRAC_DIGITS = 4;
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
-    value = value >= 0 ? value : 0;
-    let wholeValue = Math.floor(value);
-    let fracValue = value - wholeValue;
+    let safeValue = value >= 0 ? value : 0;
+    let wholeValue = Math.floor(safeValue);
+    let fracValue = safeValue - wholeValue;
     
     let formattedWhole = wholeDigits > 0 ? wholeValue.toString(8).padStart(wholeDigits, '0').slice(-wholeDigits) : '';
     let formattedFrac = fracDigits > 0 ? Math.floor(fracValue * Math.pow(8, fracDigits)).toString(8).padStart(fracDigits, '0').slice(-fracDigits) : '';
     
     return formattedWhole + formattedFrac;
-  };
+  }
 
   function encodeOrbeatTime(unixMilliseconds) {
-    let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
+    let unixDays = (unixMilliseconds >= 0 ? unixMilliseconds : 0) / MILLISECONDS_PER_DAY;
     let unixYears = Math.floor(unixDays) / DAYS_PER_YEAR;
     
     let encodedDays = formatOctalPart(unixDays, DAYS_WHOLE_DIGITS, DAYS_FRAC_DIGITS);
