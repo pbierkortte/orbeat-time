@@ -303,10 +303,12 @@
   const DAYS_FRAC_DIGITS = 4;
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
-    let [whole, frac = ''] = value.toString(8).split('.');
+    value = value >= 0 ? value : 0;
+    let wholeValue = Math.floor(value);
+    let fracValue = value - wholeValue;
     
-    let formattedWhole = whole.padStart(wholeDigits, '0').slice(-wholeDigits);
-    let formattedFrac = frac.padEnd(fracDigits, '0').slice(0, fracDigits);
+    let formattedWhole = wholeDigits > 0 ? wholeValue.toString(8).padStart(wholeDigits, '0').slice(-wholeDigits) : '';
+    let formattedFrac = fracDigits > 0 ? Math.floor(fracValue * Math.pow(8, fracDigits)).toString(8).padStart(fracDigits, '0').slice(-fracDigits) : '';
     
     return formattedWhole + formattedFrac;
   };

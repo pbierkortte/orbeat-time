@@ -14,26 +14,17 @@ def format_octal_part(value: float, whole_digits: int, frac_digits: int) -> str:
 
     Args:
         value: The number to format
-        whole_digits: Number of digits before decimal
-        frac_digits: Number of digits after decimal
+        whole_digits: Number of digits before decimal (0 to skip)
+        frac_digits: Number of digits after decimal (0 to skip)
 
     Returns:
         Formatted octal string
-
-    Raises:
-        ValueError: If value is negative
-        OverflowError: If value is too large
     """
-    if value < 0:
-        raise ValueError("Value must be non-negative")
 
-    try:
-        whole_value, frac_value = divmod(value, 1)
-        whole_str = oct(int(whole_value))[2:].zfill(whole_digits)[-whole_digits:]
-        frac_str = oct(int(frac_value * 8**frac_digits))[2:].zfill(frac_digits)[-frac_digits:]
-        return whole_str + frac_str
-    except OverflowError:
-        raise OverflowError("Value is too large to process")
+    whole_value, frac_value = divmod(value if value >= 0 else 0, 1)
+    whole_str = oct(int(whole_value))[2:].zfill(whole_digits)[-whole_digits:] if whole_digits > 0 else ''
+    frac_str = oct(int(frac_value * 8**frac_digits))[2:].zfill(frac_digits)[-frac_digits:] if frac_digits > 0 else ''
+    return whole_str + frac_str
 
 
 def encode_orbeat_time(unix_milliseconds: float) -> str:
