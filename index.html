@@ -301,19 +301,17 @@
       </li>
       <li><strong>Output:</strong> <code>02373365</code></li>
     </ul>
-  </div>
-  <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">code</a></div>
-  <div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
-</div>
+<div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
+<div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
 <script>
 
-  const DAYS_PER_YEAR = 365.25;
-  const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+  let DAYS_PER_YEAR = 365.25;
+  let MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  const YEARS_WHOLE_DIGITS = 1;
-  const YEARS_FRAC_DIGITS = 1;
-  const DAYS_WHOLE_DIGITS = 2;
-  const DAYS_FRAC_DIGITS = 4;
+  let YEARS_WHOLE_DIGITS = 1;
+  let YEARS_FRAC_DIGITS = 2;
+  let DAYS_WHOLE_DIGITS = 1;
+  let DAYS_FRAC_DIGITS = 4;
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
     let safeValue = value >= 0 ? value : 0;
@@ -335,7 +333,7 @@
 
     return `${encodedYears}${encodedDays}`.split('').reverse().join('');
   }
-  
+
   function calculateOctalTime() {
     let now = new Date();
     let unixMilliseconds = now.getTime();
@@ -360,6 +358,7 @@
     const currentYear = new Date().getFullYear();
     document.getElementById('currentYear').textContent = currentYear;
   }
+  
   updateTime();
   setCurrentYear();
   window.onload = setCurrentYear;
