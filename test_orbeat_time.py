@@ -3,15 +3,14 @@ from datetime import datetime
 from orbeat_time import encode_orbeat_time
 
 TEST_CASES = [
-    ("1970-01-01T00:00:00+00:00", "00000000"),
-    ("2023-11-14T22:13:20+00:00", "02373765"),  # Unix timestamp 1700000000000
-    ("2024-11-14T16:50:16+00:00", "17451766"),
-    ("2024-11-15T07:04:30+00:00", "76222766"),
-    ("2024-11-15T21:18:44+00:00", "56072766"),
-    ("2024-11-16T11:32:58+00:00", "36633766"),
-    ("2025-12-31T10:33:51+00:00", "21435777"),
-    ("2026-01-01T10:33:51+00:00", "21436000"),
-    ("2100-01-01T10:39:16+00:00", "23432771"),
+    ("1970-01-01T00:00:00+00:00", "00000000"),  # Tests Unix epoch, year whole = 0, and day whole = 0 (base case)
+    ("2023-11-14T22:13:20+00:00", "02373765"),  # Tests documented example case with Unix timestamp 1700000000000
+    ("2100-01-01T10:39:16+00:00", "23432771"),  # Tests far future date (century boundary)
+    ("2024-01-01T15:30:45+00:00", "72153775"),  # Tests first day of leap year (year transition + leap year start)
+    ("2024-02-29T08:45:30+00:00", "62726216"),  # Tests leap day (special calendar case)
+    ("1970-12-27T00:00:00+00:00", "00000770"),  # Tests year part = 00 (clean year division)
+    ("1972-12-31T23:59:59+00:00", "77777772"),  # Tests year part = 77 (maximum year fraction)
+    ("1972-12-31T23:45:45+00:00", "72777772"),  # Tests day part = 7777 (maximum day fraction pattern)
 ]
 
 @pytest.mark.parametrize("dt_str,expected", TEST_CASES)
