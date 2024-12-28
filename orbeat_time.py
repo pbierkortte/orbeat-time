@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 DAYS_PER_YEAR = 365.25
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
 YEARS_WHOLE = 1
-YEARS_FRAC = 1
-DAYS_WHOLE = 2
+YEARS_FRAC = 2
+DAYS_WHOLE = 1
 DAYS_FRAC = 4
 
 
