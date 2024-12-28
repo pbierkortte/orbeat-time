@@ -36,14 +36,8 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
 
     Returns:
         Encoded Orbeat time string
-
-    Raises:
-        ValueError: If timestamp is negative
     """
-    if unix_milliseconds < 0:
-        raise ValueError("Timestamp must be non-negative")
-
-    unix_days = unix_milliseconds / MILLISECONDS_PER_DAY
+    unix_days = (unix_milliseconds if unix_milliseconds > 0 else 0) / MILLISECONDS_PER_DAY
     unix_years = int(unix_days) / DAYS_PER_YEAR
     encoded_days = format_octal_part(unix_days, DAYS_WHOLE, DAYS_FRAC)
     encoded_years = format_octal_part(unix_years, YEARS_WHOLE, YEARS_FRAC)
