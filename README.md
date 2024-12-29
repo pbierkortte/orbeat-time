@@ -23,7 +23,7 @@ My design decisions include:
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems
 - Flooring the total days before calculating years to ensure accurate year representation
 - Full-year was omitted in favor of brevity and due to space constraints
-- Including a single fractional year digit to provide a month-like division of the year
+- Including two fractional year digits to provide a division of the year (~5.7 days)
 - Avoiding timezones to simplify global time representation
 - Using the Unix epoch for convenience and to avoid leap-second complications
 - The precision is ~21 seconds roughly in the scale of seconds
