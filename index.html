@@ -122,9 +122,21 @@
     color: #2ecc71;
   }
 
-  .copyright {
+  .footer-made-with {
     text-align: center;
     margin-top: 20px;
+    font-size: 0.9em;
+    color: #bdc3c7;
+  }
+
+  .footer-made-with a {
+    color: #bdc3c7;
+    text-decoration: none;
+  }
+
+  .footer-copyright {
+    text-align: center;
+    margin-top: 10px;
     font-size: 0.9em;
     color: #bdc3c7;
   }
@@ -232,7 +244,7 @@
       <li>Avoiding timezones to simplify global time representation</li>
       <li>Using the Unix epoch for convenience and to avoid leap-second complications</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
-      <li>Used 365.24219 days per year, which is the mean tropical year, to minimize long-term drift</li>
+      <li>Used 365.25 days per year, following the Julian calendar standard</li>
     </ul>
 
     <h2>Format</h2>
@@ -265,54 +277,55 @@
       </li>
       <li><strong>Conversion:</strong>
         <ul>
-          <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.9259259</code> days</li>
-          <li>Years: <code>Math.floor(19675.9259259) / 365.24219</code> ≈ <code>53.86836608333775</code> years</li>
+          <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.925925925927</code> days</li>
+          <li>Years: <code>Math.floor(19675.925925925927) / 365.25</code> ≈ <code>53.86721423682409</code> years</li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
         <ul>
-          <li>Days: <code>19675.9259259</code> → octal ≈ <code>46333.7320457</code></li>
-          <li>Years: <code>53.86836608333775</code> → octal ≈ <code>65.674464752616</code></li>
+          <li>Days: <code>19675.925925925927</code> → octal ≈ <code>46333.7320</code></li>
+          <li>Years: <code>53.86721423682409</code> → octal ≈ <code>65.67</code></li>
         </ul>
       </li>
       <li><strong>Formatting with Digit Counts:</strong>
         <ul>
-          <li>Days: <code>46333.7320457</code> → <code>33</code> (whole) + <code>7320</code> (fraction) → <code>337320</code></li>
-          <li>Years: <code>65.674464752616</code> → <code>5</code> (whole) + <code>6</code> (fraction) → <code>56</code></li>
+          <li>Days: <code>46333.7320</code> → <code>3</code> (whole) + <code>7320</code> (fraction) → <code>37320</code></li>
+          <li>Years: <code>65.67</code> → <code>5</code> (whole) + <code>67</code> (fraction) → <code>567</code></li>
         </ul>
       </li>
       <li><strong>Concatenation and Reversal:</strong>
         <ul>
-          <li>Combined: Years + Days  → <code>56337320</code></li>
-          <li>Reversed: <code>02373365</code></li>
+          <li>Combined: Years + Days  → <code>56737320</code></li>
+          <li>Reversed: <code>02373765</code></li>
         </ul>
       </li>
-      <li><strong>Output:</strong> <code>02373365</code></li>
+      <li><strong>Output:</strong> <code>02373765</code></li>
     </ul>
-  </div>
-  <div class="copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
-</div>
+<div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
+<div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
 <script>
 
-  const DAYS_PER_YEAR = 365.24219;
-  const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+  let DAYS_PER_YEAR = 365.25;
+  let MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  const YEARS_WHOLE_DIGITS = 1;
-  const YEARS_FRAC_DIGITS = 1;
-  const DAYS_WHOLE_DIGITS = 2;
-  const DAYS_FRAC_DIGITS = 4;
+  let YEARS_WHOLE_DIGITS = 1;
+  let YEARS_FRAC_DIGITS = 2;
+  let DAYS_WHOLE_DIGITS = 1;
+  let DAYS_FRAC_DIGITS = 4;
 
   function formatOctalPart(value, wholeDigits, fracDigits) {
-    let [whole, frac = ''] = value.toString(8).split('.');
+    let safeValue = value >= 0 ? value : 0;
+    let wholeValue = Math.floor(safeValue);
+    let fracValue = safeValue - wholeValue;
     
-    let formattedWhole = whole.padStart(wholeDigits, '0').slice(-wholeDigits);
-    let formattedFrac = frac.padEnd(fracDigits, '0').slice(0, fracDigits);
+    let formattedWhole = wholeDigits > 0 ? wholeValue.toString(8).padStart(wholeDigits, '0').slice(-wholeDigits) : '';
+    let formattedFrac = fracDigits > 0 ? Math.floor(fracValue * Math.pow(8, fracDigits)).toString(8).padStart(fracDigits, '0').slice(-fracDigits) : '';
     
     return formattedWhole + formattedFrac;
-  };
+  }
 
   function encodeOrbeatTime(unixMilliseconds) {
-    let unixDays = unixMilliseconds / MILLISECONDS_PER_DAY;
+    let unixDays = (unixMilliseconds >= 0 ? unixMilliseconds : 0) / MILLISECONDS_PER_DAY;
     let unixYears = Math.floor(unixDays) / DAYS_PER_YEAR;
     
     let encodedDays = formatOctalPart(unixDays, DAYS_WHOLE_DIGITS, DAYS_FRAC_DIGITS);
@@ -320,7 +333,7 @@
 
     return `${encodedYears}${encodedDays}`.split('').reverse().join('');
   }
-  
+
   function calculateOctalTime() {
     let now = new Date();
     let unixMilliseconds = now.getTime();
@@ -345,6 +358,7 @@
     const currentYear = new Date().getFullYear();
     document.getElementById('currentYear').textContent = currentYear;
   }
+  
   updateTime();
   setCurrentYear();
   window.onload = setCurrentYear;
