@@ -54,7 +54,7 @@ def encode_orbeat_time(unix_milliseconds: float) -> str:
     return "".join(reversed(encoded_years + encoded_days))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     print("Demo Output:")
     current_date = datetime.now(timezone.utc).replace(microsecond=0)
     for i in range(8):
