@@ -34,5 +34,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        set -e
         pytest --cov=. --cov-fail-under=95 --cov-report=term-missing
+        if [ $? -ne 0 ]; then
+          exit 1
+        fi
