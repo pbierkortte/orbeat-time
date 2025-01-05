@@ -5,9 +5,11 @@ from orbeat_cli import run_cli
 
 
 def test_cli_orbeat():
-    out, _ = run_cli('--output', 'orbeat', is_test=True)
-    assert len(out) == 8
+    out,_ = run_cli('--output', 'orbeat', is_test=True)
+    assert len(out)==8
 
+
+    
 def test_cli_json():
     out, _ = run_cli('--output', 'json', is_test=True)
     data = json.loads(out)
