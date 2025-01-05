@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 DAYS_PER_YEAR = 365.25
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
@@ -8,7 +8,19 @@ DAYS_WHOLE = 1
 DAYS_FRAC = 4
 
 
-def format_octal_part(value, whole_digits, frac_digits):
+def format_octal_part(value: float, whole_digits: int, frac_digits: int) -> str:
+    """
+    Format a number into octal with specified whole and fractional digits.
+
+    Args:
+        value: The number to format
+        whole_digits: Number of digits before decimal (0 to skip)
+        frac_digits: Number of digits after decimal (0 to skip)
+
+    Returns:
+        Formatted octal string
+    """
+
     whole_value, frac_value = divmod(value if value >= 0 else 0, 1)
     whole_str = (
         oct(int(whole_value))[2:].zfill(whole_digits)[-whole_digits:]
@@ -23,7 +35,16 @@ def format_octal_part(value, whole_digits, frac_digits):
     return whole_str + frac_str
 
 
-def encode_orbeat_time(unix_milliseconds):
+def encode_orbeat_time(unix_milliseconds: float) -> str:
+    """
+    Encode Unix milliseconds timestamp into Orbeat time format.
+
+    Args:
+        unix_milliseconds: Unix timestamp in milliseconds
+
+    Returns:
+        Encoded Orbeat time string
+    """
     unix_days = (
         unix_milliseconds if unix_milliseconds > 0 else 0
     ) / MILLISECONDS_PER_DAY
@@ -34,4 +55,9 @@ def encode_orbeat_time(unix_milliseconds):
 
 
 if __name__ == "__main__":
-    print(encode_orbeat_time(int(datetime.now(timezone.utc).timestamp() * 1000)))
+    print("Demo Output:")
+    current_date = datetime.now(timezone.utc).replace(microsecond=0)
+    for i in range(8):
+        future_date = current_date + timedelta(days=i)
+        unix_ms = int(future_date.timestamp() * 1000)
+        print(future_date.isoformat(), encode_orbeat_time(unix_ms), sep=" | ")
