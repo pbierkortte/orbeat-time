@@ -33,5 +33,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run tests with coverage
       run: |
-        # pytest --cov=. --cov-fail-under=95 --cov-report=term-missing
+        pytest --cov=. --cov-fail-under=95 --cov-report=term-missing && exit 0
         exit 1
