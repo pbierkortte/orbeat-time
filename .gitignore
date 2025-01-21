@@ -1,5 +1,28 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-.*
-!.github
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.env
+.venv
+venv/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Allow specific dot files/directories
+!.github/
+!.gitignore
+!.pre-commit-config.yaml
