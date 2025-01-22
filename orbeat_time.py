@@ -23,6 +23,7 @@ def encode_orbeat_time(unix_ms: float) -> str:
     days_frac = f"{int(day_frac * 4096):04o}"
     return (years_whole + years_frac + days_whole + days_frac)[::-1]
 
+
 if __name__ == "__main__":  # pragma: no cover
     print("Demo Output:")
     current_date = datetime.now(timezone.utc).replace(microsecond=0)
