@@ -1,26 +1,34 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 DAYS_PER_YEAR = 365.25
-MS_PER_DAY = 86_400_000
+MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
+YEARS_WHOLE = 1
+YEARS_FRAC = 2
+DAYS_WHOLE = 1
+DAYS_FRAC = 4
 
 
 def encode_orbeat_time(unix_ms: float) -> str:
-    """Convert Unix timestamp milliseconds to orbeat time format.
+    """
+    Encode Unix milliseconds timestamp into Orbeat time format.
 
     Args:
-        unix_ms (float): Unix timestamp in milliseconds
+        unix_milliseconds: Unix timestamp in milliseconds
 
     Returns:
-        str: Orbeat time
+        Encoded Orbeat time string
     """
 
-    days, day_frac = divmod(unix_ms / MS_PER_DAY, 1)
+    ## ADJUST CODE BELOW V
+
+    days, day_frac = divmod(unix_ms / MILLISECONDS_PER_DAY, 1)
     years, year_frac = divmod(int(days) / DAYS_PER_YEAR, 1)
 
-    years_whole = f"{int(years) % 8:o}"
-    years_frac = f"{int(year_frac * 64):02o}"
-    days_whole = f"{int(days) % 8:o}"
-    days_frac = f"{int(day_frac * 4096):04o}"
+    years_whole = f"{int(years) % 8:0{YEARS_WHOLE}o}"
+    years_frac = f"{int(year_frac * (8 ** YEARS_FRAC)):0{YEARS_FRAC}o}"
+    days_whole = f"{int(days) % 8:0{DAYS_WHOLE}o}"
+    days_frac = f"{int(day_frac * (8 ** DAYS_FRAC)):0{DAYS_FRAC}o}"
+
     return (years_whole + years_frac + days_whole + days_frac)[::-1]
 
 
