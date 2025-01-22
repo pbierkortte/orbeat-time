@@ -17,9 +17,11 @@ def encode_orbeat_time(unix_ms: float) -> str:
     days, day_frac = divmod(unix_ms / MS_PER_DAY, 1)
     years, year_frac = divmod(int(days) / DAYS_PER_YEAR, 1)
 
-    y1, y2 = f"{int(years) % 8:o}", f"{int(year_frac * 64):02o}"
-    d1, d2 = f"{int(days) % 8:o}", f"{int(day_frac * 4096):04o}"
-    return (y1 + y2 + d1 + d2)[::-1]
+    years_whole = f"{int(years) % 8:o}"
+    years_frac = f"{int(year_frac * 64):02o}"
+    days_whole = f"{int(days) % 8:o}"
+    days_frac = f"{int(day_frac * 4096):04o}"
+    return (years_whole + years_frac + days_whole + days_frac)[::-1]
 
 if __name__ == "__main__":  # pragma: no cover
     print("Demo Output:")
