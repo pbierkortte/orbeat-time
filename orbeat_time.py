@@ -19,8 +19,6 @@ def encode_orbeat_time(unix_ms: float) -> str:
         Encoded Orbeat time string
     """
 
-    ## ADJUST CODE BELOW V
-
     days, day_frac = divmod(unix_ms / MILLISECONDS_PER_DAY, 1)
     years, year_frac = divmod(int(days) / DAYS_PER_YEAR, 1)
 
