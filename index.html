@@ -1,4 +1,5 @@
 <html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -228,7 +229,7 @@
     <p>Orbeat is an octal time system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle.</p>
 
     <h2>Background</h2>
-    <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming. It also draws inspiration from batch codes used in retail and manufacturing industries for date codes and competitive intelligence.</p>
+    <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming, and the 8-day market week nundinal cycle was used alongside the Roman calendar. It also draws inspiration from batch codes used in retail and manufacturing industries for date codes and competitive intelligence.</p>
 
     <h2>Motivation</h2>
     <p>I created this project out of intellectual curiosity and as a practical tool. It was a stimulating exercise that allowed me to combine various concepts across multiple disciplines. I needed an efficient and cryptic timestamping method, like batch codes, to manage public-facing personal documents. I sought to devise an innovative way to balance precision with obscurity by crafting a compact yet noteworthy date time code, which would be meaningful to me while remaining ambiguous for others.</p>
@@ -244,14 +245,16 @@
       <li>Avoiding timezones to simplify global time representation</li>
       <li>Using the Unix epoch for convenience and to avoid leap-second complications</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
-      <li>Used 365.25 days per year, following the Julian calendar standard</li>
+      <li>Used 365.25 days per year, which is the Julian calendar standard</li>
+      <li>Added a 3-day nundinal offset to align with present day estimates</li>
     </ul>
 
     <h2>Format</h2>
     <p>A concatenated string consisting of:</p>
     <ul>
-      <li>Days since Unix epoch formatted with specific digit counts and then reversed</li>
-      <li>Years since Unix epoch formatted with specific digit counts and then reversed</li>
+      <li>Years since Unix epoch formatted with specific digit counts</li>
+      <li>Days since Unix epoch formatted with specific digit counts</li>
+      <li>The concatenated string is then reversed</li>
     </ul>
 
     <h2>Implementation</h2>
@@ -259,11 +262,11 @@
     <ol start="0">
       <li>Calculate the Unix timestamp in milliseconds</li>
       <li>Convert the milliseconds to fractional days since the Unix epoch</li>
-      <li>Floor the total days and then convert the milliseconds to fractional years since the Unix epoch</li>
-      <li>Transform both days to octal format, preserving the fractional parts</li>
-      <li>Transform both years to octal format, preserving the fractional parts</li>
-      <li>Format each part (days and years) with specific digit counts for whole and fractional parts</li>
-      <li>Combine the formatted years and days</li>
+      <li>Calculate years (based on original days without offset)</li>
+      <li>Apply nundinal offset to days</li>
+      <li>Format years in octal with proper digit counts</li>
+      <li>Format days in octal with proper digit counts</li>
+      <li>Combine formatted years and days into a string</li>
       <li>Reverse the concatenated string to generate the Orbeat time</li>
     </ol>
 
@@ -278,28 +281,35 @@
       <li><strong>Conversion:</strong>
         <ul>
           <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.925925925927</code> days</li>
-          <li>Years: <code>Math.floor(19675.925925925927) / 365.25</code> ≈ <code>53.86721423682409</code> years</li>
+          <li>Years: <code>int(19675.925925925927) / 365.25</code> ≈ <code>53.86721423682409</code> years</li>
+        </ul>
+      </li>
+      <li><strong>Apply Nundinal Offset:</strong>
+        <ul>
+          <li>Days with offset: <code>19675.925925925927 + 3</code> = <code>19678.925925925927</code></li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
         <ul>
-          <li>Days: <code>19675.925925925927</code> → octal ≈ <code>46333.7320</code></li>
-          <li>Years: <code>53.86721423682409</code> → octal ≈ <code>65.67</code></li>
+          <li>Years: <code>53.86721423682409</code> → octal whole part = <code>5</code></li>
+          <li>Years fraction in octal: <code>0.8672142368240898</code> → octal = <code>67</code></li>
+          <li>Days (with offset): <code>19678.925925925927</code> → octal whole part = <code>6</code></li>
+          <li>Days fraction in octal: <code>0.9259259259270038</code> → octal = <code>7320</code></li>
         </ul>
       </li>
       <li><strong>Formatting with Digit Counts:</strong>
         <ul>
-          <li>Days: <code>46333.7320</code> → <code>3</code> (whole) + <code>7320</code> (fraction) → <code>37320</code></li>
-          <li>Years: <code>65.67</code> → <code>5</code> (whole) + <code>67</code> (fraction) → <code>567</code></li>
+          <li>Years: <code>5</code> (whole) + <code>67</code> (fraction) → <code>567</code></li>
+          <li>Days: <code>6</code> (whole) + <code>7320</code> (fraction) → <code>67320</code></li>
         </ul>
       </li>
       <li><strong>Concatenation and Reversal:</strong>
         <ul>
-          <li>Combined: Years + Days  → <code>56737320</code></li>
-          <li>Reversed: <code>02373765</code></li>
+          <li>Combined: Years + Days → <code>56767320</code></li>
+          <li>Reversed: <code>02376765</code></li>
         </ul>
       </li>
-      <li><strong>Output:</strong> <code>02373765</code></li>
+      <li><strong>Output:</strong> <code>02376765</code></li>
     </ul>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
 <div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
@@ -307,31 +317,28 @@
 
   let DAYS_PER_YEAR = 365.25;
   let MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+  let NUNDINAL_OFFSET = 3;
 
-  let YEARS_WHOLE_DIGITS = 1;
-  let YEARS_FRAC_DIGITS = 2;
-  let DAYS_WHOLE_DIGITS = 1;
-  let DAYS_FRAC_DIGITS = 4;
-
-  function formatOctalPart(value, wholeDigits, fracDigits) {
-    let safeValue = value >= 0 ? value : 0;
-    let wholeValue = Math.floor(safeValue);
-    let fracValue = safeValue - wholeValue;
-    
-    let formattedWhole = wholeDigits > 0 ? wholeValue.toString(8).padStart(wholeDigits, '0').slice(-wholeDigits) : '';
-    let formattedFrac = fracDigits > 0 ? Math.floor(fracValue * Math.pow(8, fracDigits)).toString(8).padStart(fracDigits, '0').slice(-fracDigits) : '';
-    
-    return formattedWhole + formattedFrac;
-  }
+  let YEARS_WHOLE = 1;
+  let YEARS_FRAC = 2;
+  let DAYS_WHOLE = 1;
+  let DAYS_FRAC = 4;
 
   function encodeOrbeatTime(unixMilliseconds) {
-    let unixDays = (unixMilliseconds >= 0 ? unixMilliseconds : 0) / MILLISECONDS_PER_DAY;
-    let unixYears = Math.floor(unixDays) / DAYS_PER_YEAR;
+    let days = unixMilliseconds / MILLISECONDS_PER_DAY;
+    let dayFrac = days % 1;
     
-    let encodedDays = formatOctalPart(unixDays, DAYS_WHOLE_DIGITS, DAYS_FRAC_DIGITS);
-    let encodedYears = formatOctalPart(unixYears, YEARS_WHOLE_DIGITS, YEARS_FRAC_DIGITS);
-
-    return `${encodedYears}${encodedDays}`.split('').reverse().join('');
+    let years = Math.trunc(days) / DAYS_PER_YEAR;
+    let yearFrac = years % 1;
+    
+    let daysWithOffset = days + NUNDINAL_OFFSET;
+    
+    let yearsWhole = (Math.trunc(years) % 8).toString(8).padStart(YEARS_WHOLE, '0');
+    let yearsFrac = Math.trunc(yearFrac * Math.pow(8, YEARS_FRAC)).toString(8).padStart(YEARS_FRAC, '0');
+    let daysWhole = (Math.trunc(daysWithOffset) % 8).toString(8).padStart(DAYS_WHOLE, '0');
+    let daysFrac = Math.trunc(dayFrac * Math.pow(8, DAYS_FRAC)).toString(8).padStart(DAYS_FRAC, '0');
+    
+    return (yearsWhole + yearsFrac + daysWhole + daysFrac).split('').reverse().join('');
   }
 
   function calculateOctalTime() {
@@ -358,7 +365,7 @@
     const currentYear = new Date().getFullYear();
     document.getElementById('currentYear').textContent = currentYear;
   }
-  
+
   updateTime();
   setCurrentYear();
   window.onload = setCurrentYear;

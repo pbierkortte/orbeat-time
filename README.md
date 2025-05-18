@@ -9,7 +9,7 @@ Orbeat is an octal time system. It gets its name from a combination of octal, or
 
 ## Background
 
-Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming. It also draws inspiration from batch codes used in retail and manufacturing industries for date codes and competitive intelligence.
+Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming, and the 8-day market week nundinal cycle was used alongside the Roman calendar. It also draws inspiration from batch codes used in retail and manufacturing industries for date codes and competitive intelligence.
 
 ## Motivation
 
@@ -28,12 +28,14 @@ My design decisions include:
 - Using the Unix epoch for convenience and to avoid leap-second complications
 - The precision is ~21 seconds roughly in the scale of seconds
 - Used 365.25 days per year, which is the Julian calendar standard
+- Added a 3-day nundinal offset to align with present day estimates
 
 ## Format
 
 A concatenated string consisting of:
-- Days since Unix epoch formatted with specific digit counts and then reversed
-- Years since Unix epoch formatted with specific digit counts and then reversed
+- Years since Unix epoch formatted with specific digit counts
+- Days since Unix epoch formatted with specific digit counts 
+- The concatenated string is then reversed
 
 ## Implementation
 
@@ -41,11 +43,11 @@ The encoding process involves the following steps:
 
 0. Calculate the Unix timestamp in milliseconds
 1. Convert the milliseconds to fractional days since the Unix epoch
-2. Floor the total days and then convert the milliseconds to fractional years since the Unix epoch
-3. Transform both days to octal format, preserving the fractional parts
-4. Transform both years to octal format, preserving the fractional parts
-5. Format each part (days and years) with specific digit counts for whole and fractional parts
-6. Combine the formatted years and days
+2. Calculate years (based on original days without offset)
+3. Apply nundinal offset to days
+4. Format years in octal with proper digit counts
+5. Format days in octal with proper digit counts
+6. Combine formatted years and days into a string
 7. Reverse the concatenated string to generate the Orbeat time
 
 ## Example
@@ -56,14 +58,18 @@ The encoding process:
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Conversion:** 
   - Days: `1700000000000 / 86400000` ≈ `19675.925925925927` days
-  - Years: `Math.floor(19675.925925925927) / 365.25` ≈ `53.86721423682409` years
+  - Years: `int(19675.925925925927) / 365.25` ≈ `53.86721423682409` years
+- **Apply Nundinal Offset:**
+  - Days with offset: `19675.925925925927 + 3` = `19678.925925925927`
 - **Octal Formatting:** 
-  - Days: `19675.925925925927` → octal ≈ `46333.7320`
-  - Years: `53.86721423682409` → octal ≈ `65.67`
+  - Years: `53.86721423682409` → octal whole part = `5`
+  - Years fraction in octal: `0.8672142368240898` → octal = `67`
+  - Days (with offset): `19678.925925925927` → octal whole part = `6`
+  - Days fraction in octal: `0.9259259259270038` → octal = `7320`
 - **Formatting with Digit Counts:**
-  - Days: `46333.7320` → `3` (whole) + `7320` (fraction) → `37320`
-  - Years: `65.67` → `5` (whole) + `67` (fraction) → `567`
+  - Years: `5` (whole) + `67` (fraction) → `567`
+  - Days: `6` (whole) + `7320` (fraction) → `67320`
 - **Concatenation and Reversal:**
-  - Combined: Years + Days  → `56737320`
-  - Reversed: `02373765`
-- **Output:** `02373765`
+  - Combined: Years + Days  → `56767320`
+  - Reversed: `02376765`
+- **Output:** `02376765`
