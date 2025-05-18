@@ -8,6 +8,7 @@ YEARS_FRAC = 2
 DAYS_WHOLE = 1
 DAYS_FRAC = 4
 
+
 def encode_orbeat_time(unix_ms: float) -> str:
     """
     Encode Unix milliseconds timestamp into Orbeat time format.
@@ -18,13 +19,13 @@ def encode_orbeat_time(unix_ms: float) -> str:
     Returns:
         Encoded Orbeat time string
     """
-    
+
     days, day_frac = divmod(unix_ms / MILLISECONDS_PER_DAY, 1)
-    
+
     years, year_frac = divmod(int(days) / DAYS_PER_YEAR, 1)
-    
+
     days_with_offset = days + NUNDINAL_OFFSET
-    
+
     years_whole = f"{int(years) % 8:0{YEARS_WHOLE}o}"
     years_frac = f"{int(year_frac * (8 ** YEARS_FRAC)):0{YEARS_FRAC}o}"
     days_whole = f"{int(days_with_offset) % 8:0{DAYS_WHOLE}o}"
