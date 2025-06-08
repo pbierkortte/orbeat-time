@@ -101,3 +101,30 @@ def test_encode_orbeat_time_epoch_zero():
     unix_ms_epoch = 0
     expected_orbeat_epoch = "52542777"  # Corrected from "03542777"
     assert encode_orbeat_time(unix_ms_epoch) == expected_orbeat_epoch
+
+
+def test_decode_error_no_date_match():
+    """Test that a ValueError is raised for a code that cannot be found."""
+    # This code corresponds to a date far in the future, so it won't be found.
+    future_ms = datetime.now(timezone.utc).timestamp() * 1000 + (20 * 365 * 24 * 60 * 60 * 1000)
+    future_code = encode_orbeat_time(future_ms)
+    with pytest.raises(ValueError, match="Could not find a matching date part in the search window."):
+        # Use a very old reference time to ensure the future code is not found.
+        old_ref_ms = datetime(1980, 1, 1, tzinfo=timezone.utc).timestamp() * 1000
+        decode_orbeat_time(future_code, old_ref_ms)
+
+
+def test_decode_error_no_time_match():
+    """Test that a ValueError is raised for a code with a valid date but invalid time."""
+    # Create a code with a valid date part for today, but a nonsense time part.
+    valid_code = encode_orbeat_time(datetime.now(timezone.utc).timestamp() * 1000)
+    date_part_reversed = valid_code[::-1][:4]
+    # Create a nonsense time part by flipping the bits of the valid one.
+    valid_time_part_reversed = valid_code[::-1][4:]
+    bad_time_part_reversed = "".join([str(7 - int(c)) for c in valid_time_part_reversed])
+    
+    bad_code_reversed = date_part_reversed + bad_time_part_reversed
+    bad_code = bad_code_reversed[::-1]
+
+    with pytest.raises(ValueError, match="Found date part but could not find exact time match."):
+        decode_orbeat_time(bad_code)
