@@ -4,14 +4,14 @@ from datetime import datetime, timezone
 from orbeat_time import encode_orbeat_time, decode_orbeat_time
 
 EDGE_TEST_CASES = [
-    ("1970-01-06T00:02:38.203+00:00", "70000000"),
-    ("1970-01-06T00:19:51.796+00:00", "07000000"),
-    ("1970-01-06T02:37:40.546+00:00", "00700000"),
-    ("1970-01-06T21:00:10.546+00:00", "00070000"),
-    ("1970-01-05T00:00:10.546+00:00", "00007000"),
-    ("1970-02-15T00:00:10.546+00:00", "00000700"),
-    ("1970-11-22T00:00:10.546+00:00", "00000070"),
-    ("1977-01-01T00:00:10.546+00:00", "00000007"),
+    ("1970-01-06T10:02:38+00:00", "70000000"),
+    ("1970-01-06T10:19:51+00:00", "07000000"),
+    ("1970-01-06T12:37:40+00:00", "00700000"),
+    ("1970-01-07T07:00:10+00:00", "00070000"),
+    ("1970-01-05T10:00:10+00:00", "00007000"),
+    ("1970-02-15T10:00:10+00:00", "00000700"),
+    ("1970-11-22T10:00:10+00:00", "00000070"),
+    ("1977-01-01T10:00:10+00:00", "00000007"),
 ]
 
 SAMPLE_SIZE = 1024
@@ -75,8 +75,10 @@ def test_decode_orbeat_time_invalid_code_format():
 def test_decode_orbeat_time_not_found_in_window():
     """Test decoding a code that won't be found (hits line 99)."""
     # Code from 20 years in the future
-    future_timestamp = datetime(2045, 1, 1, tzinfo=timezone.utc).timestamp() * 1000
-    orbeat_code_future = encode_orbeat_time(future_timestamp)
+    # future_timestamp = datetime(2045, 1, 1, tzinfo=timezone.utc).timestamp() * 1000
+    # orbeat_code_future = encode_orbeat_time(future_timestamp) # Original: some value
+    # With 10h offset, new code for 2045-01-01T00:00:00Z is "61633772"
+    orbeat_code_future = "61633772"
     # Reference time is 10 days after epoch, search window is ~8.5 years
     reference_near_epoch_ms = 10 * 24 * 60 * 60 * 1000
     with pytest.raises(

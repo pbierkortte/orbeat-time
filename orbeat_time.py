@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 DAYS_PER_YEAR = 365.25
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
+DAWN_OFFSET_MS = 10 * 60 * 60 * 1000 # 5 AM EST is 10 AM UTC
 NUNDINAL_OFFSET = 3
 YEARS_WHOLE = 1
 YEARS_FRAC = 2
@@ -19,8 +20,8 @@ def encode_orbeat_time(unix_ms: float) -> str:
     Returns:
         Encoded Orbeat time string
     """
-
-    days, day_frac = divmod(unix_ms / MILLISECONDS_PER_DAY, 1)
+    adjusted_unix_ms = unix_ms - DAWN_OFFSET_MS
+    days, day_frac = divmod(adjusted_unix_ms / MILLISECONDS_PER_DAY, 1)
 
     years, year_frac = divmod(int(days) / DAYS_PER_YEAR, 1)
 
@@ -49,6 +50,8 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
     if reference_unix_ms is None:
         reference_unix_ms = datetime.now(timezone.utc).timestamp() * 1000
 
+    adjusted_reference_unix_ms = reference_unix_ms - DAWN_OFFSET_MS
+
     if not isinstance(orbeat_code, str) or len(orbeat_code) != 8:
         raise ValueError("Invalid Orbeat code format: Must be an 8-character string.")
 
@@ -69,7 +72,8 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
         raise ValueError("Invalid Orbeat code format")
 
     target_day_plus_frac = (df_oct + 0.5) / (8**DAYS_FRAC)
-    day_of_reference = int((reference_unix_ms - 1e-9) / MILLISECONDS_PER_DAY)
+    # Use adjusted_reference_unix_ms to calculate day_of_reference
+    day_of_reference = int((adjusted_reference_unix_ms - 1e-9) / MILLISECONDS_PER_DAY)
     max_search_days_offset = int(8.5 * DAYS_PER_YEAR)
 
     for d_offset in range(max_search_days_offset):
@@ -91,13 +95,35 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
             and calc_dw_oct_cand == dw_oct
         ):
 
-            candidate_unix_ms = (
+            # candidate_unix_ms is in the shifted frame
+            candidate_unix_ms_shifted = (
                 d_candidate + target_day_plus_frac
             ) * MILLISECONDS_PER_DAY
 
-            if candidate_unix_ms < reference_unix_ms:
-                if encode_orbeat_time(candidate_unix_ms) == orbeat_code:
-                    return candidate_unix_ms
+            # Compare in the shifted frame
+            if candidate_unix_ms_shifted < adjusted_reference_unix_ms:
+                # encode_orbeat_time expects an actual UTC timestamp,
+                # but its internal logic will subtract DAWN_OFFSET_MS.
+                # So, to test if the *shifted* candidate_unix_ms_shifted
+                # produces the correct orbeat_code, we must pass it
+                # an *actual* timestamp that would result in candidate_unix_ms_shifted
+                # after the internal subtraction.
+                # This means passing (candidate_unix_ms_shifted + DAWN_OFFSET_MS)
+                # to encode_orbeat_time.
+                #
+                # Let's re-evaluate: encode_orbeat_time now takes a true unix_ms
+                # and *internally* shifts it.
+                # The candidate_unix_ms_shifted is already in the "dawn-shifted" frame.
+                # To verify it, we need to pass encode_orbeat_time a value X such that
+                # X - DAWN_OFFSET_MS = candidate_unix_ms_shifted.
+                # So, X = candidate_unix_ms_shifted + DAWN_OFFSET_MS.
+                # This X is the actual UTC timestamp that would correspond to the
+                # start of the Orbeat day represented by candidate_unix_ms_shifted.
+                actual_candidate_unix_ms_for_encoding_check = candidate_unix_ms_shifted + DAWN_OFFSET_MS
+
+                if encode_orbeat_time(actual_candidate_unix_ms_for_encoding_check) == orbeat_code:
+                    # Return the actual UTC timestamp
+                    return actual_candidate_unix_ms_for_encoding_check
 
     raise ValueError("Could not find a matching timestamp in the search window.")
 
