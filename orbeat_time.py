@@ -49,6 +49,9 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
     if reference_unix_ms is None:
         reference_unix_ms = datetime.now(timezone.utc).timestamp() * 1000
 
+    if not isinstance(orbeat_code, str) or len(orbeat_code) != 8:
+        raise ValueError("Invalid Orbeat code format: Must be an 8-character string.")
+
     reversed_code = orbeat_code[::-1]
     yw_str = reversed_code[0:YEARS_WHOLE]
     yf_str = reversed_code[YEARS_WHOLE : YEARS_WHOLE + YEARS_FRAC]
