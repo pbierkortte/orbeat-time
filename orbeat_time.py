@@ -37,33 +37,34 @@ def encode_orbeat_time(unix_ms: float) -> str:
 
 def decode_orbeat_time(orbeat_code, reference_unix_ms=None):
     """
-    Find the most recent Unix timestamp for a given Orbeat code before a reference time.
-
-    Args:
-        orbeat_code: The Orbeat time string to decode.
-        reference_unix_ms: The reference Unix timestamp in milliseconds.
-                           Defaults to the current time if not provided.
-
-    Returns:
-        The Unix timestamp in milliseconds for the most recent occurrence.
+    A simple, two-step decoder that first finds the days, then the seconds.
     """
-    rc = orbeat_code[::-1]
-    yw, yf, dw, df = int(rc[0], 8), int(rc[1:3], 8), int(rc[3], 8), int(rc[4:], 8)
-    ref_ms = (
-        reference_unix_ms or datetime.now(timezone.utc).timestamp() * 1000
-    ) - DAWN_OFFSET_MS
-    for offset in range(int(8.5 * DAYS_PER_YEAR)):
-        day = int(ref_ms / MILLISECONDS_PER_DAY) - offset
-        if day < 0:
+    if reference_unix_ms is None:
+        reference_unix_ms = datetime.now(timezone.utc).timestamp() * 1000
+
+    # Step 1: Walk back day-by-day to find the correct day.
+    target_date_part = orbeat_code[::-1][:4]
+    day_candidate_ms = reference_unix_ms
+    found_day_ms = None
+    for _ in range(365 * 10):  # Search back up to 10 years
+        encoded_candidate = encode_orbeat_time(day_candidate_ms)
+        if encoded_candidate[::-1][:4] == target_date_part:
+            found_day_ms = day_candidate_ms
             break
-        years, year_frac = divmod(day / DAYS_PER_YEAR, 1)
-        if int(years) % 8 == yw and int(year_frac * 64) == yf and (day + 3) % 8 == dw:
-            unix_ms = (day + (df + 0.5) / 4096) * MILLISECONDS_PER_DAY + DAWN_OFFSET_MS
-            if (
-                unix_ms < ref_ms + DAWN_OFFSET_MS
-                and encode_orbeat_time(unix_ms) == orbeat_code
-            ):
-                return unix_ms
+        day_candidate_ms -= MILLISECONDS_PER_DAY
+
+    if found_day_ms is None:
+        raise ValueError("Could not find a matching date part in the search window.")
+
+    # Step 2: Walk back second-by-second from the found day.
+    # Start search 24h after the found timestamp to ensure we cover the whole day.
+    time_candidate_ms = found_day_ms + MILLISECONDS_PER_DAY
+    for _ in range(MILLISECONDS_PER_DAY // 1000):  # Search a full day
+        if encode_orbeat_time(time_candidate_ms) == orbeat_code:
+            return time_candidate_ms
+        time_candidate_ms -= 10000
+
+    raise ValueError("Found date part but could not find exact time match.")
 
 
 if __name__ == "__main__":  # pragma: no cover
