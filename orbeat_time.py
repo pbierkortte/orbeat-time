@@ -47,73 +47,57 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
     Returns:
         The Unix timestamp in milliseconds for the most recent occurrence.
     """
-    if reference_unix_ms is None:
-        reference_unix_ms = datetime.now(timezone.utc).timestamp() * 1000
-
-    adjusted_reference_unix_ms = reference_unix_ms - DAWN_OFFSET_MS
-
     if not isinstance(orbeat_code, str) or len(orbeat_code) != 8:
         raise ValueError("Invalid Orbeat code format: Must be an 8-character string.")
 
-    reversed_code = orbeat_code[::-1]
-    yw_str = reversed_code[0:YEARS_WHOLE]
-    yf_str = reversed_code[YEARS_WHOLE : YEARS_WHOLE + YEARS_FRAC]
-    dw_str = reversed_code[
-        YEARS_WHOLE + YEARS_FRAC : YEARS_WHOLE + YEARS_FRAC + DAYS_WHOLE
-    ]
-    df_str = reversed_code[YEARS_WHOLE + YEARS_FRAC + DAYS_WHOLE :]
-
-    try:
-        yw_oct = int(yw_str, 8)
-        yf_oct = int(yf_str, 8)
-        dw_oct = int(dw_str, 8)
-        df_oct = int(df_str, 8)
+    rc = orbeat_code[::-1]
+    try:  # Target Orbeat components (yw_t, yf_t, dw_t, df_t) from reversed code
+        yw_t, yf_t, dw_t, df_t = (
+            int(rc[0], 8),
+            int(rc[1:3], 8),
+            int(rc[3], 8),
+            int(rc[4:], 8),
+        )
     except ValueError:
         raise ValueError("Invalid Orbeat code format")
 
-    target_day_plus_frac = (df_oct + 0.5) / (8**DAYS_FRAC)
-    day_of_reference = int((adjusted_reference_unix_ms - 1e-9) / MILLISECONDS_PER_DAY)
-    max_search_days_offset = int(8.5 * DAYS_PER_YEAR)
+    # Adjusted reference time and target day fraction (midpoint of df_t quantum)
+    adj_ref_ms = (
+        reference_unix_ms
+        if reference_unix_ms is not None
+        else datetime.now(timezone.utc).timestamp() * 1000
+    ) - DAWN_OFFSET_MS
+    day_frac_target = (df_t + 0.5) / (8**DAYS_FRAC)
 
-    for d_offset in range(max_search_days_offset):
-        d_candidate = day_of_reference - d_offset
+    day_num_ref = int(
+        (adj_ref_ms / MILLISECONDS_PER_DAY) - 1e-9
+    )  # Start day for search (adj. frame), epsilon for float
 
-        if d_candidate < 0:
-            break
+    for offset in range(
+        int(8.5 * DAYS_PER_YEAR)
+    ):  # Max search window ~8.5 Orbeat years
+        day_c = day_num_ref - offset  # Candidate day number
+        if day_c < 0:
+            break  # Cannot be before epoch
 
-        years_val_cand, year_frac_val_cand = divmod(d_candidate / DAYS_PER_YEAR, 1)
-        years_val_cand = int(years_val_cand)
-
-        calc_yw_oct_cand = years_val_cand % 8
-        calc_yf_oct_cand = int(year_frac_val_cand * (8**YEARS_FRAC))
-        calc_dw_oct_cand = int(d_candidate + NUNDINAL_OFFSET) % 8
+        # Candidate Orbeat components (mirroring encode logic for year/day whole parts)
+        yr_c_f, yr_frac_c_f = divmod(day_c / DAYS_PER_YEAR, 1)
 
         if (
-            calc_yw_oct_cand == yw_oct
-            and calc_yf_oct_cand == yf_oct
-            and calc_dw_oct_cand == dw_oct
-        ):
+            int(yr_c_f) % 8 == yw_t
+            and int(yr_frac_c_f * (8**YEARS_FRAC)) == yf_t
+            and (day_c + NUNDINAL_OFFSET) % 8 == dw_t
+        ):  # dw_c calculation inlined
 
-            # candidate_unix_ms is in the shifted frame
-            candidate_unix_ms_shifted = (
-                d_candidate + target_day_plus_frac
-            ) * MILLISECONDS_PER_DAY
-
-            # Compare in the shifted frame
-            if candidate_unix_ms_shifted < adjusted_reference_unix_ms:
-                # To verify the Orbeat code, we need to convert the shifted timestamp
-                # back to a true UTC timestamp before passing it to encode_orbeat_time,
-                # as encode_orbeat_time expects a true UTC timestamp and applies the
-                # DAWN_OFFSET_MS internally.
-                actual_candidate_unix_ms_for_encoding_check = (
-                    candidate_unix_ms_shifted + DAWN_OFFSET_MS
-                )
-
+            adj_ms_c = (
+                day_c + day_frac_target
+            ) * MILLISECONDS_PER_DAY  # Candidate ms (adjusted frame)
+            if adj_ms_c < adj_ref_ms:  # Must be strictly before reference
+                unix_ms_c = adj_ms_c + DAWN_OFFSET_MS  # Candidate ms (actual Unix)
                 if (
-                    encode_orbeat_time(actual_candidate_unix_ms_for_encoding_check)
-                    == orbeat_code
-                ):
-                    return actual_candidate_unix_ms_for_encoding_check
+                    encode_orbeat_time(unix_ms_c) == orbeat_code
+                ):  # Final verification for df_t
+                    return unix_ms_c
 
     raise ValueError("Could not find a matching timestamp in the search window.")
 
