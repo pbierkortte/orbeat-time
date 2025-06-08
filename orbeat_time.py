@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 DAYS_PER_YEAR = 365.25
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
-DAWN_OFFSET_MS = 10 * 60 * 60 * 1000 # 5 AM EST is 10 AM UTC
+DAWN_OFFSET_MS = 10 * 60 * 60 * 1000  # 5 AM EST is 10 AM UTC
 NUNDINAL_OFFSET = 3
 YEARS_WHOLE = 1
 YEARS_FRAC = 2
@@ -119,9 +119,14 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
                 # So, X = candidate_unix_ms_shifted + DAWN_OFFSET_MS.
                 # This X is the actual UTC timestamp that would correspond to the
                 # start of the Orbeat day represented by candidate_unix_ms_shifted.
-                actual_candidate_unix_ms_for_encoding_check = candidate_unix_ms_shifted + DAWN_OFFSET_MS
+                actual_candidate_unix_ms_for_encoding_check = (
+                    candidate_unix_ms_shifted + DAWN_OFFSET_MS
+                )
 
-                if encode_orbeat_time(actual_candidate_unix_ms_for_encoding_check) == orbeat_code:
+                if (
+                    encode_orbeat_time(actual_candidate_unix_ms_for_encoding_check)
+                    == orbeat_code
+                ):
                     # Return the actual UTC timestamp
                     return actual_candidate_unix_ms_for_encoding_check
 
