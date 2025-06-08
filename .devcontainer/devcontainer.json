@@ -1,0 +1,52 @@
+// A Secure Minimal Python Development Environment
+{
+	"name": "Python Dev",
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.9-bookworm",
+
+	// Optimize for AI agents
+	"containerEnv": {
+		"PIP_QUIET": "1",        // Suppress verbose pip output to save tokens
+		"GIT_PAGER": "cat"       // Prevent getting stuck in vim/less pagers
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// AI Coding Assistants
+				// "saoudrizwan.claude-dev",
+				// "RooVeterinaryInc.roo-cline",
+
+				// Python Development
+				"ms-python.python",
+				"ms-python.pylance",
+				"ms-python.debugpy",
+				"ms-python.black-formatter"
+			],
+			"settings": {
+				// Remove MS bloat
+				"dev.containers.defaultExtensionsIfInstalledLocally": [],
+				
+				// Container Security
+				"dev.containers.dockerCredentialHelper": false, // Prevent Docker credentials leaking
+				"dev.containers.copyGitConfig": false, // Prevent Git credentials leaking
+				"dev.containers.gitCredentialHelperConfigLocation": "none", // Disable Git credential helper
+				"dev.containers.executeInWSL": false // Prevent WSL-related credential leaks on Windows
+			}
+		}
+	},
+	
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "pip3 install --upgrade pip && pip3 install --user -r requirements.txt"
+	
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {
+	//     "ghcr.io/devcontainers/features/aws-cli:1": {}
+	// },
+	
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
