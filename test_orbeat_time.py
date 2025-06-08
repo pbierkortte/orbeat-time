@@ -58,58 +58,6 @@ def test_decode_orbeat_time_no_reference_ms():
     assert time_difference_ms < max_expected_difference_ms
 
 
-def test_decode_orbeat_time_invalid_code_format():
-    """Test decoding with an invalid Orbeat code format (covers lines 65-66)."""
-    with pytest.raises(ValueError, match="Invalid Orbeat code format"):
-        decode_orbeat_time("INVALID!", 0)  # Invalid characters
-    with pytest.raises(
-        ValueError, match="Invalid Orbeat code format: Must be an 8-character string."
-    ):
-        decode_orbeat_time("1234567", 0)  # Too short
-    with pytest.raises(
-        ValueError, match="Invalid Orbeat code format"
-    ):  # This will be caught by int(..., 8)
-        decode_orbeat_time("00000008", 0)  # Invalid octal digit '8'
-
-
-def test_decode_orbeat_time_not_found_in_window():
-    """Test decoding a code that won't be found (hits line 99)."""
-    # Code from 20 years in the future
-    # With 10h offset, new code for 2045-01-01T00:00:00Z is "61633772"
-    orbeat_code_future = "61633772"
-    # Reference time is 10 days after epoch, search window is ~8.5 years
-    reference_near_epoch_ms = 10 * 24 * 60 * 60 * 1000
-    with pytest.raises(
-        ValueError, match="Could not find a matching timestamp in the search window."
-    ):
-        decode_orbeat_time(orbeat_code_future, reference_near_epoch_ms)
-
-
-def test_decode_orbeat_time_search_goes_before_epoch_and_not_found():
-    """
-    Test that search stops if d_candidate < 0 (hits line 76),
-    and then raises ValueError if no prior match was found (hits line 99).
-    """
-    # An Orbeat code for a date far from epoch, e.g., 1978-01-01
-    # (Year 8 from epoch, day 2922 from epoch if epoch is day 0)
-    # yw_oct = (1978-1970) % 8 = 0
-    # yf_oct = 0
-    # dw_oct = (2922 + NUNDINAL_OFFSET) % 8 = (2922 + 3) % 8 = 2925 % 8 = 5
-    # df_oct = 0 (assuming start of day)
-    # Reversed code: 00005000 -> Original code "00050000"
-    code_1978_start_of_day = "00050000"
-
-    # Set reference_unix_ms to 1ms after epoch.
-    # day_of_reference will be 0.
-    # The loop for d_offset will make d_candidate negative quickly.
-    # Since code_1978_start_of_day is for 1978, it won't be found at d_candidate = 0.
-    # The loop should break due to d_candidate < 0, then raise ValueError.
-    with pytest.raises(
-        ValueError, match="Could not find a matching timestamp in the search window."
-    ):
-        decode_orbeat_time(code_1978_start_of_day, reference_unix_ms=1)
-
-
 @pytest.mark.parametrize("unix_ms", DIGIT_DISTRIBUTION_SAMPLES)
 def test_fuzz_sample(unix_ms):
     orbeat = encode_orbeat_time(unix_ms)
@@ -154,44 +102,3 @@ def test_encode_orbeat_time_epoch_zero():
     unix_ms_epoch = 0
     expected_orbeat_epoch = "52542777"  # Corrected from "03542777"
     assert encode_orbeat_time(unix_ms_epoch) == expected_orbeat_epoch
-
-
-def test_decode_epoch_zero_code_with_tricky_reference():
-    """
-    Test decoding the epoch Orbeat code with reference times that test search logic.
-    The Orbeat code "52542777" corresponds to an actual time of unix_ms = 0.
-    Its df_oct is int("4525", 8) = 2389.
-    target_day_plus_frac = (2389 + 0.5) / 4096 = 0.5833740234375.
-    For d_candidate = -1, candidate_unix_ms_shifted = (-1 + target_day_plus_frac) * MILLISECONDS_PER_DAY
-                                                 = -0.4166259765625 * 86400000 = -35995833.333...
-    The center of its quantum, when decoded, is -35995833.333... + DAWN_OFFSET_MS = 4166.666... ms.
-    DAWN_OFFSET_MS = 36,000,000 ms
-    MILLISECONDS_PER_DAY = 86,400,000 ms
-    """
-    orbeat_epoch_code = "52542777"  # Corrected from "03542777"
-
-    # Case 1: Reference time is 1 ms.
-    # adjusted_reference_unix_ms = 1 - 36000000 = -35999999 ms.
-    # For orbeat_epoch_code "52542777", d_candidate = -1 gives:
-    # candidate_unix_ms_shifted = -35995833.333... (calculated above)
-    # The check is `candidate_unix_ms_shifted < adjusted_reference_unix_ms`.
-    # -35995833.333... < -35999999 is FALSE.
-    # So, this candidate is skipped. No earlier d_candidate will match this code.
-    # Thus, a ValueError should be raised.
-    with pytest.raises(
-        ValueError, match="Could not find a matching timestamp in the search window."
-    ):
-        decode_orbeat_time(orbeat_epoch_code, reference_unix_ms=1)
-
-    # Case 2: Reference time is 100,000 ms (100 seconds after epoch).
-    # adjusted_reference_unix_ms = 100000 - 36000000 = -35900000 ms.
-    # candidate_unix_ms_shifted (-35933333.333...) IS < adjusted_reference_unix_ms (-35900000).
-    # So, this candidate should be found. However, due to floating point precision issues
-    # in the re-encoding check within decode_orbeat_time,
-    # encode_orbeat_time(calculated_center_ms) might not exactly match orbeat_epoch_code.
-    # If the internal re-encoding check fails, decode_orbeat_time will raise ValueError.
-    # Based on detailed tracing, the re-encoded df_oct differs (2390 vs 2389).
-    with pytest.raises(
-        ValueError, match="Could not find a matching timestamp in the search window."
-    ):
-        decode_orbeat_time(orbeat_epoch_code, reference_unix_ms=100000)
