@@ -1,4 +1,5 @@
 import pytest
+import random
 from datetime import datetime
 from orbeat_time import encode_orbeat_time
 
@@ -45,6 +46,15 @@ EDGE_TEST_CASES = [
     ),
 ]
 
+SAMPLE_SIZE = 512
+EXPECTED_FLOOR = SAMPLE_SIZE * 8 // 64 // 2
+MAX_RANDOM_MS = 50 * 365 * 24 * 60 * 60 * 1000  # 50 years
+
+# Generate random test samples for digit distribution testing
+DIGIT_DISTRIBUTION_SAMPLES = [
+    random.randint(0, MAX_RANDOM_MS) for _ in range(SAMPLE_SIZE)
+]
+
 
 @pytest.mark.parametrize("dt_str,expected", EDGE_TEST_CASES)
 def test_encode_orbeat_time_valid_dates(dt_str, expected):
@@ -52,5 +62,27 @@ def test_encode_orbeat_time_valid_dates(dt_str, expected):
     unix_ms = dt.timestamp() * 1000
     result = encode_orbeat_time(unix_ms)
     assert result == expected
-    assert isinstance(result, str)
-    assert all(c in "01234567" for c in result)
+
+
+@pytest.mark.parametrize("unix_ms", DIGIT_DISTRIBUTION_SAMPLES)
+def test_fuzz_sample(unix_ms):
+    orbeat = encode_orbeat_time(unix_ms)
+    assert isinstance(orbeat, str)
+    assert len(orbeat) == 8
+    assert all(c in "01234567" for c in orbeat)
+
+
+def test_digit_distribution():
+    counts = [[0] * 8 for _ in range(8)]
+
+    for unix_ms in DIGIT_DISTRIBUTION_SAMPLES:
+        orbeat = encode_orbeat_time(unix_ms)
+
+        for pos, digit in enumerate(orbeat):
+            counts[int(digit)][pos] += 1
+
+    for digit in range(8):
+        for pos in range(8):
+            assert (
+                counts[digit][pos] >= EXPECTED_FLOOR
+            ), f"Test failed: Cell at digit {digit}, position {pos} has count {counts[digit][pos]}. Expected at least {EXPECTED_FLOOR}."
