@@ -35,7 +35,7 @@ def encode_orbeat_time(unix_ms: float) -> str:
     return (years_whole + years_frac + days_whole + days_frac)[::-1]
 
 
-def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> float:
+def decode_orbeat_time(orbeat_code, reference_unix_ms=None):
     """
     Find the most recent Unix timestamp for a given Orbeat code before a reference time.
 
@@ -47,59 +47,23 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
     Returns:
         The Unix timestamp in milliseconds for the most recent occurrence.
     """
-    if not isinstance(orbeat_code, str) or len(orbeat_code) != 8:
-        raise ValueError("Invalid Orbeat code format: Must be an 8-character string.")
-
     rc = orbeat_code[::-1]
-    try:  # Target Orbeat components (yw_t, yf_t, dw_t, df_t) from reversed code
-        yw_t, yf_t, dw_t, df_t = (
-            int(rc[0], 8),
-            int(rc[1:3], 8),
-            int(rc[3], 8),
-            int(rc[4:], 8),
-        )
-    except ValueError:
-        raise ValueError("Invalid Orbeat code format")
-
-    # Adjusted reference time and target day fraction (midpoint of df_t quantum)
-    adj_ref_ms = (
-        reference_unix_ms
-        if reference_unix_ms is not None
-        else datetime.now(timezone.utc).timestamp() * 1000
+    yw, yf, dw, df = int(rc[0], 8), int(rc[1:3], 8), int(rc[3], 8), int(rc[4:], 8)
+    ref_ms = (
+        reference_unix_ms or datetime.now(timezone.utc).timestamp() * 1000
     ) - DAWN_OFFSET_MS
-    day_frac_target = (df_t + 0.5) / (8**DAYS_FRAC)
-
-    day_num_ref = int(
-        (adj_ref_ms / MILLISECONDS_PER_DAY) - 1e-9
-    )  # Start day for search (adj. frame), epsilon for float
-
-    for offset in range(
-        int(8.5 * DAYS_PER_YEAR)
-    ):  # Max search window ~8.5 Orbeat years
-        day_c = day_num_ref - offset  # Candidate day number
-        if day_c < 0:
-            break  # Cannot be before epoch
-
-        # Candidate Orbeat components (mirroring encode logic for year/day whole parts)
-        yr_c_f, yr_frac_c_f = divmod(day_c / DAYS_PER_YEAR, 1)
-
-        if (
-            int(yr_c_f) % 8 == yw_t
-            and int(yr_frac_c_f * (8**YEARS_FRAC)) == yf_t
-            and (day_c + NUNDINAL_OFFSET) % 8 == dw_t
-        ):  # dw_c calculation inlined
-
-            adj_ms_c = (
-                day_c + day_frac_target
-            ) * MILLISECONDS_PER_DAY  # Candidate ms (adjusted frame)
-            if adj_ms_c < adj_ref_ms:  # Must be strictly before reference
-                unix_ms_c = adj_ms_c + DAWN_OFFSET_MS  # Candidate ms (actual Unix)
-                if (
-                    encode_orbeat_time(unix_ms_c) == orbeat_code
-                ):  # Final verification for df_t
-                    return unix_ms_c
-
-    raise ValueError("Could not find a matching timestamp in the search window.")
+    for offset in range(int(8.5 * DAYS_PER_YEAR)):
+        day = int(ref_ms / MILLISECONDS_PER_DAY) - offset
+        if day < 0:
+            break
+        years, year_frac = divmod(day / DAYS_PER_YEAR, 1)
+        if int(years) % 8 == yw and int(year_frac * 64) == yf and (day + 3) % 8 == dw:
+            unix_ms = (day + (df + 0.5) / 4096) * MILLISECONDS_PER_DAY + DAWN_OFFSET_MS
+            if (
+                unix_ms < ref_ms + DAWN_OFFSET_MS
+                and encode_orbeat_time(unix_ms) == orbeat_code
+            ):
+                return unix_ms
 
 
 if __name__ == "__main__":  # pragma: no cover
