@@ -72,7 +72,6 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
         raise ValueError("Invalid Orbeat code format")
 
     target_day_plus_frac = (df_oct + 0.5) / (8**DAYS_FRAC)
-    # Use adjusted_reference_unix_ms to calculate day_of_reference
     day_of_reference = int((adjusted_reference_unix_ms - 1e-9) / MILLISECONDS_PER_DAY)
     max_search_days_offset = int(8.5 * DAYS_PER_YEAR)
 
@@ -102,23 +101,10 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
 
             # Compare in the shifted frame
             if candidate_unix_ms_shifted < adjusted_reference_unix_ms:
-                # encode_orbeat_time expects an actual UTC timestamp,
-                # but its internal logic will subtract DAWN_OFFSET_MS.
-                # So, to test if the *shifted* candidate_unix_ms_shifted
-                # produces the correct orbeat_code, we must pass it
-                # an *actual* timestamp that would result in candidate_unix_ms_shifted
-                # after the internal subtraction.
-                # This means passing (candidate_unix_ms_shifted + DAWN_OFFSET_MS)
-                # to encode_orbeat_time.
-                #
-                # Let's re-evaluate: encode_orbeat_time now takes a true unix_ms
-                # and *internally* shifts it.
-                # The candidate_unix_ms_shifted is already in the "dawn-shifted" frame.
-                # To verify it, we need to pass encode_orbeat_time a value X such that
-                # X - DAWN_OFFSET_MS = candidate_unix_ms_shifted.
-                # So, X = candidate_unix_ms_shifted + DAWN_OFFSET_MS.
-                # This X is the actual UTC timestamp that would correspond to the
-                # start of the Orbeat day represented by candidate_unix_ms_shifted.
+                # To verify the Orbeat code, we need to convert the shifted timestamp
+                # back to a true UTC timestamp before passing it to encode_orbeat_time,
+                # as encode_orbeat_time expects a true UTC timestamp and applies the
+                # DAWN_OFFSET_MS internally.
                 actual_candidate_unix_ms_for_encoding_check = (
                     candidate_unix_ms_shifted + DAWN_OFFSET_MS
                 )
@@ -127,7 +113,6 @@ def decode_orbeat_time(orbeat_code: str, reference_unix_ms: float = None) -> flo
                     encode_orbeat_time(actual_candidate_unix_ms_for_encoding_check)
                     == orbeat_code
                 ):
-                    # Return the actual UTC timestamp
                     return actual_candidate_unix_ms_for_encoding_check
 
     raise ValueError("Could not find a matching timestamp in the search window.")

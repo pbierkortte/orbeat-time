@@ -75,8 +75,6 @@ def test_decode_orbeat_time_invalid_code_format():
 def test_decode_orbeat_time_not_found_in_window():
     """Test decoding a code that won't be found (hits line 99)."""
     # Code from 20 years in the future
-    # future_timestamp = datetime(2045, 1, 1, tzinfo=timezone.utc).timestamp() * 1000
-    # orbeat_code_future = encode_orbeat_time(future_timestamp) # Original: some value
     # With 10h offset, new code for 2045-01-01T00:00:00Z is "61633772"
     orbeat_code_future = "61633772"
     # Reference time is 10 days after epoch, search window is ~8.5 years
