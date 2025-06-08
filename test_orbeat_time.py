@@ -1,52 +1,20 @@
 import pytest
 import random
-from datetime import datetime
-from orbeat_time import encode_orbeat_time
+from datetime import datetime, timezone
+from orbeat_time import encode_orbeat_time, decode_orbeat_time
 
 EDGE_TEST_CASES = [
-    # Tests Unix epoch, year whole = 0, and day whole = 0 (base case)
-    (
-        "1970-01-01T00:00:00+00:00",
-        "00003000",
-    ),
-    # Tests documented example case with Unix timestamp 1700000000000
-    (
-        "2023-11-14T22:13:20+00:00",
-        "02376765",
-    ),
-    # Tests far future date (century boundary)
-    (
-        "2100-01-01T10:39:16+00:00",
-        "23435771",
-    ),
-    # Tests first day of leap year (year transition + leap year start)
-    (
-        "2024-01-01T15:30:45+00:00",
-        "72156775",
-    ),
-    # Tests leap day (special calendar case)
-    (
-        "2024-02-29T08:45:30+00:00",
-        "62721216",
-    ),
-    # Tests year part = 00 (clean year division)
-    (
-        "1970-12-27T00:00:00+00:00",
-        "00003770",
-    ),
-    # Tests year part = 77 (maximum year fraction)
-    (
-        "1972-12-31T23:59:59+00:00",
-        "77772772",
-    ),
-    # Tests day part = 7777 (maximum day fraction pattern)
-    (
-        "1972-12-31T23:45:45+00:00",
-        "72772772",
-    ),
+    ("1970-01-06T00:02:38.203+00:00", "70000000"),
+    ("1970-01-06T00:19:51.796+00:00", "07000000"),
+    ("1970-01-06T02:37:40.546+00:00", "00700000"),
+    ("1970-01-06T21:00:10.546+00:00", "00070000"),
+    ("1970-01-05T00:00:10.546+00:00", "00007000"),
+    ("1970-02-15T00:00:10.546+00:00", "00000700"),
+    ("1970-11-22T00:00:10.546+00:00", "00000070"),
+    ("1977-01-01T00:00:10.546+00:00", "00000007"),
 ]
 
-SAMPLE_SIZE = 512
+SAMPLE_SIZE = 1024
 EXPECTED_FLOOR = SAMPLE_SIZE * 8 // 64 // 2
 MAX_RANDOM_MS = 50 * 365 * 24 * 60 * 60 * 1000  # 50 years
 
@@ -62,6 +30,19 @@ def test_encode_orbeat_time_valid_dates(dt_str, expected):
     unix_ms = dt.timestamp() * 1000
     result = encode_orbeat_time(unix_ms)
     assert result == expected
+
+
+@pytest.mark.parametrize("unix_ms_sample", DIGIT_DISTRIBUTION_SAMPLES)
+def test_decode_orbeat_time_round_trip(unix_ms_sample):
+    """
+    Tests the encode-decode round trip consistency for a sample of timestamps.
+    """
+    orbeat_code = encode_orbeat_time(unix_ms_sample)
+    reference_offset_ms = 25 * 1000
+    decoded_ms = decode_orbeat_time(orbeat_code, unix_ms_sample + reference_offset_ms)
+    time_difference_ms = abs(unix_ms_sample - decoded_ms)
+    max_expected_difference_ms = ((1 / (8**4)) * 24 * 60 * 60 * 1000 / 2) + 100
+    assert time_difference_ms < max_expected_difference_ms
 
 
 @pytest.mark.parametrize("unix_ms", DIGIT_DISTRIBUTION_SAMPLES)
