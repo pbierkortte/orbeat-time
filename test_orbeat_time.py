@@ -41,8 +41,7 @@ def test_decode_orbeat_time_round_trip(unix_ms_sample):
     reference_offset_ms = 25 * 1000
     decoded_ms = decode_orbeat_time(orbeat_code, unix_ms_sample + reference_offset_ms)
     time_difference_ms = abs(unix_ms_sample - decoded_ms)
-    max_expected_difference_ms = ((1 / (8**4)) * 24 * 60 * 60 * 1000 / 2) + 100
-    assert time_difference_ms < max_expected_difference_ms
+    assert time_difference_ms < reference_offset_ms
 
 
 def test_decode_orbeat_time_no_reference_ms():
