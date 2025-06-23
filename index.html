@@ -238,36 +238,36 @@
     <p>My design decisions include:</p>
     <ul>
       <li>Using little-endian ordering, which is more common in modern computing systems</li>
-      <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal systems</li>
-      <li>Flooring the total days before calculating years to ensure accurate year representation</li>
-      <li>Full-year was omitted in favor of brevity and due to space constraints</li>
-      <li>Including two fractional year digits to provide a division of the year (~5.7 days)</li>
-      <li>Avoiding timezones to simplify global time representation</li>
-      <li>Using the Unix epoch for convenience and to avoid leap-second complications</li>
+      <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic</li>
+      <li>Using Caesar's death as epoch (March 15, 44 BCE) for historical certainty and spring alignment</li>
+      <li>8-day week structure following the Roman nundinal market cycle</li>
+      <li>Fixed Eastern timezone Prime Meridian adjustment (UTC-5) for natural day boundaries</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
       <li>Used 365.25 days per year, which is the Julian calendar standard</li>
-      <li>Added a 3-day nundinal offset to align with present day estimates</li>
+      <li>Reversal and truncation to 8 characters for cryptic output</li>
     </ul>
 
     <h2>Format</h2>
     <p>A concatenated string consisting of:</p>
     <ul>
-      <li>Years since Unix epoch formatted with specific digit counts</li>
-      <li>Days since Unix epoch formatted with specific digit counts</li>
-      <li>The concatenated string is then reversed</li>
+      <li>Years since Caesar's death formatted in octal</li>
+      <li>Weeks within the year formatted in octal (2 digits)</li>
+      <li>Days within the 8-day week formatted in octal</li>
+      <li>Fractional day component formatted in octal (4 digits)</li>
+      <li>The concatenated string is then reversed and truncated to 8 characters</li>
     </ul>
 
     <h2>Implementation</h2>
     <p>The encoding process involves the following steps:</p>
     <ol start="0">
       <li>Calculate the Unix timestamp in milliseconds</li>
-      <li>Convert the milliseconds to fractional days since the Unix epoch</li>
-      <li>Calculate years (based on original days without offset)</li>
-      <li>Apply nundinal offset to days</li>
-      <li>Format years in octal with proper digit counts</li>
-      <li>Format days in octal with proper digit counts</li>
-      <li>Combine formatted years and days into a string</li>
-      <li>Reverse the concatenated string to generate the Orbeat time</li>
+      <li>Apply Caesar epoch offset and Prime Meridian adjustments</li>
+      <li>Convert the milliseconds to fractional days since Caesar's death</li>
+      <li>Calculate years using 365.25 days per year</li>
+      <li>Calculate day within year, then week within year (÷8) and day within 8-day week</li>
+      <li>Calculate fractional day component (×4096 for octal precision)</li>
+      <li>Format all components in octal with proper digit counts</li>
+      <li>Combine, reverse, and truncate to 8 characters</li>
     </ol>
 
     <h2>Example</h2>
@@ -278,73 +278,76 @@
           <li>Unix timestamp in milliseconds (e.g., <code>1700000000000</code>)</li>
         </ul>
       </li>
-      <li><strong>Conversion:</strong>
+      <li><strong>Apply Epoch and Timezone Adjustments:</strong>
         <ul>
-          <li>Days: <code>1700000000000 / 86400000</code> ≈ <code>19675.925925925927</code> days</li>
-          <li>Years: <code>int(19675.925925925927) / 365.25</code> ≈ <code>53.86721423682409</code> years</li>
+          <li>Add Caesar offset: <code>1700000000000 + 63517996800000 = 65217996800000</code></li>
+          <li>Apply Prime Meridian: <code>65217996800000 - 18000000 = 65217978800000</code></li>
         </ul>
       </li>
-      <li><strong>Apply Nundinal Offset:</strong>
+      <li><strong>Conversion:</strong>
         <ul>
-          <li>Days with offset: <code>19675.925925925927 + 3</code> = <code>19678.925925925927</code></li>
+          <li>Days since Caesar: <code>65217978800000 / 86400000</code> ≈ <code>754837.7175925926</code> days</li>
+          <li>Years: <code>int(754837.7175925926 / 365.25)</code> = <code>2066</code> years</li>
+        </ul>
+      </li>
+      <li><strong>8-Day Week Calculations:</strong>
+        <ul>
+          <li>Day in year: <code>754837.7175925926 % 365.25</code> ≈ <code>231.218</code></li>
+          <li>Week of year: <code>int(231.218 / 8)</code> = <code>28</code> weeks</li>
+          <li>Day of week: <code>int(754837.7175925926) % 8</code> = <code>5</code></li>
+          <li>Fractional day: Extract decimal part <code>0.7175925926</code> from <code>754837.7175925926</code></li>
+          <li>Multiply by 4096: <code>0.7175925926 * 4096</code> ≈ <code>2939</code></li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
         <ul>
-          <li>Years: <code>53.86721423682409</code> → octal whole part = <code>5</code></li>
-          <li>Years fraction in octal: <code>0.8672142368240898</code> → octal = <code>67</code></li>
-          <li>Days (with offset): <code>19678.925925925927</code> → octal whole part = <code>6</code></li>
-          <li>Days fraction in octal: <code>0.9259259259270038</code> → octal = <code>7320</code></li>
-        </ul>
-      </li>
-      <li><strong>Formatting with Digit Counts:</strong>
-        <ul>
-          <li>Years: <code>5</code> (whole) + <code>67</code> (fraction) → <code>567</code></li>
-          <li>Days: <code>6</code> (whole) + <code>7320</code> (fraction) → <code>67320</code></li>
+          <li>Years: <code>2066</code> → octal = <code>4022</code></li>
+          <li>Week: <code>28</code> → octal = <code>34</code> (2 digits)</li>
+          <li>Day: <code>5</code> → octal = <code>5</code></li>
+          <li>Fraction: <code>2939</code> → octal = <code>5573</code> (4 digits)</li>
         </ul>
       </li>
       <li><strong>Concatenation and Reversal:</strong>
         <ul>
-          <li>Combined: Years + Days → <code>56767320</code></li>
-          <li>Reversed: <code>02376765</code></li>
+          <li>Combined: <code>4022</code> + <code>34</code> + <code>5</code> + <code>5573</code> → <code>40223455573</code></li>
+          <li>Reversed: <code>37555432204</code></li>
+          <li>Truncated to 8 chars: <code>37555432</code></li>
         </ul>
       </li>
-      <li><strong>Output:</strong> <code>02376765</code></li>
+      <li><strong>Output:</strong> <code>37555432</code></li>
     </ul>
+  </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
 <div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
+</div>
 <script>
 
-  let DAYS_PER_YEAR = 365.25;
-  let MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-  let NUNDINAL_OFFSET = 3;
+  const MS_PER_DAY = 86400000;
+  const DAYS_PER_YEAR = 365.25;
+  const PRIME_MERIDIAN_MS = -5 * 60 * 60 * 1000;
+  const CAESAR_JDN = 1705426;
+  const UNIX_JDN = 2440588;
+  const CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY;
 
-  let YEARS_WHOLE = 1;
-  let YEARS_FRAC = 2;
-  let DAYS_WHOLE = 1;
-  let DAYS_FRAC = 4;
-
-  function encodeOrbeatTime(unixMilliseconds) {
-    let days = unixMilliseconds / MILLISECONDS_PER_DAY;
-    let dayFrac = days % 1;
+  function toOrbeat8(unixMs) {
+    if (unixMs === undefined) {
+      unixMs = Date.now();
+    }
     
-    let years = Math.trunc(days) / DAYS_PER_YEAR;
-    let yearFrac = years % 1;
+    const msSinceCaesar = unixMs + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
+    const daysSinceCaesar = msSinceCaesar / MS_PER_DAY;
+    const dayInYear = daysSinceCaesar % DAYS_PER_YEAR;
+    const years = Math.floor(daysSinceCaesar / DAYS_PER_YEAR);
+    const weeks = Math.floor(dayInYear / 8);
+    const days = Math.floor(daysSinceCaesar) % 8;
+    const fracs = Math.floor((daysSinceCaesar % 1) * 4096);
     
-    let daysWithOffset = days + NUNDINAL_OFFSET;
-    
-    let yearsWhole = (Math.trunc(years) % 8).toString(8).padStart(YEARS_WHOLE, '0');
-    let yearsFrac = Math.trunc(yearFrac * Math.pow(8, YEARS_FRAC)).toString(8).padStart(YEARS_FRAC, '0');
-    let daysWhole = (Math.trunc(daysWithOffset) % 8).toString(8).padStart(DAYS_WHOLE, '0');
-    let daysFrac = Math.trunc(dayFrac * Math.pow(8, DAYS_FRAC)).toString(8).padStart(DAYS_FRAC, '0');
-    
-    return (yearsWhole + yearsFrac + daysWhole + daysFrac).split('').reverse().join('');
+    const orbeat = `${years.toString(8)}${weeks.toString(8).padStart(2, '0')}${days.toString(8)}${fracs.toString(8).padStart(4, '0')}`;
+    return orbeat.split('').reverse().join('').substring(0, 8);
   }
 
   function calculateOctalTime() {
-    let now = new Date();
-    let unixMilliseconds = now.getTime();
-    return encodeOrbeatTime(unixMilliseconds);
+    return toOrbeat8();
   }
 
   function updateTime() {
