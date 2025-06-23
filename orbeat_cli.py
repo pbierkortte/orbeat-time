@@ -1,13 +1,15 @@
+import json
+import argparse
 from datetime import datetime, timezone
-from orbeat_time import encode_orbeat_time
-import json, argparse, sys
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
+from orbeat_time import to_orbeat8
 
 
 def get_orbeat_time():
     now = datetime.now(timezone.utc)
-    orbeat = encode_orbeat_time(int(now.timestamp() * 1000))
+    unix_ms = int(now.timestamp() * 1000)
+    orbeat = to_orbeat8(unix_ms)
     iso = now.isoformat()
     return orbeat, iso
 
@@ -20,6 +22,7 @@ def parse_args(args=None):
         "--output",
         metavar="FORMAT",
         choices=["json", "orbeat"],
+        default="orbeat",
         help="Output format: json or orbeat (default: orbeat)",
     )
     return parser.parse_args(args)

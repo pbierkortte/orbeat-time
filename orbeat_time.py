@@ -1,82 +1,79 @@
-from datetime import datetime, timedelta, timezone
+import time
+import zoneinfo
+from datetime import datetime
 
+MS_PER_DAY = 86400000
 DAYS_PER_YEAR = 365.25
-MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
-DAWN_OFFSET_MS = 10 * 60 * 60 * 1000  # 5 AM EST is 10 AM UTC
-NUNDINAL_OFFSET = 3
-YEARS_WHOLE = 1
-YEARS_FRAC = 2
-DAYS_WHOLE = 1
-DAYS_FRAC = 4
+PRIME_MERIDIAN_MS = -5 * 60 * 60 * 1000
+CAESAR_JDN = 1705426
+UNIX_JDN = 2440588
+CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY
 
 
-def encode_orbeat_time(unix_ms: float) -> str:
+def to_ucy(unix_ms=None):
     """
-    Encode Unix milliseconds timestamp into Orbeat time format.
+    Converts Unix millisecond timestamp to UCY format.
 
     Args:
-        unix_milliseconds: Unix timestamp in milliseconds
+        unix_ms: Unix timestamp in milliseconds. Defaults to current time.
 
     Returns:
-        Encoded Orbeat time string
+        str: UCY format as "YYYY_WW_D.FFFF" where:
+             - YYYY: Years after Ceasar (Octal, 0-prefix for pre-epoch)
+             - WW: Week number within the year (0-45 in octal)
+             - D: Day within the 8-day week (0-7 in octal)
+             - FFFF: Fractional part of day (0-7777 in octal)
     """
-    adjusted_unix_ms = unix_ms - DAWN_OFFSET_MS
-    days, day_frac = divmod(adjusted_unix_ms / MILLISECONDS_PER_DAY, 1)
-
-    years, year_frac = divmod(int(days) / DAYS_PER_YEAR, 1)
-
-    days_with_offset = days + NUNDINAL_OFFSET
-
-    years_whole = f"{int(years) % 8:0{YEARS_WHOLE}o}"
-    years_frac = f"{int(year_frac * (8 ** YEARS_FRAC)):0{YEARS_FRAC}o}"
-    days_whole = f"{int(days_with_offset) % 8:0{DAYS_WHOLE}o}"
-    days_frac = f"{int(day_frac * (8 ** DAYS_FRAC)):0{DAYS_FRAC}o}"
-
-    return (years_whole + years_frac + days_whole + days_frac)[::-1]
+    now_ms = int(time.time() * 1000)
+    ms_since_caesar = int(unix_ms or now_ms) + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS
+    days_since_caesar = ms_since_caesar / MS_PER_DAY
+    day_in_year = days_since_caesar % DAYS_PER_YEAR
+    years = int(days_since_caesar / DAYS_PER_YEAR)
+    weeks = int(day_in_year / 8)
+    days = int(days_since_caesar % 8)
+    fracs = int((days_since_caesar % 1) * 4096)
+    ucy = f"{years:o}_{weeks:o}_{days:o}.{fracs:04o}".replace("-", "0")
+    return ucy
 
 
-def decode_orbeat_time(orbeat_code, reference_unix_ms=None):
+def to_orbeat8(unix_ms=None):
     """
-    A simple, two-step decoder that first finds the days, then the seconds.
+    Converts Unix millisecond timestamp to 8-character Orbeat format.
+
+    Args:
+        unix_ms: Unix timestamp in milliseconds. Defaults to current time.
+
+    Returns:
+        str: Orbeat8 format as 8-character string where:
+             - Concatenates years (octal), weeks (2-digit octal), days (octal), fractions (4-digit octal)
+             - Reverses the concatenated string and truncates to 8 characters
+             - Uses same temporal calculations as UCY but in compressed cryptic format
     """
-    if reference_unix_ms is None:
-        reference_unix_ms = datetime.now(timezone.utc).timestamp() * 1000
-
-    # Step 1: Walk back day-by-day to find the correct day.
-    target_date_part = orbeat_code[::-1][:4]
-    day_candidate_ms = reference_unix_ms
-    found_day_ms = None
-    for _ in range(365 * 10):  # Search back up to 10 years
-        encoded_candidate = encode_orbeat_time(day_candidate_ms)
-        if encoded_candidate[::-1][:4] == target_date_part:
-            found_day_ms = day_candidate_ms
-            break
-        day_candidate_ms -= MILLISECONDS_PER_DAY
-
-    if found_day_ms is None:
-        raise ValueError("Could not find a matching date part in the search window.")
-
-    # Step 2: Walk back second-by-second from the found day.
-    # Start search 24h after the found timestamp to ensure we cover the whole day.
-    time_candidate_ms = found_day_ms + MILLISECONDS_PER_DAY
-    for _ in range(MILLISECONDS_PER_DAY // 1000):  # Search a full day
-        if encode_orbeat_time(time_candidate_ms) == orbeat_code:
-            return time_candidate_ms
-        time_candidate_ms -= 10000
-
-    raise ValueError("Found date part but could not find exact time match.")
+    now_ms = int(time.time() * 1000)
+    ms_since_caesar = int(unix_ms or now_ms) + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS
+    days_since_caesar = ms_since_caesar / MS_PER_DAY
+    day_in_year = days_since_caesar % DAYS_PER_YEAR
+    years = int(days_since_caesar / DAYS_PER_YEAR)
+    weeks = int(day_in_year / 8)
+    days = int(days_since_caesar % 8)
+    fracs = int((days_since_caesar % 1) * 4096)
+    orbeat = f"{years:o}{weeks:02o}{days:o}{fracs:04o}"[::-1][:8]
+    return orbeat
 
 
-if __name__ == "__main__":  # pragma: no cover
-    print("Demo Output:")
-    current_date = datetime.now(timezone.utc).replace(microsecond=0)
-    for i in range(8):
-        future_date = current_date + timedelta(days=i)
-        unix_ms = int(future_date.timestamp() * 1000)
-        print(future_date.isoformat(), encode_orbeat_time(unix_ms), sep=" | ")
+def to_eastern():
+    """
+    Converts current time to Eastern timezone format (EST/EDT with daylight saving).
 
-    print("\nDecoding Demo:")
-    test_code = "02376765"
-    decoded_ms = decode_orbeat_time(test_code)
-    decoded_date = datetime.fromtimestamp(decoded_ms / 1000, tz=timezone.utc)
-    print(f"Code '{test_code}' most recently occurred at: {decoded_date.isoformat()}")
+    Returns:
+        str: Eastern format as "YYYY-MM-DD HH:MM AM/PM EST/EDT"
+    """
+    eastern = zoneinfo.ZoneInfo("America/New_York")
+    now_eastern = datetime.now(eastern)
+    return now_eastern.strftime("%Y-%m-%d %I:%M %p %Z")
+
+
+if __name__ == "__main__":
+    print(f"{to_ucy()} UCY")
+    print(f"{to_orbeat8()} ORB")
+    print(to_eastern())
