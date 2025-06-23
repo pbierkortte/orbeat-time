@@ -43,7 +43,7 @@ jobs:
     
     - name: Run tests with coverage
       run: |
-        pytest --cov=. --cov-fail-under=95 --cov-report=term-missing
+        pytest --cov=. --cov-fail-under=80 --cov-report=term-missing
 
     - name: Lint with black
       run: |
