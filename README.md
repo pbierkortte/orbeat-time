@@ -23,7 +23,7 @@ My design decisions include:
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic
 - Using Caesar's death as epoch (March 15, 44 BCE) for historical certainty and spring alignment
 - 8-day week structure following the Roman nundinal market cycle
-- Fixed Eastern timezone Prime Meridian adjustment (UTC-5) for natural day boundaries
+- Fixed Eastern timezone Prime Meridian adjustment for natural day boundaries
 - The precision is ~21 seconds roughly in the scale of seconds
 - Used 365.25 days per year, which is the Julian calendar standard
 - Reversal and truncation to 8 characters for cryptic output
@@ -46,7 +46,7 @@ The encoding process involves the following steps:
 2. Convert the milliseconds to fractional days since Caesar's death
 3. Calculate years using 365.25 days per year
 4. Calculate day within year, then week within year (÷8) and day within 8-day week
-5. Calculate fractional day component (×4096 for octal precision)
+5. Calculate fractional day component (x4096 for octal precision)
 6. Format all components in octal with proper digit counts
 7. Combine, reverse, and truncate to 8 characters
 
@@ -58,23 +58,23 @@ The encoding process:
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Apply Epoch and Timezone Adjustments:**
   - Add Caesar offset: `1700000000000 + 63517996800000 = 65217996800000`
-  - Apply Prime Meridian: `65217996800000 - 18000000 = 65217978800000`
+  - Apply Prime Meridian: `65217996800000 + -36000000 = 65217960800000`
 - **Conversion:** 
-  - Days since Caesar: `65217978800000 / 86400000` ≈ `754837.7175925926` days
-  - Years: `int(754837.7175925926 / 365.25)` = `2066` years
+  - Days since Caesar: `65217960800000 / 86400000` ≈ `754837.5092592592` days
+  - Years: `int(754837.5092592592 / 365.25)` = `2066` years
 - **8-Day Week Calculations:**
-  - Day in year: `754837.7175925926 % 365.25` ≈ `231.218`
-  - Week of year: `int(231.218 / 8)` = `28` weeks
-  - Day of week: `int(754837.7175925926) % 8` = `5`
-  - Fractional day: Extract decimal part `0.7175925926` from `754837.7175925926`
-  - Multiply by 4096: `0.7175925926 * 4096` ≈ `2939`
+  - Day in year: `754837.5092592592 % 365.25` ≈ `231.009`
+  - Week of year: `int(231.009 / 8)` = `28` weeks
+  - Day of week: `int(754837.5092592592) % 8` = `5`
+  - Fractional day: Extract decimal part `0.5092592592` from `754837.5092592592`
+  - Multiply by 4096: `0.5092592592 * 4096` ≈ `2085`
 - **Octal Formatting:** 
   - Years: `2066` → octal = `4022`
   - Week: `28` → octal = `34` (2 digits)
   - Day: `5` → octal = `5`
-  - Fraction: `2939` → octal = `5573` (4 digits)
+  - Fraction: `2085` → octal = `4045` (4 digits)
 - **Concatenation and Reversal:**
-  - Combined: `4022` + `34` + `5` + `5573` → `40223455573`
-  - Reversed: `37555432204`
-  - Truncated to 8 chars: `37555432`
-- **Output:** `37555432`
+  - Combined: `4022` + `34` + `5` + `4045` → `40223454045`
+  - Reversed: `54045432204`
+  - Truncated to 8 chars: `54045432`
+- **Output:** `54045432`
