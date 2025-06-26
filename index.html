@@ -281,22 +281,22 @@
       <li><strong>Apply Epoch and Timezone Adjustments:</strong>
         <ul>
           <li>Add Caesar offset: <code>1700000000000 + 63517996800000 = 65217996800000</code></li>
-          <li>Apply Prime Meridian: <code>65217996800000 + -36000000 = 65217960800000</code></li>
+          <li>Apply Prime Meridian: <code>65217996800000 + -32400000 = 65217964400000</code></li>
         </ul>
       </li>
       <li><strong>Conversion:</strong>
         <ul>
-          <li>Days since Caesar: <code>65217960800000 / 86400000</code> ≈ <code>754837.5092592592</code> days</li>
-          <li>Years: <code>int(754837.5092592592 / 365.25)</code> = <code>2066</code> years</li>
+          <li>Days since Caesar: <code>65217964400000 / 86400000</code> ≈ <code>754837.550925926</code> days</li>
+          <li>Years: <code>int(754837.550925926 / 365.25)</code> = <code>2066</code> years</li>
         </ul>
       </li>
       <li><strong>8-Day Week Calculations:</strong>
         <ul>
-          <li>Day in year: <code>754837.5092592592 % 365.25</code> ≈ <code>231.009</code></li>
-          <li>Week of year: <code>int(231.009 / 8)</code> = <code>28</code> weeks</li>
-          <li>Day of week: <code>int(754837.5092592592) % 8</code> = <code>5</code></li>
-          <li>Fractional day: Extract decimal part <code>0.5092592592</code> from <code>754837.5092592592</code></li>
-          <li>Multiply by 4096: <code>0.5092592592 * 4096</code> ≈ <code>2085</code></li>
+          <li>Day in year: <code>754837.550925926 % 365.25</code> ≈ <code>231.051</code></li>
+          <li>Week of year: <code>int(231.051 / 8)</code> = <code>28</code> weeks</li>
+          <li>Day of week: <code>int(754837.550925926) % 8</code> = <code>5</code></li>
+          <li>Fractional day: Extract decimal part <code>0.550925926</code> from <code>754837.550925926</code></li>
+          <li>Multiply by 4096: <code>0.550925926 * 4096</code> ≈ <code>2256</code></li>
         </ul>
       </li>
       <li><strong>Octal Formatting:</strong>
@@ -304,17 +304,17 @@
           <li>Years: <code>2066</code> → octal = <code>4022</code></li>
           <li>Week: <code>28</code> → octal = <code>34</code> (2 digits)</li>
           <li>Day: <code>5</code> → octal = <code>5</code></li>
-          <li>Fraction: <code>2085</code> → octal = <code>4045</code> (4 digits)</li>
+          <li>Fraction: <code>2256</code> → octal = <code>4320</code> (4 digits)</li>
         </ul>
       </li>
       <li><strong>Concatenation and Reversal:</strong>
         <ul>
-          <li>Combined: <code>4022</code> + <code>34</code> + <code>5</code> + <code>4045</code> → <code>40223454045</code></li>
-          <li>Reversed: <code>54045432204</code></li>
-          <li>Truncated to 8 chars: <code>54045432</code></li>
+          <li>Combined: <code>4022</code> + <code>34</code> + <code>5</code> + <code>4320</code> → <code>40223454320</code></li>
+          <li>Reversed: <code>02345432204</code></li>
+          <li>Truncated to 8 chars: <code>02345432</code></li>
         </ul>
       </li>
-      <li><strong>Output:</strong> <code>54045432</code></li>
+      <li><strong>Output:</strong> <code>02345432</code></li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
@@ -324,7 +324,7 @@
 
   const MS_PER_DAY = 86400000;
   const DAYS_PER_YEAR = 365.25;
-  const PRIME_MERIDIAN_MS = -10 * 60 * 60 * 1000;
+  const PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000;
   const CAESAR_JDN = 1705426;
   const UNIX_JDN = 2440588;
   const CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY;
