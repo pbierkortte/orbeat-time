@@ -58,23 +58,23 @@ The encoding process:
   - Unix timestamp in milliseconds (e.g., `1700000000000`)
 - **Apply Epoch and Timezone Adjustments:**
   - Add Caesar offset: `1700000000000 + 63517996800000 = 65217996800000`
-  - Apply Prime Meridian: `65217996800000 + -36000000 = 65217960800000`
+  - Apply Prime Meridian: `65217996800000 + -32400000 = 65217964400000`
 - **Conversion:** 
-  - Days since Caesar: `65217960800000 / 86400000` ≈ `754837.5092592592` days
-  - Years: `int(754837.5092592592 / 365.25)` = `2066` years
+  - Days since Caesar: `65217964400000 / 86400000` ≈ `754837.550925926` days
+  - Years: `int(754837.550925926 / 365.25)` = `2066` years
 - **8-Day Week Calculations:**
-  - Day in year: `754837.5092592592 % 365.25` ≈ `231.009`
-  - Week of year: `int(231.009 / 8)` = `28` weeks
-  - Day of week: `int(754837.5092592592) % 8` = `5`
-  - Fractional day: Extract decimal part `0.5092592592` from `754837.5092592592`
-  - Multiply by 4096: `0.5092592592 * 4096` ≈ `2085`
+  - Day in year: `754837.550925926 % 365.25` ≈ `231.051`
+  - Week of year: `int(231.051 / 8)` = `28` weeks
+  - Day of week: `int(754837.550925926) % 8` = `5`
+  - Fractional day: Extract decimal part `0.550925926` from `754837.550925926`
+  - Multiply by 4096: `0.550925926 * 4096` ≈ `2256`
 - **Octal Formatting:** 
   - Years: `2066` → octal = `4022`
   - Week: `28` → octal = `34` (2 digits)
   - Day: `5` → octal = `5`
-  - Fraction: `2085` → octal = `4045` (4 digits)
+  - Fraction: `2256` → octal = `4320` (4 digits)
 - **Concatenation and Reversal:**
-  - Combined: `4022` + `34` + `5` + `4045` → `40223454045`
-  - Reversed: `54045432204`
-  - Truncated to 8 chars: `54045432`
-- **Output:** `54045432`
+  - Combined: `4022` + `34` + `5` + `4320` → `40223454320`
+  - Reversed: `02345432204`
+  - Truncated to 8 chars: `02345432`
+- **Output:** `02345432`
