@@ -41,14 +41,14 @@ A concatenated string consisting of:
 
 The encoding process involves the following steps:
 
-0. Calculate the Unix timestamp in milliseconds
-1. Apply Caesar epoch offset and Prime Meridian adjustments
-2. Convert the milliseconds to fractional days since Caesar's death
-3. Calculate years using 365.25 days per year
-4. Calculate day within year, then week within year (÷8) and day within 8-day week
-5. Calculate fractional day component (x4096 for octal precision)
-6. Format all components in octal with proper digit counts
-7. Combine, reverse, and truncate to 8 characters
+0. Get Unix timestamp in milliseconds
+1. Add Caesar epoch offset and Prime Meridian adjustment
+2. Convert to fractional days since Caesar
+3. Extract years via division by 365.25
+4. Calculate week and day within 8-day cycle
+5. Extract fractional part for sub-day precision
+6. Convert each component to octal
+7. Concatenate, reverse, truncate to 8 chars
 
 ## Example
 
@@ -60,12 +60,12 @@ The encoding process:
   - Add Caesar offset: `1700000000000 + 63517996800000 = 65217996800000`
   - Apply Prime Meridian: `65217996800000 + -32400000 = 65217964400000`
 - **Conversion:** 
-  - Days since Caesar: `65217964400000 / 86400000` ≈ `754837.550925926` days
-  - Years: `int(754837.550925926 / 365.25)` = `2066` years
+  - Days since Caesar: `65217964400000 ÷ 86400000` ≈ `754837.550925926` days
+  - Years: `754837.550925926 ÷ 365.25` = `2066` years
 - **8-Day Week Calculations:**
-  - Day in year: `754837.550925926 % 365.25` ≈ `231.051`
-  - Week of year: `int(231.051 / 8)` = `28` weeks
-  - Day of week: `int(754837.550925926) % 8` = `5`
+  - Day in year: `754837.550925926 mod 365.25` ≈ `231.051`
+  - Week of year: `231.051 ÷ 8` = `28` weeks
+  - Day of week: `754837.550925926 mod 8` = `5`
   - Fractional day: Extract decimal part `0.550925926` from `754837.550925926`
   - Multiply by 4096: `0.550925926 * 4096` ≈ `2256`
 - **Octal Formatting:** 
