@@ -260,14 +260,14 @@
     <h2>Implementation</h2>
     <p>The encoding process involves the following steps:</p>
     <ol start="0">
-      <li>Calculate the Unix timestamp in milliseconds</li>
-      <li>Apply Caesar epoch offset and Prime Meridian adjustments</li>
-      <li>Convert the milliseconds to fractional days since Caesar's death</li>
-      <li>Calculate years using 365.25 days per year</li>
-      <li>Calculate day within year, then week within year (÷8) and day within 8-day week</li>
-      <li>Calculate fractional day component (x4096 for octal precision)</li>
-      <li>Format all components in octal with proper digit counts</li>
-      <li>Combine, reverse, and truncate to 8 characters</li>
+      <li>Get Unix timestamp in milliseconds</li>
+      <li>Add Caesar epoch offset and Prime Meridian adjustment</li>
+      <li>Convert to fractional days since Caesar</li>
+      <li>Extract years via division by 365.25</li>
+      <li>Calculate week and day within 8-day cycle</li>
+      <li>Extract fractional part for sub-day precision</li>
+      <li>Convert each component to octal</li>
+      <li>Concatenate, reverse, truncate to 8 chars</li>
     </ol>
 
     <h2>Example</h2>
@@ -286,15 +286,15 @@
       </li>
       <li><strong>Conversion:</strong>
         <ul>
-          <li>Days since Caesar: <code>65217964400000 / 86400000</code> ≈ <code>754837.550925926</code> days</li>
-          <li>Years: <code>int(754837.550925926 / 365.25)</code> = <code>2066</code> years</li>
+          <li>Days since Caesar: <code>65217964400000 ÷ 86400000</code> ≈ <code>754837.550925926</code> days</li>
+          <li>Years: <code>754837.550925926 ÷ 365.25</code> = <code>2066</code> years</li>
         </ul>
       </li>
       <li><strong>8-Day Week Calculations:</strong>
         <ul>
-          <li>Day in year: <code>754837.550925926 % 365.25</code> ≈ <code>231.051</code></li>
-          <li>Week of year: <code>int(231.051 / 8)</code> = <code>28</code> weeks</li>
-          <li>Day of week: <code>int(754837.550925926) % 8</code> = <code>5</code></li>
+          <li>Day in year: <code>754837.550925926 mod 365.25</code> ≈ <code>231.051</code></li>
+          <li>Week of year: <code>231.051 ÷ 8</code> = <code>28</code> weeks</li>
+          <li>Day of week: <code>754837.550925926 mod 8</code> = <code>5</code></li>
           <li>Fractional day: Extract decimal part <code>0.550925926</code> from <code>754837.550925926</code></li>
           <li>Multiply by 4096: <code>0.550925926 * 4096</code> ≈ <code>2256</code></li>
         </ul>
