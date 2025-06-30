@@ -321,39 +321,67 @@
 <div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
 </div>
 <script>
+const MS_PER_DAY = 86400000;
+const DAYS_PER_YEAR = 365.25;
+const PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000;
+const CAESAR_JDN = 1705426;
+const UNIX_JDN = 2440588;
+const CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY;
 
-  const MS_PER_DAY = 86400000;
-  const DAYS_PER_YEAR = 365.25;
-  const PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000;
-  const CAESAR_JDN = 1705426;
-  const UNIX_JDN = 2440588;
-  const CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY;
+function to_ucy(unix_ms = undefined) {
+    const now_ms = Date.now();
+    const ms_since_caesar = (unix_ms === undefined ? now_ms : unix_ms) + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
+    const days_since_caesar = ms_since_caesar / MS_PER_DAY;
 
-  function toOrbeat8(unixMs) {
-    if (unixMs === undefined) {
-      unixMs = Date.now();
-    }
+    const days = Math.floor(days_since_caesar);
+    const frac = days_since_caesar - days;
     
-    const msSinceCaesar = unixMs + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
-    const daysSinceCaesar = msSinceCaesar / MS_PER_DAY;
-    const dayInYear = daysSinceCaesar % DAYS_PER_YEAR;
-    const years = Math.floor(daysSinceCaesar / DAYS_PER_YEAR);
-    const weeks = Math.floor(dayInYear / 8);
-    const days = Math.floor(daysSinceCaesar) % 8;
-    const fracs = Math.floor((daysSinceCaesar % 1) * 4096);
-    
-    const orbeat = `${years.toString(8)}${weeks.toString(8).padStart(2, '0')}${days.toString(8)}${fracs.toString(8).padStart(4, '0')}`;
+    const day_in_year = days % DAYS_PER_YEAR;
+
+    const years_int = Math.floor(days / DAYS_PER_YEAR);
+    const weeks_int = Math.floor(day_in_year / 8);
+    const days_int = Math.floor(days % 8);
+    const frac_int = Math.floor(frac * 4096);
+
+    const ucy = `${years_int.toString(8)}_${weeks_int.toString(8)}_${days_int.toString(8)}.${frac_int.toString(8).padStart(4, '0')}`.replace("-", "0");
+    return ucy;
+}
+
+function to_orbeat8(unix_ms = undefined) {
+    const now_ms = Date.now();
+    const effective_unix_ms = (unix_ms === undefined ? now_ms : unix_ms);
+    const ms_since_caesar = effective_unix_ms + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
+    const days_since_caesar = ms_since_caesar / MS_PER_DAY;
+    const days = Math.floor(days_since_caesar);
+    const frac = days_since_caesar - days;
+    const day_in_year = days % DAYS_PER_YEAR;
+    const years_int = Math.floor(days / DAYS_PER_YEAR);
+    const weeks_int = Math.floor(day_in_year / 8);
+    const days_int = Math.floor(days % 8);
+    const frac_int = Math.floor(frac * 4096);
+    const orbeat = `${years_int.toString(8)}${weeks_int.toString(8).padStart(2, '0')}${days_int.toString(8)}${frac_int.toString(8).padStart(4, '0')}`;
     return orbeat.split('').reverse().join('').substring(0, 8);
-  }
+}
 
-  function calculateOctalTime() {
-    return toOrbeat8();
-  }
+function to_eastern() {
+    const options = {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+        timeZoneName: 'short'
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(new Date());
+}
 
   function updateTime() {
     const now = new Date();
     document.getElementById('human-time').textContent = `Human Date Time: ${now.toUTCString()}`;
-    const octalTime = calculateOctalTime();
+    const octalTime = to_orbeat8();
     document.getElementById('octal-time').textContent = octalTime;
   }
 
