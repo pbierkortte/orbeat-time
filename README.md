@@ -52,29 +52,40 @@ The encoding process involves the following steps:
 
 ## Example
 
-The encoding process:
+Here is a by-hand calculation using the Unix timestamp `1700000000000`:
 
-- **Input:**
-  - Unix timestamp in milliseconds (e.g., `1700000000000`)
-- **Apply Epoch and Timezone Adjustments:**
-  - Add Caesar offset: `1700000000000 + 63517996800000 = 65217996800000`
-  - Apply Prime Meridian: `65217996800000 + -32400000 = 65217964400000`
-- **Conversion:** 
-  - Days since Caesar: `65217964400000 ÷ 86400000` ≈ `754837.550925926` days
-  - Years: `754837.550925926 ÷ 365.25` = `2066` years
-- **8-Day Week Calculations:**
-  - Day in year: `754837.550925926 mod 365.25` ≈ `231.051`
-  - Week of year: `231.051 ÷ 8` = `28` weeks
-  - Day of week: `754837.550925926 mod 8` = `5`
-  - Fractional day: Extract decimal part `0.550925926` from `754837.550925926`
-  - Multiply by 4096: `0.550925926 * 4096` ≈ `2256`
-- **Octal Formatting:** 
-  - Years: `2066` → octal = `4022`
-  - Week: `28` → octal = `34` (2 digits)
-  - Day: `5` → octal = `5`
-  - Fraction: `2256` → octal = `4320` (4 digits)
-- **Concatenation and Reversal:**
-  - Combined: `4022` + `34` + `5` + `4320` → `40223454320`
-  - Reversed: `02345432204`
-  - Truncated to 8 chars: `02345432`
-- **Output:** `02345432`
+- **Input Milliseconds:** `1700000000000`
+
+- **Step 1: Adjust for Epoch and Timezone**
+  - Start with the input timestamp: `1700000000000`
+  - Add the Caesar epoch offset: `+ 63517996800000`
+  - Add the Prime Meridian offset: `+ (-32400000)`
+  - **Resulting Milliseconds:** `65217964400000`
+
+- **Step 2: Convert to Days**
+  - Divide by the number of milliseconds in a day: `65217964400000 / 86400000`
+  - **Result in Days:** `754837.5509259259`
+
+- **Step 3: Calculate Year, Week, and Day**
+  - **Year:** `floor(754837.5509259259 / 365.25)` = `2066`
+  - **Day of Year:** `floor(754837.5509259259 % 365.25)` = `231`
+  - **Week of Year:** `floor(231 / 8)` = `28`
+  - **Day of Week:** `floor(754837.5509259259) % 8` = `5`
+
+- **Step 4: Calculate the Fractional Part**
+  - Take the decimal part from Step 2: `0.5509259259`
+  - Multiply by 8 to the power of 4: `0.5509259259 * 4096`
+  - **Resulting Fraction:** `2256.500000...` (we take the floor: `2256`)
+
+- **Step 5: Convert to Octal**
+  - Year `2066` = `4022` in octal
+  - Week `28` = `34` in octal
+  - Day `5` = `5` in octal
+  - Fraction `2256` = `4320` in octal
+
+- **Step 6: Combine and Finalize**
+  - Concatenate the octal values: `4022` + `34` + `5` + `4320` = `40223454320`
+  - Reverse the string: `02345432204`
+  - Truncate to the first 8 characters: `02345432`
+
+- **Final Output:** `02345432`
