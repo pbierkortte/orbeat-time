@@ -271,50 +271,54 @@
     </ol>
 
     <h2>Example</h2>
-    <p>The encoding process:</p>
+    <p>Here is a by-hand calculation using the Unix timestamp `1700000000000`:</p>
     <ul>
-      <li><strong>Input:</strong>
+      <li><strong>Input Milliseconds:</strong> `1700000000000`</li>
+      <li><strong>Step 1: Adjust for Epoch and Timezone</strong>
         <ul>
-          <li>Unix timestamp in milliseconds (e.g., <code>1700000000000</code>)</li>
+          <li>Start with the input timestamp: `1700000000000`</li>
+          <li>Add the Caesar epoch offset: `+ 63517996800000`</li>
+          <li>Add the Prime Meridian offset: `+ (-32400000)`</li>
+          <li><strong>Resulting Milliseconds:</strong> `65217964400000`</li>
         </ul>
       </li>
-      <li><strong>Apply Epoch and Timezone Adjustments:</strong>
+      <li><strong>Step 2: Convert to Days</strong>
         <ul>
-          <li>Add Caesar offset: <code>1700000000000 + 63517996800000 = 65217996800000</code></li>
-          <li>Apply Prime Meridian: <code>65217996800000 + -32400000 = 65217964400000</code></li>
+          <li>Divide by the number of milliseconds in a day: `65217964400000 / 86400000`</li>
+          <li><strong>Result in Days:</strong> `754837.5509259259`</li>
         </ul>
       </li>
-      <li><strong>Conversion:</strong>
+      <li><strong>Step 3: Calculate Year, Week, and Day</strong>
         <ul>
-          <li>Days since Caesar: <code>65217964400000 ÷ 86400000</code> ≈ <code>754837.550925926</code> days</li>
-          <li>Years: <code>754837.550925926 ÷ 365.25</code> = <code>2066</code> years</li>
+          <li><strong>Year:</strong> `floor(754837.5509259259 / 365.25)` = `2066`</li>
+          <li><strong>Day of Year:</strong> `floor(754837.5509259259 % 365.25)` = `231`</li>
+          <li><strong>Week of Year:</strong> `floor(231 / 8)` = `28`</li>
+          <li><strong>Day of Week:</strong> `floor(754837.5509259259) % 8` = `5`</li>
         </ul>
       </li>
-      <li><strong>8-Day Week Calculations:</strong>
+      <li><strong>Step 4: Calculate the Fractional Part</strong>
         <ul>
-          <li>Day in year: <code>754837.550925926 mod 365.25</code> ≈ <code>231.051</code></li>
-          <li>Week of year: <code>231.051 ÷ 8</code> = <code>28</code> weeks</li>
-          <li>Day of week: <code>754837.550925926 mod 8</code> = <code>5</code></li>
-          <li>Fractional day: Extract decimal part <code>0.550925926</code> from <code>754837.550925926</code></li>
-          <li>Multiply by 4096: <code>0.550925926 * 4096</code> ≈ <code>2256</code></li>
+          <li>Take the decimal part from Step 2: `0.5509259259`</li>
+          <li>Multiply by 8 to the power of 4: `0.5509259259 * 4096`</li>
+          <li><strong>Resulting Fraction:</strong> `2256.500000...` (we take the floor: `2256`)</li>
         </ul>
       </li>
-      <li><strong>Octal Formatting:</strong>
+      <li><strong>Step 5: Convert to Octal</strong>
         <ul>
-          <li>Years: <code>2066</code> → octal = <code>4022</code></li>
-          <li>Week: <code>28</code> → octal = <code>34</code> (2 digits)</li>
-          <li>Day: <code>5</code> → octal = <code>5</code></li>
-          <li>Fraction: <code>2256</code> → octal = <code>4320</code> (4 digits)</li>
+          <li>Year `2066` = `4022` in octal</li>
+          <li>Week `28` = `34` in octal</li>
+          <li>Day `5` = `5` in octal</li>
+          <li>Fraction `2256` = `4320` in octal</li>
         </ul>
       </li>
-      <li><strong>Concatenation and Reversal:</strong>
+      <li><strong>Step 6: Combine and Finalize</strong>
         <ul>
-          <li>Combined: <code>4022</code> + <code>34</code> + <code>5</code> + <code>4320</code> → <code>40223454320</code></li>
-          <li>Reversed: <code>02345432204</code></li>
-          <li>Truncated to 8 chars: <code>02345432</code></li>
+          <li>Concatenate the octal values: `4022` + `34` + `5` + `4320` = `40223454320`</li>
+          <li>Reverse the string: `02345432204`</li>
+          <li>Truncate to the first 8 characters: `02345432`</li>
         </ul>
       </li>
-      <li><strong>Output:</strong> <code>02345432</code></li>
+      <li><strong>Final Output:</strong> `02345432`</li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
@@ -328,60 +332,55 @@ const CAESAR_JDN = 1705426;
 const UNIX_JDN = 2440588;
 const CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY;
 
-function to_ucy(unix_ms = undefined) {
-    const now_ms = Date.now();
-    const ms_since_caesar = (unix_ms === undefined ? now_ms : unix_ms) + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
+function _parts_from_ms(unix_ms = null) {
+    if (unix_ms === null) {
+        unix_ms = Date.now();
+    }
+
+    const ms_since_caesar = unix_ms + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
     const days_since_caesar = ms_since_caesar / MS_PER_DAY;
 
     const days = Math.floor(days_since_caesar);
     const frac = days_since_caesar - days;
+
+    const year_int = Math.floor(days / DAYS_PER_YEAR);
+    const day_in_year = Math.floor(days % DAYS_PER_YEAR);
     
-    const day_in_year = days % DAYS_PER_YEAR;
+    const week_int = Math.floor(day_in_year / 8);
+    const day_int = Math.floor(days % 8);
+    const frac_int = Math.floor(frac * Math.pow(8, 4));
 
-    const years_int = Math.floor(days / DAYS_PER_YEAR);
-    const weeks_int = Math.floor(day_in_year / 8);
-    const days_int = Math.floor(days % 8);
-    const frac_int = Math.floor(frac * 4096);
-
-    const ucy = `${years_int.toString(8)}_${weeks_int.toString(8)}_${days_int.toString(8)}.${frac_int.toString(8).padStart(4, '0')}`.replace("-", "0");
-    return ucy;
+    return [year_int, week_int, day_int, frac_int];
 }
 
-function to_orbeat8(unix_ms = undefined) {
-    const now_ms = Date.now();
-    const effective_unix_ms = (unix_ms === undefined ? now_ms : unix_ms);
-    const ms_since_caesar = effective_unix_ms + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
-    const days_since_caesar = ms_since_caesar / MS_PER_DAY;
-    const days = Math.floor(days_since_caesar);
-    const frac = days_since_caesar - days;
-    const day_in_year = days % DAYS_PER_YEAR;
-    const years_int = Math.floor(days / DAYS_PER_YEAR);
-    const weeks_int = Math.floor(day_in_year / 8);
-    const days_int = Math.floor(days % 8);
-    const frac_int = Math.floor(frac * 4096);
-    const orbeat = `${years_int.toString(8)}${weeks_int.toString(8).padStart(2, '0')}${days_int.toString(8)}${frac_int.toString(8).padStart(4, '0')}`;
+function toUcy(unix_ms = null) {
+    const [years_int, weeks_int, days_int, frac_int] = _parts_from_ms(unix_ms);
+    
+    const year_oct = years_int.toString(8).padStart(4, '0');
+    const week_oct = weeks_int.toString(8).padStart(2, '0');
+    const day_oct = days_int.toString(8);
+    const frac_oct = frac_int.toString(8).padStart(4, '0');
+
+    const ucy = `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`;
+    return ucy.replace("-", "0");
+}
+
+function toOrbeat8(unix_ms = null) {
+    const [years_int, weeks_int, days_int, frac_int] = _parts_from_ms(unix_ms);
+
+    const year_oct = years_int.toString(8);
+    const week_oct = weeks_int.toString(8).padStart(2, '0');
+    const day_oct = days_int.toString(8);
+    const frac_oct = frac_int.toString(8).padStart(4, '0');
+
+    const orbeat = `${year_oct}${week_oct}${day_oct}${frac_oct}`;
     return orbeat.split('').reverse().join('').substring(0, 8);
-}
-
-function to_eastern() {
-    const options = {
-        timeZone: 'America/New_York',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-        timeZoneName: 'short'
-    };
-    return new Intl.DateTimeFormat('en-US', options).format(new Date());
 }
 
   function updateTime() {
     const now = new Date();
     document.getElementById('human-time').textContent = `Human Date Time: ${now.toUTCString()}`;
-    const octalTime = to_orbeat8();
+    const octalTime = toOrbeat8();
     document.getElementById('octal-time').textContent = octalTime;
   }
 
