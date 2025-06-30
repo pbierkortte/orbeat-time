@@ -243,7 +243,7 @@
       <li>8-day week structure following the Roman nundinal market cycle</li>
       <li>Fixed Eastern timezone Prime Meridian adjustment for natural day boundaries</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
-      <li>Used 365.25 days per year, which is the Julian calendar standard</li>
+      <li>Used 365.2425 days per year, which is the Gregorian calendar standard</li>
       <li>Reversal and truncation to 8 characters for cryptic output</li>
     </ul>
 
@@ -263,7 +263,7 @@
       <li>Get Unix timestamp in milliseconds</li>
       <li>Add Caesar epoch offset and Prime Meridian adjustment</li>
       <li>Convert to fractional days since Caesar</li>
-      <li>Extract years via division by 365.25</li>
+      <li>Extract years via division by 365.2425</li>
       <li>Calculate week and day within 8-day cycle</li>
       <li>Extract fractional part for sub-day precision</li>
       <li>Convert each component to octal</li>
@@ -290,8 +290,8 @@
       </li>
       <li><strong>Step 3: Calculate Year, Week, and Day</strong>
         <ul>
-          <li><strong>Year:</strong> `floor(754837.5509259259 / 365.25)` = `2066`</li>
-          <li><strong>Day of Year:</strong> `floor(754837.5509259259 % 365.25)` = `231`</li>
+          <li><strong>Year:</strong> `floor(754837.5509259259 / 365.2425)` = `2067`</li>
+          <li><strong>Day of Year:</strong> `floor(754837.5509259259 % 365.2425)` = `232`</li>
           <li><strong>Week of Year:</strong> `floor(231 / 8)` = `28`</li>
           <li><strong>Day of Week:</strong> `floor(754837.5509259259) % 8` = `5`</li>
         </ul>
@@ -326,7 +326,7 @@
 </div>
 <script>
 const MS_PER_DAY = 86400000;
-const DAYS_PER_YEAR = 365.25;
+const DAYS_PER_YEAR = 365.2425;
 const PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000;
 const CAESAR_JDN = 1705426;
 const UNIX_JDN = 2440588;
