@@ -30,7 +30,7 @@ def to_ucy(unix_ms=None):
 
     days, frac = divmod(days_since_caesar, 1)
     day_in_year = days % DAYS_PER_YEAR
-    
+
     years_int = int(days / DAYS_PER_YEAR)
     weeks_int = int(day_in_year / 8)
     days_int = int(days % 8)
@@ -59,12 +59,12 @@ def to_orbeat8(unix_ms=None):
 
     days, frac = divmod(days_since_caesar, 1)
     day_in_year = days % DAYS_PER_YEAR
-    
+
     years_int = int(days / DAYS_PER_YEAR)
     weeks_int = int(day_in_year / 8)
     days_int = int(days % 8)
     frac_int = int(frac * 4096)
-    
+
     orbeat = f"{years_int:o}{weeks_int:02o}{days_int:o}{frac_int:04o}"[::-1][:8]
     return orbeat
 
