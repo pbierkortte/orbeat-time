@@ -67,7 +67,7 @@ Here is a by-hand calculation using the Unix timestamp `1700000000000`:
   - **Result in Days:** `754837.5509259259`
 
 - **Step 3: Calculate Year, Week, and Day**
-  - **Year:** `floor(754837.5509259259 / 365.2425)` = `2067`
+  - **Year:** `floor(754837.5509259259 / 365.2425)` = `2066`
   - **Day of Year:** `floor(754837.5509259259 % 365.2425)` = `232`
   - **Week of Year:** `floor(231 / 8)` = `28`
   - **Day of Week:** `floor(754837.5509259259) % 8` = `5`
