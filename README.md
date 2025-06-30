@@ -25,7 +25,7 @@ My design decisions include:
 - 8-day week structure following the Roman nundinal market cycle
 - Fixed Eastern timezone Prime Meridian adjustment for natural day boundaries
 - The precision is ~21 seconds roughly in the scale of seconds
-- Used 365.25 days per year, which is the Julian calendar standard
+- Used 365.2425 days per year, which is the Gregorian calendar standard
 - Reversal and truncation to 8 characters for cryptic output
 
 ## Format
@@ -44,7 +44,7 @@ The encoding process involves the following steps:
 0. Get Unix timestamp in milliseconds
 1. Add Caesar epoch offset and Prime Meridian adjustment
 2. Convert to fractional days since Caesar
-3. Extract years via division by 365.25
+3. Extract years via division by 365.2425
 4. Calculate week and day within 8-day cycle
 5. Extract fractional part for sub-day precision
 6. Convert each component to octal
@@ -67,8 +67,8 @@ Here is a by-hand calculation using the Unix timestamp `1700000000000`:
   - **Result in Days:** `754837.5509259259`
 
 - **Step 3: Calculate Year, Week, and Day**
-  - **Year:** `floor(754837.5509259259 / 365.25)` = `2066`
-  - **Day of Year:** `floor(754837.5509259259 % 365.25)` = `231`
+  - **Year:** `floor(754837.5509259259 / 365.2425)` = `2067`
+  - **Day of Year:** `floor(754837.5509259259 % 365.2425)` = `232`
   - **Week of Year:** `floor(231 / 8)` = `28`
   - **Day of Week:** `floor(754837.5509259259) % 8` = `5`
 

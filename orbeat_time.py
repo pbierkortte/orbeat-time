@@ -3,7 +3,7 @@ import zoneinfo
 from datetime import datetime
 
 MS_PER_DAY = 86400000
-DAYS_PER_YEAR = 365.25
+DAYS_PER_YEAR = 365.2425
 PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000
 CAESAR_JDN = 1705426
 UNIX_JDN = 2440588
