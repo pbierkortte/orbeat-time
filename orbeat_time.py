@@ -27,12 +27,16 @@ def to_ucy(unix_ms=None):
     now_ms = int(time.time() * 1000)
     ms_since_caesar = int(unix_ms or now_ms) + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS
     days_since_caesar = ms_since_caesar / MS_PER_DAY
-    day_in_year = days_since_caesar % DAYS_PER_YEAR
-    years = int(days_since_caesar / DAYS_PER_YEAR)
-    weeks = int(day_in_year / 8)
-    days = int(days_since_caesar % 8)
-    fracs = int((days_since_caesar % 1) * 4096)
-    ucy = f"{years:o}_{weeks:o}_{days:o}.{fracs:04o}".replace("-", "0")
+
+    days, frac = divmod(days_since_caesar, 1)
+    day_in_year = days % DAYS_PER_YEAR
+    
+    years_int = int(days / DAYS_PER_YEAR)
+    weeks_int = int(day_in_year / 8)
+    days_int = int(days % 8)
+    frac_int = int(frac * 4096)
+
+    ucy = f"{years_int:o}_{weeks_int:o}_{days_int:o}.{frac_int:04o}".replace("-", "0")
     return ucy
 
 
@@ -52,12 +56,16 @@ def to_orbeat8(unix_ms=None):
     now_ms = int(time.time() * 1000)
     ms_since_caesar = int(unix_ms or now_ms) + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS
     days_since_caesar = ms_since_caesar / MS_PER_DAY
-    day_in_year = days_since_caesar % DAYS_PER_YEAR
-    years = int(days_since_caesar / DAYS_PER_YEAR)
-    weeks = int(day_in_year / 8)
-    days = int(days_since_caesar % 8)
-    fracs = int((days_since_caesar % 1) * 4096)
-    orbeat = f"{years:o}{weeks:02o}{days:o}{fracs:04o}"[::-1][:8]
+
+    days, frac = divmod(days_since_caesar, 1)
+    day_in_year = days % DAYS_PER_YEAR
+    
+    years_int = int(days / DAYS_PER_YEAR)
+    weeks_int = int(day_in_year / 8)
+    days_int = int(days % 8)
+    frac_int = int(frac * 4096)
+    
+    orbeat = f"{years_int:o}{weeks_int:02o}{days_int:o}{frac_int:04o}"[::-1][:8]
     return orbeat
 
 
