@@ -21,9 +21,9 @@ My design decisions include:
 
 - Using little-endian ordering, which is more common in modern computing systems
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic
-- Using Caesar's death as epoch (March 15, 44 BCE) for historical certainty and spring alignment
+- Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment
 - 8-day week structure following the Roman nundinal market cycle
-- Fixed Eastern timezone Prime Meridian adjustment for natural day boundaries
+- Fixed Eastern timezone Dawn adjustment for natural day boundaries
 - The precision is ~21 seconds roughly in the scale of seconds
 - Used 365.2425 days per year, which is the Gregorian calendar standard
 - Reversal and truncation to 8 characters for cryptic output
@@ -31,7 +31,7 @@ My design decisions include:
 ## Format
 
 A concatenated string consisting of:
-- Years since Caesar's death formatted in octal
+- Years since Datum formatted in octal
 - Weeks within the year formatted in octal (2 digits)
 - Days within the 8-day week formatted in octal
 - Fractional day component formatted in octal (4 digits)
@@ -42,8 +42,8 @@ A concatenated string consisting of:
 The encoding process involves the following steps:
 
 0. Get Unix timestamp in milliseconds
-1. Add Caesar epoch offset and Prime Meridian adjustment
-2. Convert to fractional days since Caesar
+1. Add Datum offset and Dawn adjustment
+2. Convert to fractional days since Datum
 3. Extract years via division by 365.2425
 4. Calculate week and day within 8-day cycle
 5. Extract fractional part for sub-day precision
@@ -58,8 +58,8 @@ Here is a by-hand calculation using the Unix timestamp `1700000000000`:
 
 - **Step 1: Adjust for Epoch and Timezone**
   - Start with the input timestamp: `1700000000000`
-  - Add the Caesar epoch offset: `+ 63517996800000`
-  - Add the Prime Meridian offset: `+ (-32400000)`
+  - Add the Datum offset: `+ 63517996800000`
+  - Add the Dawn offset: `+ (-32400000)`
   - **Resulting Milliseconds:** `65217964400000`
 
 - **Step 2: Convert to Days**
