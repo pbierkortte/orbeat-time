@@ -10,7 +10,7 @@ UNIX_JDN = 2440588
 OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS
 
 
-def _parts_from_ms(unix_ms=None):
+def to_parts_from_ms(unix_ms=None):
     """Helper to calculate Orbeat time components from a Unix timestamp."""
     if unix_ms is None:
         unix_ms = int(time.time() * 1000)
@@ -49,7 +49,7 @@ def to_ucy(unix_ms=None):
              - D: Day within the 8-day week (0-7 in octal)
              - FFFF: Fractional part of day (0-7777 in octal)
     """
-    return "%s_%s_%s.%s" % _parts_from_ms(unix_ms)
+    return "%s_%s_%s.%s" % to_parts_from_ms(unix_ms)
 
 
 def to_orbeat8(unix_ms=None):
@@ -65,7 +65,7 @@ def to_orbeat8(unix_ms=None):
              - Reverses the concatenated string and truncates to 8 characters
              - Uses same temporal calculations as UCY but in compressed cryptic format
     """
-    return ("%s%s%s%s" % _parts_from_ms(unix_ms))[::-1][:8]
+    return ("%s%s%s%s" % to_parts_from_ms(unix_ms))[::-1][:8]
 
 
 def to_eastern():
