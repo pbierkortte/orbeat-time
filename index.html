@@ -359,16 +359,12 @@ function _parts_from_ms(unix_ms = null) {
 
 function toUcy(unix_ms = null) {
     const [year_oct, week_oct, day_oct, frac_oct] = _parts_from_ms(unix_ms);
-
-    const ucy = `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`;
-    return ucy;
+    return `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`;
 }
 
 function toOrbeat8(unix_ms = null) {
     const [year_oct, week_oct, day_oct, frac_oct] = _parts_from_ms(unix_ms);
-
-    const orbeat = `${year_oct}${week_oct}${day_oct}${frac_oct}`.split('').reverse().join('').substring(0, 8);
-    return orbeat;
+    return `${year_oct}${week_oct}${day_oct}${frac_oct}`.split('').reverse().join('').substring(0, 8);
 }
 
   function updateTime() {

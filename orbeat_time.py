@@ -49,10 +49,7 @@ def to_ucy(unix_ms=None):
              - D: Day within the 8-day week (0-7 in octal)
              - FFFF: Fractional part of day (0-7777 in octal)
     """
-    year_oct, week_oct, day_oct, frac_oct = _parts_from_ms(unix_ms)
-
-    ucy = f"{year_oct}_{week_oct}_{day_oct}.{frac_oct}"
-    return ucy
+    return "%s_%s_%s.%s" % _parts_from_ms(unix_ms)
 
 
 def to_orbeat8(unix_ms=None):
@@ -68,10 +65,7 @@ def to_orbeat8(unix_ms=None):
              - Reverses the concatenated string and truncates to 8 characters
              - Uses same temporal calculations as UCY but in compressed cryptic format
     """
-    year_oct, week_oct, day_oct, frac_oct = _parts_from_ms(unix_ms)
-
-    orbeat = f"{year_oct}{week_oct}{day_oct}{frac_oct}"[::-1][:8]
-    return orbeat
+    return ("%s%s%s%s" % _parts_from_ms(unix_ms))[::-1][:8]
 
 
 def to_eastern():
