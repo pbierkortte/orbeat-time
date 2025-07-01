@@ -18,7 +18,8 @@ def _parts_from_ms(unix_ms=None):
     ms_since = unix_ms + OFFSET_MS
     days_since = ms_since / MS_PER_DAY
 
-    days, frac = divmod(days_since, 1)
+    days = int(days_since)
+    frac = days_since - days
     day_in_year = int(days % DAYS_PER_YEAR)
 
     year_int = int(days / DAYS_PER_YEAR)
@@ -44,10 +45,14 @@ def to_ucy(unix_ms=None):
              - FFFF: Fractional part of day (0-7777 in octal)
     """
     years_int, weeks_int, days_int, frac_int = _parts_from_ms(unix_ms)
-    ucy = f"{years_int:04o}_{weeks_int:02o}_{days_int:o}.{frac_int:04o}".replace(
-        "-", "0"
-    )
-    return ucy
+
+    year_oct = f"{years_int:04o}"
+    week_oct = f"{weeks_int:02o}"
+    day_oct = f"{days_int:o}"
+    frac_oct = f"{frac_int:04o}"
+
+    ucy = f"{year_oct}_{week_oct}_{day_oct}.{frac_oct}"
+    return ucy.replace("-", "0")
 
 
 def to_orbeat8(unix_ms=None):
@@ -64,8 +69,14 @@ def to_orbeat8(unix_ms=None):
              - Uses same temporal calculations as UCY but in compressed cryptic format
     """
     years_int, weeks_int, days_int, frac_int = _parts_from_ms(unix_ms)
-    orbeat = f"{years_int:o}{weeks_int:02o}{days_int:o}{frac_int:04o}"[::-1][:8]
-    return orbeat
+
+    year_oct = f"{years_int:o}"
+    week_oct = f"{weeks_int:02o}"
+    day_oct = f"{days_int:o}"
+    frac_oct = f"{frac_int:04o}"
+
+    orbeat = f"{year_oct}{week_oct}{day_oct}{frac_oct}"
+    return orbeat[::-1][:8]
 
 
 def to_eastern():
