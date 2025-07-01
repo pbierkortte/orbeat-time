@@ -68,8 +68,8 @@ Here is a by-hand calculation using the Unix timestamp `1700000000000`:
 
 - **Step 3: Calculate Year, Week, and Day**
   - **Year:** `floor(754837.5509259259 / 365.2425)` = `2066`
-  - **Day of Year:** `floor(754837.5509259259 % 365.2425)` = `232`
-  - **Week of Year:** `floor(231 / 8)` = `28`
+  - **Day of Year:** `floor(754837.5509259259 % 365.2425)` = `255`
+  - **Week of Year:** `floor(255 / 8)` = `31`
   - **Day of Week:** `floor(754837.5509259259) % 8` = `5`
 
 - **Step 4: Calculate the Fractional Part**
@@ -79,13 +79,13 @@ Here is a by-hand calculation using the Unix timestamp `1700000000000`:
 
 - **Step 5: Convert to Octal**
   - Year `2066` = `4022` in octal
-  - Week `28` = `34` in octal
+  - Week `31` = `37` in octal
   - Day `5` = `5` in octal
   - Fraction `2256` = `4320` in octal
 
 - **Step 6: Combine and Finalize**
-  - Concatenate the octal values: `4022` + `34` + `5` + `4320` = `40223454320`
-  - Reverse the string: `02345432204`
-  - Truncate to the first 8 characters: `02345432`
+  - Concatenate the octal values: `4022` + `37` + `5` + `4320` = `40223754320`
+  - Reverse the string: `02345732204`
+  - Truncate to the first 8 characters: `02345732`
 
-- **Final Output:** `02345432`
+- **Final Output:** `02345732`

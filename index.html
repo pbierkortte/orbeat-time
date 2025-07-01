@@ -291,8 +291,8 @@
       <li><strong>Step 3: Calculate Year, Week, and Day</strong>
         <ul>
           <li><strong>Year:</strong> `floor(754837.5509259259 / 365.2425)` = `2066`</li>
-          <li><strong>Day of Year:</strong> `floor(754837.5509259259 % 365.2425)` = `232`</li>
-          <li><strong>Week of Year:</strong> `floor(231 / 8)` = `28`</li>
+          <li><strong>Day of Year:</strong> `floor(754837.5509259259 % 365.2425)` = `255`</li>
+          <li><strong>Week of Year:</strong> `floor(255 / 8)` = `31`</li>
           <li><strong>Day of Week:</strong> `floor(754837.5509259259) % 8` = `5`</li>
         </ul>
       </li>
@@ -306,19 +306,19 @@
       <li><strong>Step 5: Convert to Octal</strong>
         <ul>
           <li>Year `2066` = `4022` in octal</li>
-          <li>Week `28` = `34` in octal</li>
+          <li>Week `31` = `37` in octal</li>
           <li>Day `5` = `5` in octal</li>
           <li>Fraction `2256` = `4320` in octal</li>
         </ul>
       </li>
       <li><strong>Step 6: Combine and Finalize</strong>
         <ul>
-          <li>Concatenate the octal values: `4022` + `34` + `5` + `4320` = `40223454320`</li>
-          <li>Reverse the string: `02345432204`</li>
-          <li>Truncate to the first 8 characters: `02345432`</li>
+          <li>Concatenate the octal values: `4022` + `37` + `5` + `4320` = `40223754320`</li>
+          <li>Reverse the string: `02345732204`</li>
+          <li>Truncate to the first 8 characters: `02345732`</li>
         </ul>
       </li>
-      <li><strong>Final Output:</strong> `02345432`</li>
+      <li><strong>Final Output:</strong> `02345732`</li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
