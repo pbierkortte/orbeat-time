@@ -19,13 +19,13 @@ def to_parts_from_ms(unix_ms=None):
     days_since = ms_since / MS_PER_DAY
 
     days = int(days_since)
-    frac = days_since - days
+    frac = abs(days_since - days)
     day_in_year = int(days % DAYS_PER_YEAR)
 
     year_int = int(days / DAYS_PER_YEAR)
-    week_int = int(day_in_year / 8)
-    day_int = int(days % 8)
-    frac_int = int(frac * 8**4)
+    week_int = abs(int(day_in_year / 8))
+    day_int = abs(int(days % 8))
+    frac_int = abs(int(frac * 8**4))
 
     year_oct = f"{year_int:o}".replace("-", "0")
     week_oct = f"{week_int:02o}"

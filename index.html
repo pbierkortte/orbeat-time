@@ -341,15 +341,15 @@ function toPartsFromMs(unix_ms = null) {
     const days_since = ms_since / MS_PER_DAY;
 
     const days = Math.floor(days_since);
-    const frac = days_since - days;
+    const frac = Math.abs(days_since - days);
     const day_in_year = Math.floor(days % DAYS_PER_YEAR);
 
     const year_int = Math.floor(days / DAYS_PER_YEAR);
-    const week_int = Math.floor(day_in_year / 8);
-    const day_int = Math.floor(days % 8);
-    const frac_int = Math.floor(frac * 8**4);
+    const week_int = Math.abs(Math.floor(day_in_year / 8));
+    const day_int = Math.abs(Math.floor(days % 8));
+    const frac_int = Math.abs(Math.floor(frac * 8**4));
 
-    const year_oct = year_int.toString(8).replace("-", "0").padStart(4, '0');
+    const year_oct = year_int.toString(8).replace("-", "0");
     const week_oct = week_int.toString(8).padStart(2, '0');
     const day_oct = day_int.toString(8).padStart(1, '0');
     const frac_oct = frac_int.toString(8).padStart(4, '0');
