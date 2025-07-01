@@ -342,14 +342,12 @@ function _parts_from_ms(unix_ms = null) {
 
     const days = Math.floor(days_since);
     const frac = days_since - days;
-
     const day_in_year = Math.floor(days % DAYS_PER_YEAR);
 
     const year_int = Math.floor(days / DAYS_PER_YEAR);
-    
     const week_int = Math.floor(day_in_year / 8);
     const day_int = Math.floor(days % 8);
-    const frac_int = Math.floor(frac * Math.pow(8, 4));
+    const frac_int = Math.floor(frac * 8**4);
 
     return [year_int, week_int, day_int, frac_int];
 }
