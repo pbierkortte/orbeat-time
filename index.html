@@ -329,8 +329,8 @@ const MS_PER_DAY = 86400000;
 const DAYS_PER_YEAR = 365.2425;
 const PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000;
 const CAESAR_JDN = 1705426;
-const UNIX_JDN = 2440588;
-const CAESAR_OFFSET_MS = (UNIX_JDN - CAESAR_JDN) * MS_PER_DAY;
+const UNIX_EPOCH_JDN = 2440588;
+const CAESAR_OFFSET_MS = (UNIX_EPOCH_JDN - CAESAR_JDN) * MS_PER_DAY;
 
 function _parts_from_ms(unix_ms = null) {
     if (unix_ms === null) {
