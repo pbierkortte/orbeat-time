@@ -7,7 +7,7 @@ DAYS_PER_YEAR = 365.2425
 DAWN_MS = -9 * 60 * 60 * 1000
 DATUM_JDN = 1705426
 UNIX_JDN = 2440588
-DATUM_OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY
+OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS
 
 
 def _parts_from_ms(unix_ms=None):
@@ -15,14 +15,13 @@ def _parts_from_ms(unix_ms=None):
     if unix_ms is None:
         unix_ms = int(time.time() * 1000)
 
-    ms_since_datum = unix_ms + DATUM_OFFSET_MS + DAWN_MS
-    days_since_datum = ms_since_datum / MS_PER_DAY
+    ms_since = unix_ms + OFFSET_MS
+    days_since = ms_since / MS_PER_DAY
 
-    days, frac = divmod(days_since_datum, 1)
-
-    year_int = int(days / DAYS_PER_YEAR)
+    days, frac = divmod(days_since, 1)
     day_in_year = int(days % DAYS_PER_YEAR)
 
+    year_int = int(days / DAYS_PER_YEAR)
     week_int = int(day_in_year / 8)
     day_int = int(days % 8)
     frac_int = int(frac * 8**4)

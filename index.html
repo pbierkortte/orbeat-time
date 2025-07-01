@@ -330,21 +330,22 @@ const DAYS_PER_YEAR = 365.2425;
 const DAWN_MS = -9 * 60 * 60 * 1000;
 const DATUM_JDN = 1705426;
 const UNIX_JDN = 2440588;
-const DATUM_OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY;
+const OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS;
 
 function _parts_from_ms(unix_ms = null) {
     if (unix_ms === null) {
         unix_ms = Date.now();
     }
 
-    const ms_since_datum = unix_ms + DATUM_OFFSET_MS + DAWN_MS;
-    const days_since_datum = ms_since_datum / MS_PER_DAY;
+    const ms_since = unix_ms + OFFSET_MS;
+    const days_since = ms_since / MS_PER_DAY;
 
-    const days = Math.floor(days_since_datum);
-    const frac = days_since_datum - days;
+    const days = Math.floor(days_since);
+    const frac = days_since - days;
+
+    const day_in_year = Math.floor(days % DAYS_PER_YEAR);
 
     const year_int = Math.floor(days / DAYS_PER_YEAR);
-    const day_in_year = Math.floor(days % DAYS_PER_YEAR);
     
     const week_int = Math.floor(day_in_year / 8);
     const day_int = Math.floor(days % 8);
