@@ -349,7 +349,7 @@ function _parts_from_ms(unix_ms = null) {
     const day_int = Math.floor(days % 8);
     const frac_int = Math.floor(frac * 8**4);
 
-    const year_oct = year_int.toString(8).padStart(4, '0');
+    const year_oct = year_int.toString(8).replace("-", "0").padStart(4, '0');
     const week_oct = week_int.toString(8).padStart(2, '0');
     const day_oct = day_int.toString(8).padStart(1, '0');
     const frac_oct = frac_int.toString(8).padStart(4, '0');
@@ -360,7 +360,7 @@ function _parts_from_ms(unix_ms = null) {
 function toUcy(unix_ms = null) {
     const [year_oct, week_oct, day_oct, frac_oct] = _parts_from_ms(unix_ms);
 
-    const ucy = `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`.replace("-", "0");
+    const ucy = `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`;
     return ucy;
 }
 
