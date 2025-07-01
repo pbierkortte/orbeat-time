@@ -4,10 +4,10 @@ from datetime import datetime
 
 MS_PER_DAY = 86400000
 DAYS_PER_YEAR = 365.2425
-PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000
-CAESAR_JDN = 1705426
-UNIX_EPOCH_JDN = 2440588
-CAESAR_OFFSET_MS = (UNIX_EPOCH_JDN - CAESAR_JDN) * MS_PER_DAY
+DAWN_MS = -9 * 60 * 60 * 1000
+DATUM_JDN = 1705426
+UNIX_JDN = 2440588
+DATUM_OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY
 
 
 def _parts_from_ms(unix_ms=None):
@@ -15,10 +15,10 @@ def _parts_from_ms(unix_ms=None):
     if unix_ms is None:
         unix_ms = int(time.time() * 1000)
 
-    ms_since_caesar = unix_ms + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS
-    days_since_caesar = ms_since_caesar / MS_PER_DAY
+    ms_since_datum = unix_ms + DATUM_OFFSET_MS + DAWN_MS
+    days_since_datum = ms_since_datum / MS_PER_DAY
 
-    days, frac = divmod(days_since_caesar, 1)
+    days, frac = divmod(days_since_datum, 1)
 
     year_int = int(days / DAYS_PER_YEAR)
     day_in_year = int(days % DAYS_PER_YEAR)
@@ -39,7 +39,7 @@ def to_ucy(unix_ms=None):
 
     Returns:
         str: UCY format as "YYYY_WW_D.FFFF" where:
-             - YYYY: Years after Ceasar (Octal, 0-prefix for pre-epoch)
+             - YYYY: Year number (in octal)
              - WW: Week number within the year (0-45 in octal)
              - D: Day within the 8-day week (0-7 in octal)
              - FFFF: Fractional part of day (0-7777 in octal)

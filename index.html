@@ -239,9 +239,9 @@
     <ul>
       <li>Using little-endian ordering, which is more common in modern computing systems</li>
       <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic</li>
-      <li>Using Caesar's death as epoch (March 15, 44 BCE) for historical certainty and spring alignment</li>
+      <li>Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment</li>
       <li>8-day week structure following the Roman nundinal market cycle</li>
-      <li>Fixed Eastern timezone Prime Meridian adjustment for natural day boundaries</li>
+      <li>Fixed Eastern timezone Dawn adjustment for natural day boundaries</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
       <li>Used 365.2425 days per year, which is the Gregorian calendar standard</li>
       <li>Reversal and truncation to 8 characters for cryptic output</li>
@@ -250,7 +250,7 @@
     <h2>Format</h2>
     <p>A concatenated string consisting of:</p>
     <ul>
-      <li>Years since Caesar's death formatted in octal</li>
+      <li>Years since Datum formatted in octal</li>
       <li>Weeks within the year formatted in octal (2 digits)</li>
       <li>Days within the 8-day week formatted in octal</li>
       <li>Fractional day component formatted in octal (4 digits)</li>
@@ -261,8 +261,8 @@
     <p>The encoding process involves the following steps:</p>
     <ol start="0">
       <li>Get Unix timestamp in milliseconds</li>
-      <li>Add Caesar epoch offset and Prime Meridian adjustment</li>
-      <li>Convert to fractional days since Caesar</li>
+      <li>Add Datum offset and Dawn adjustment</li>
+      <li>Convert to fractional days since Datum</li>
       <li>Extract years via division by 365.2425</li>
       <li>Calculate week and day within 8-day cycle</li>
       <li>Extract fractional part for sub-day precision</li>
@@ -277,8 +277,8 @@
       <li><strong>Step 1: Adjust for Epoch and Timezone</strong>
         <ul>
           <li>Start with the input timestamp: `1700000000000`</li>
-          <li>Add the Caesar epoch offset: `+ 63517996800000`</li>
-          <li>Add the Prime Meridian offset: `+ (-32400000)`</li>
+          <li>Add the Datum offset: `+ 63517996800000`</li>
+          <li>Add the Dawn offset: `+ (-32400000)`</li>
           <li><strong>Resulting Milliseconds:</strong> `65217964400000`</li>
         </ul>
       </li>
@@ -327,21 +327,21 @@
 <script>
 const MS_PER_DAY = 86400000;
 const DAYS_PER_YEAR = 365.2425;
-const PRIME_MERIDIAN_MS = -9 * 60 * 60 * 1000;
-const CAESAR_JDN = 1705426;
-const UNIX_EPOCH_JDN = 2440588;
-const CAESAR_OFFSET_MS = (UNIX_EPOCH_JDN - CAESAR_JDN) * MS_PER_DAY;
+const DAWN_MS = -9 * 60 * 60 * 1000;
+const DATUM_JDN = 1705426;
+const UNIX_JDN = 2440588;
+const DATUM_OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY;
 
 function _parts_from_ms(unix_ms = null) {
     if (unix_ms === null) {
         unix_ms = Date.now();
     }
 
-    const ms_since_caesar = unix_ms + CAESAR_OFFSET_MS + PRIME_MERIDIAN_MS;
-    const days_since_caesar = ms_since_caesar / MS_PER_DAY;
+    const ms_since_datum = unix_ms + DATUM_OFFSET_MS + DAWN_MS;
+    const days_since_datum = ms_since_datum / MS_PER_DAY;
 
-    const days = Math.floor(days_since_caesar);
-    const frac = days_since_caesar - days;
+    const days = Math.floor(days_since_datum);
+    const frac = days_since_datum - days;
 
     const year_int = Math.floor(days / DAYS_PER_YEAR);
     const day_in_year = Math.floor(days % DAYS_PER_YEAR);
