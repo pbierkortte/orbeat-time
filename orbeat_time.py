@@ -27,7 +27,7 @@ def _parts_from_ms(unix_ms=None):
     day_int = int(days % 8)
     frac_int = int(frac * 8**4)
 
-    year_oct = f"{year_int:04o}"
+    year_oct = f"{year_int:o}".replace("-", "0")
     week_oct = f"{week_int:02o}"
     day_oct = f"{day_int:01o}"
     frac_oct = f"{frac_int:04o}"
@@ -51,7 +51,7 @@ def to_ucy(unix_ms=None):
     """
     year_oct, week_oct, day_oct, frac_oct = _parts_from_ms(unix_ms)
 
-    ucy = f"{year_oct}_{week_oct}_{day_oct}.{frac_oct}".replace("-", "0")
+    ucy = f"{year_oct}_{week_oct}_{day_oct}.{frac_oct}"
     return ucy
 
 
