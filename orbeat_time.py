@@ -10,7 +10,15 @@ DAYS_PER_YEAR = 365.2425
 
 
 def to_parts_from_ms(unix_ms=None):
-    """Helper to calculate Orbeat time components from a Unix timestamp."""
+    """
+    Convert Unix timestamp to time components in octal format.
+    
+    Args:
+        unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
+    
+    Returns:
+        tuple: (year_oct, week_oct, day_oct, frac_oct) - all as octal strings
+    """
     if unix_ms is None:
         unix_ms = int(time.time() * 1000)
 
@@ -36,43 +44,36 @@ def to_parts_from_ms(unix_ms=None):
 
 def to_ucy(unix_ms=None):
     """
-    Converts Unix millisecond timestamp to UCY format.
-
+    Convert Unix timestamp to UCY format: YYYY_WW_D.FFFF
+    
     Args:
-        unix_ms: Unix timestamp in milliseconds. Defaults to current time.
-
+        unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
+    
     Returns:
-        str: UCY format as "YYYY_WW_D.FFFF" where:
-             - YYYY: Year number (in octal)
-             - WW: Week number within the year (0-45 in octal)
-             - D: Day within the 8-day week (0-7 in octal)
-             - FFFF: Fractional part of day (0-7777 in octal)
+        str: Human-readable timestamp
     """
     return "%s_%s_%s.%s" % to_parts_from_ms(unix_ms)
 
 
 def to_orbeat8(unix_ms=None):
     """
-    Converts Unix millisecond timestamp to 8-character Orbeat format.
-
+    Convert Unix timestamp to compact 8-character Orbeat format.
+    
     Args:
-        unix_ms: Unix timestamp in milliseconds. Defaults to current time.
-
+        unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
+    
     Returns:
-        str: Orbeat8 format as 8-character string where:
-             - Concatenates years (octal), weeks (2-digit octal), days (octal), fractions (4-digit octal)
-             - Reverses the concatenated string and truncates to 8 characters
-             - Uses same temporal calculations as UCY but in compressed cryptic format
+        str: 8-character compact timestamp
     """
     return ("%s%s%s%s" % to_parts_from_ms(unix_ms))[::-1][:8]
 
 
 def to_eastern():
     """
-    Converts current time to Eastern timezone format (EST/EDT with daylight saving).
-
+    Get current time in Eastern timezone.
+    
     Returns:
-        str: Eastern format as "YYYY-MM-DD HH:MM AM/PM EST/EDT"
+        str: Current Eastern time in format "YYYY-MM-DD HH:MM AM/PM TZ"
     """
     eastern = zoneinfo.ZoneInfo("America/New_York")
     now_eastern = datetime.now(eastern)
