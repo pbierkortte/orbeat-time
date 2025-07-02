@@ -1,5 +1,4 @@
-import time
-import zoneinfo
+import math, time, zoneinfo
 from datetime import datetime
 
 MS_PER_DAY = 86400000
@@ -18,7 +17,7 @@ def to_parts_from_ms(unix_ms=None):
     ms_since = unix_ms + OFFSET_MS
     days_since = ms_since / MS_PER_DAY
 
-    days = int(days_since)
+    days = math.floor(days_since)
     frac = abs(days_since - days)
     day_in_year = int(days % DAYS_PER_YEAR)
 
