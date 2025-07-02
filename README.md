@@ -52,8 +52,6 @@ The encoding process involves the following steps:
 
 ## Example
 
-Here is a by-hand calculation using the Unix timestamp `1700000000000`:
-
 - **Input Milliseconds:** `1700000000000`
 
 - **Step 1: Adjust for Epoch and Timezone**
