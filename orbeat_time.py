@@ -1,12 +1,12 @@
 import math, time, zoneinfo
 from datetime import datetime
 
-MS_PER_DAY = 86400000
-DAYS_PER_YEAR = 365.2425
-DAWN_MS = -9 * 60 * 60 * 1000
-DATUM_JDN = 1705426
 UNIX_JDN = 2440588
+DATUM_JDN = 1705426
+MS_PER_DAY = 86400000
+DAWN_MS = -9 * 60 * 60 * 1000
 OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS
+DAYS_PER_YEAR = 365.2425
 
 
 def to_parts_from_ms(unix_ms=None):
