@@ -12,10 +12,10 @@ DAYS_PER_YEAR = 365.2425
 def to_parts_from_ms(unix_ms=None):
     """
     Convert Unix timestamp to time components in octal format.
-    
+
     Args:
         unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
-    
+
     Returns:
         tuple: (year_oct, week_oct, day_oct, frac_oct) - all as octal strings
     """
@@ -45,10 +45,10 @@ def to_parts_from_ms(unix_ms=None):
 def to_ucy(unix_ms=None):
     """
     Convert Unix timestamp to UCY format: YYYY_WW_D.FFFF
-    
+
     Args:
         unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
-    
+
     Returns:
         str: Human-readable timestamp
     """
@@ -58,10 +58,10 @@ def to_ucy(unix_ms=None):
 def to_orbeat8(unix_ms=None):
     """
     Convert Unix timestamp to compact 8-character Orbeat format.
-    
+
     Args:
         unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
-    
+
     Returns:
         str: 8-character compact timestamp
     """
@@ -71,7 +71,7 @@ def to_orbeat8(unix_ms=None):
 def to_eastern():
     """
     Get current time in Eastern timezone.
-    
+
     Returns:
         str: Current Eastern time in format "YYYY-MM-DD HH:MM AM/PM TZ"
     """
