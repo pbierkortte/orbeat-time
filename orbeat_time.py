@@ -19,9 +19,7 @@ def to_parts_from_ms(unix_ms=None):
     Returns:
         tuple: (year_oct, week_oct, day_oct, frac_oct) - all as octal strings
     """
-    if unix_ms is None:
-        unix_ms = int(time.time() * 1000)
-
+    unix_ms = unix_ms or time.time() * 1000
     ms_since = unix_ms + OFFSET_MS
     days_since = ms_since / MS_PER_DAY
 
