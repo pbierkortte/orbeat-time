@@ -36,7 +36,6 @@ def to_parts_from_ms(unix_ms=None):
     week_oct = f"{week_int:02o}"
     day_oct = f"{day_int:01o}"
     frac_oct = f"{frac_int:04o}"
-
     return year_oct, week_oct, day_oct, frac_oct
 
 
