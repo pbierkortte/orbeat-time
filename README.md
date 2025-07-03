@@ -19,9 +19,10 @@ I created this project out of intellectual curiosity and as a practical tool. It
 
 My design decisions include:
 
+- Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment
 - Using little-endian ordering, which is more common in modern computing systems
 - Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic
-- Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment
+- Week increments on day rollover or year-end for consistency
 - 8-day week structure following the Roman nundinal market cycle
 - Fixed Eastern timezone Dawn adjustment for natural day boundaries
 - The precision is ~21 seconds roughly in the scale of seconds
@@ -41,14 +42,14 @@ A concatenated string consisting of:
 
 The encoding process involves the following steps:
 
-0. Get Unix timestamp in milliseconds
-1. Add Datum offset and Dawn adjustment
-2. Convert to fractional days since Datum
-3. Extract years via division by 365.2425
-4. Calculate week and day within 8-day cycle
-5. Extract fractional part for sub-day precision
-6. Convert each component to octal
-7. Concatenate, reverse, truncate to 8 chars
+0. Convert Unix timestamp to fractional days since Datum (with timezone adjustment)
+1. Calculate the **Year** (`year_int`) and **Day of the 8-day Week** (`day_int`) from the total day count
+2. Calculate the **Day of the Year** (`day_in_year`), which is the day count within the current Orbeat year
+3. Calculate the **Week of the Year** (`week_int`) by aligning the `day_in_year` with the `day_int`
+4. Extract the **Fractional Part** of the day for sub-day precision
+5. Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations
+6. Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters
+7. Output the final 8-character string.
 
 ## Example
 
@@ -62,28 +63,25 @@ The encoding process involves the following steps:
 
 - **Step 2: Convert to Days**
   - Divide by the number of milliseconds in a day: `65217964400000 / 86400000`
-  - **Result in Days:** `754837.5509259259`
+  - **Result in Days (`days_since`):** `754837.5509259259`
+  - **Integer part (`days`):** `754837`
 
-- **Step 3: Calculate Year, Week, and Day**
-  - **Year:** `floor(754837.5509259259 / 365.2425)` = `2066`
-  - **Day of Year:** `floor(754837.5509259259 % 365.2425)` = `255`
-  - **Week of Year:** `floor(255 / 8)` = `31`
-  - **Day of Week:** `floor(754837.5509259259) % 8` = `5`
+- **Step 3: Calculate Time Components**
+  - **Year:** `floor(754837 / 365.2425)` = `2066`
+  - **Day of Year:** `floor(754837 % 365.2425)` = `245`
+  - **Day of Week:** `floor(754837) % 8` = `5`
+  - **Week of Year:** `max(0, floor((245 - 5) / 8))` = `30`
+  - **Fractional Part:** `floor(0.5509259259 * 8**4)` = `2256`
 
-- **Step 4: Calculate the Fractional Part**
-  - Take the decimal part from Step 2: `0.5509259259`
-  - Multiply by 8 to the power of 4: `0.5509259259 * 4096`
-  - **Resulting Fraction:** `2256.500000...` (we take the floor: `2256`)
+- **Step 4: Convert to Octal**
+  - Year `2066` = `4022`
+  - Week `30` = `36`
+  - Day `5` = `5`
+  - Fraction `2256` = `4320`
 
-- **Step 5: Convert to Octal**
-  - Year `2066` = `4022` in octal
-  - Week `31` = `37` in octal
-  - Day `5` = `5` in octal
-  - Fraction `2256` = `4320` in octal
+- **Step 5: Combine and Finalize**
+  - Concatenate the octal values: `4022` + `36` + `5` + `4320` = `40223654320`
+  - Reverse the string: `02345632204`
+  - Truncate to the first 8 characters: `02345632`
 
-- **Step 6: Combine and Finalize**
-  - Concatenate the octal values: `4022` + `37` + `5` + `4320` = `40223754320`
-  - Reverse the string: `02345732204`
-  - Truncate to the first 8 characters: `02345732`
-
-- **Final Output:** `02345732`
+- **Final Output:** `02345632`
