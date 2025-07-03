@@ -285,17 +285,17 @@
       <li><strong>Step 2: Convert to Days</strong>
         <ul>
           <li>Divide by the number of milliseconds in a day: `65217964400000 / 86400000`</li>
-          <li><strong>Result in Days (`days_since`):</strong> `754837.5509259259`</li>
+          <li><strong>Result in Days (`days_since`):</strong> `754837.550925926`</li>
           <li><strong>Integer part (`days`):</strong> `754837`</li>
         </ul>
       </li>
       <li><strong>Step 3: Calculate Time Components</strong>
         <ul>
-          <li><strong>Year:</strong> `floor(754837 / 365.2425)` = `2066`</li>
-          <li><strong>Day of Year:</strong> `floor(754837 % 365.2425)` = `245`</li>
-          <li><strong>Day of Week:</strong> `floor(754837) % 8` = `5`</li>
-          <li><strong>Week of Year:</strong> `max(0, floor((245 - 5) / 8))` = `30`</li>
-          <li><strong>Fractional Part:</strong> `floor(0.5509259259 * 8**4)` = `2256`</li>
+          <li><strong>Year:</strong> To find the number of years, we take the whole number part of the total days divided by the number of days in a year: `754837 / 365.2425` gives us `2066`</li>
+          <li><strong>Day of Year:</strong> The day of the year is the remainder of the same division, which is `245`</li>
+          <li><strong>Day of Week:</strong> The day of the week is the remainder when the total days are divided by 8: `754837 / 8` leaves a remainder of `5`</li>
+          <li><strong>Week of Year:</strong> To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: `(245 - 5) / 8` gives us `30`</li>
+          <li><strong>Fractional Part:</strong> To get the fractional part of the day, we multiply the decimal part of the `days_since` value by 8 to the power of 4 (4096): `0.550925926 * 4096` gives us `2256`</li>
         </ul>
       </li>
       <li><strong>Step 4: Convert to Octal</strong>
@@ -333,12 +333,12 @@ function toPartsFromMs(unix_ms) {
     const days_since = ms_since / MS_PER_DAY;
 
     const days = Math.floor(days_since);
-    const frac = Math.abs(days_since - days);
+    const frac = days_since - days;
     const day_in_year = Math.trunc(days % DAYS_PER_YEAR);
 
     const year_int = Math.trunc(days / DAYS_PER_YEAR);
-    const day_int = Math.abs(Math.trunc(days % 8));
-    const frac_int = Math.abs(Math.trunc(frac * 8**4));
+    const day_int = Math.trunc(days % 8);
+    const frac_int = Math.trunc(frac * 8**4);
 
     const week_int = Math.max(0, Math.trunc((day_in_year - day_int) / 8));
 
@@ -357,7 +357,8 @@ function toUcy(unix_ms) {
 
 function toOrbeat8(unix_ms) {
     const [year_oct, week_oct, day_oct, frac_oct] = toPartsFromMs(unix_ms);
-    return `${year_oct}${week_oct}${day_oct}${frac_oct}`.split('').reverse().join('').substring(0, 8);
+    const concatenated = `${year_oct}${week_oct}${day_oct}${frac_oct}`;
+    return concatenated.split('').reverse().join('').substring(0, 8);
 }
 
   function updateTime() {

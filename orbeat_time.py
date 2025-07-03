@@ -24,14 +24,14 @@ def to_parts_from_ms(unix_ms=None):
     days_since = ms_since / MS_PER_DAY
 
     days = math.floor(days_since)
-    frac = abs(days_since - days)
+    frac = days_since - days
     day_in_year = int(days % DAYS_PER_YEAR)
 
     year_int = int(days / DAYS_PER_YEAR)
-    day_int = abs(int(days % 8))
-    frac_int = abs(int(frac * 8**4))
+    day_int = int(days % 8)
+    frac_int = int(frac * 8**4)
 
-    week_int = max(0, int((day_in_year - day_int) / 8))
+    week_int = max(0, (day_in_year - day_int) // 8)
 
     year_oct = f"{year_int:o}".replace("-", "0")
     week_oct = f"{week_int:02o}"
@@ -66,19 +66,6 @@ def to_orbeat8(unix_ms=None):
     return ("%s%s%s%s" % to_parts_from_ms(unix_ms))[::-1][:8]
 
 
-def to_eastern():
-    """
-    Get current time in Eastern timezone.
-
-    Returns:
-        str: Current Eastern time in format "YYYY-MM-DD HH:MM AM/PM TZ"
-    """
-    eastern = zoneinfo.ZoneInfo("America/New_York")
-    now_eastern = datetime.now(eastern)
-    return now_eastern.strftime("%Y-%m-%d %I:%M %p %Z")
-
-
 if __name__ == "__main__":
     print(f"{to_ucy()} UCY")
     print(f"{to_orbeat8()} ORB")
-    print(to_eastern())
