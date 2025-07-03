@@ -28,9 +28,10 @@ def to_parts_from_ms(unix_ms=None):
     day_in_year = int(days % DAYS_PER_YEAR)
 
     year_int = int(days / DAYS_PER_YEAR)
-    week_int = abs(int(day_in_year / 8))
     day_int = abs(int(days % 8))
     frac_int = abs(int(frac * 8**4))
+
+    week_int = max(0, int((day_in_year - day_int) / 8))
 
     year_oct = f"{year_int:o}".replace("-", "0")
     week_oct = f"{week_int:02o}"
