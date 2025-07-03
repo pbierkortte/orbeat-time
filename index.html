@@ -237,9 +237,10 @@
     <h2>Design Decisions</h2>
     <p>My design decisions include:</p>
     <ul>
+      <li>Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment</li>
       <li>Using little-endian ordering, which is more common in modern computing systems</li>
       <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic</li>
-      <li>Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment</li>
+      <li>Week increments on day rollover or year-end for consistency</li>
       <li>8-day week structure following the Roman nundinal market cycle</li>
       <li>Fixed Eastern timezone Dawn adjustment for natural day boundaries</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
@@ -260,14 +261,14 @@
     <h2>Implementation</h2>
     <p>The encoding process involves the following steps:</p>
     <ol start="0">
-      <li>Get Unix timestamp in milliseconds</li>
-      <li>Add Datum offset and Dawn adjustment</li>
-      <li>Convert to fractional days since Datum</li>
-      <li>Extract years via division by 365.2425</li>
-      <li>Calculate week and day within 8-day cycle</li>
-      <li>Extract fractional part for sub-day precision</li>
-      <li>Convert each component to octal</li>
-      <li>Concatenate, reverse, truncate to 8 chars</li>
+      <li>Convert Unix timestamp to fractional days since Datum (with timezone adjustment)</li>
+      <li>Calculate the <strong>Year</strong> (`year_int`) and <strong>Day of the 8-day Week</strong> (`day_int`) from the total day count</li>
+      <li>Calculate the <strong>Day of the Year</strong> (`day_in_year`), which is the day count within the current Orbeat year</li>
+      <li>Calculate the <strong>Week of the Year</strong> (`week_int`) by aligning the `day_in_year` with the `day_int`</li>
+      <li>Extract the <strong>Fractional Part</strong> of the day for sub-day precision</li>
+      <li>Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations</li>
+      <li>Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters</li>
+      <li>Output the final 8-character string</li>
     </ol>
 
     <h2>Example</h2>
@@ -284,40 +285,35 @@
       <li><strong>Step 2: Convert to Days</strong>
         <ul>
           <li>Divide by the number of milliseconds in a day: `65217964400000 / 86400000`</li>
-          <li><strong>Result in Days:</strong> `754837.5509259259`</li>
+          <li><strong>Result in Days (`days_since`):</strong> `754837.5509259259`</li>
+          <li><strong>Integer part (`days`):</strong> `754837`</li>
         </ul>
       </li>
-      <li><strong>Step 3: Calculate Year, Week, and Day</strong>
+      <li><strong>Step 3: Calculate Time Components</strong>
         <ul>
-          <li><strong>Year:</strong> `floor(754837.5509259259 / 365.2425)` = `2066`</li>
-          <li><strong>Day of Year:</strong> `floor(754837.5509259259 % 365.2425)` = `255`</li>
-          <li><strong>Week of Year:</strong> `floor(255 / 8)` = `31`</li>
-          <li><strong>Day of Week:</strong> `floor(754837.5509259259) % 8` = `5`</li>
+          <li><strong>Year:</strong> `floor(754837 / 365.2425)` = `2066`</li>
+          <li><strong>Day of Year:</strong> `floor(754837 % 365.2425)` = `245`</li>
+          <li><strong>Day of Week:</strong> `floor(754837) % 8` = `5`</li>
+          <li><strong>Week of Year:</strong> `max(0, floor((245 - 5) / 8))` = `30`</li>
+          <li><strong>Fractional Part:</strong> `floor(0.5509259259 * 8**4)` = `2256`</li>
         </ul>
       </li>
-      <li><strong>Step 4: Calculate the Fractional Part</strong>
+      <li><strong>Step 4: Convert to Octal</strong>
         <ul>
-          <li>Take the decimal part from Step 2: `0.5509259259`</li>
-          <li>Multiply by 8 to the power of 4: `0.5509259259 * 4096`</li>
-          <li><strong>Resulting Fraction:</strong> `2256.500000...` (we take the floor: `2256`)</li>
+          <li>Year `2066` = `4022`</li>
+          <li>Week `30` = `36`</li>
+          <li>Day `5` = `5`</li>
+          <li>Fraction `2256` = `4320`</li>
         </ul>
       </li>
-      <li><strong>Step 5: Convert to Octal</strong>
+      <li><strong>Step 5: Combine and Finalize</strong>
         <ul>
-          <li>Year `2066` = `4022` in octal</li>
-          <li>Week `31` = `37` in octal</li>
-          <li>Day `5` = `5` in octal</li>
-          <li>Fraction `2256` = `4320` in octal</li>
+          <li>Concatenate the octal values: `4022` + `36` + `5` + `4320` = `40223654320`</li>
+          <li>Reverse the string: `02345632204`</li>
+          <li>Truncate to the first 8 characters: `02345632`</li>
         </ul>
       </li>
-      <li><strong>Step 6: Combine and Finalize</strong>
-        <ul>
-          <li>Concatenate the octal values: `4022` + `37` + `5` + `4320` = `40223754320`</li>
-          <li>Reverse the string: `02345732204`</li>
-          <li>Truncate to the first 8 characters: `02345732`</li>
-        </ul>
-      </li>
-      <li><strong>Final Output:</strong> `02345732`</li>
+      <li><strong>Final Output:</strong> `02345632`</li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
@@ -332,7 +328,7 @@ const OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS;
 const DAYS_PER_YEAR = 365.2425;
 
 function toPartsFromMs(unix_ms) {
-    unix_ms = unix_ms ?? Date.now();
+    unix_ms = unix_ms || Date.now();
     const ms_since = unix_ms + OFFSET_MS;
     const days_since = ms_since / MS_PER_DAY;
 
@@ -341,9 +337,10 @@ function toPartsFromMs(unix_ms) {
     const day_in_year = Math.trunc(days % DAYS_PER_YEAR);
 
     const year_int = Math.trunc(days / DAYS_PER_YEAR);
-    const week_int = Math.abs(Math.trunc(day_in_year / 8));
     const day_int = Math.abs(Math.trunc(days % 8));
     const frac_int = Math.abs(Math.trunc(frac * 8**4));
+
+    const week_int = Math.max(0, Math.trunc((day_in_year - day_int) / 8));
 
     const year_oct = year_int.toString(8).replace("-", "0");
     const week_oct = week_int.toString(8).padStart(2, '0');

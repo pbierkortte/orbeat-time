@@ -49,7 +49,7 @@ The encoding process involves the following steps:
 4. Extract the **Fractional Part** of the day for sub-day precision
 5. Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations
 6. Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters
-7. Output the final 8-character string.
+7. Output the final 8-character string
 
 ## Example
 
