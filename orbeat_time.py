@@ -66,6 +66,24 @@ def to_orbeat8(unix_ms=None):
     return ("%s%s%s%s" % to_parts_from_ms(unix_ms))[::-1][:8]
 
 
-if __name__ == "__main__":
+def to_eastern(unix_ms=None):
+    """
+    Get time in Eastern timezone.
+
+    Args:
+        unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
+
+    Returns:
+        str: Eastern time in format "YYYY-MM-DD HH:MM AM/PM TZ"
+    """
+    unix_ms = unix_ms or time.time() * 1000
+
+    eastern = zoneinfo.ZoneInfo("America/New_York")
+    dt = datetime.fromtimestamp(unix_ms / 1000, tz=eastern)
+    return dt.strftime("%Y-%m-%d %I:%M %p %Z")
+
+
+if __name__ == "__main__":  # pragma: no cover
     print(f"{to_ucy()} UCY")
     print(f"{to_orbeat8()} ORB")
+    print(to_eastern())
