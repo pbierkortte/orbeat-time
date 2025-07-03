@@ -273,47 +273,47 @@
 
     <h2>Example</h2>
     <ul>
-      <li><strong>Input Milliseconds:</strong> `1700000000000`</li>
+      <li><strong>Input Milliseconds:</strong> <code>1700000000000</code></li>
       <li><strong>Step 1: Adjust for Epoch and Timezone</strong>
         <ul>
-          <li>Start with the input timestamp: `1700000000000`</li>
-          <li>Add the Datum offset: `+ 63517996800000`</li>
-          <li>Add the Dawn offset: `+ (-32400000)`</li>
-          <li><strong>Resulting Milliseconds:</strong> `65217964400000`</li>
+          <li>Start with the input timestamp: <code>1700000000000</code></li>
+          <li>Add the Datum offset: <code>+ 63517996800000</code></li>
+          <li>Add the Dawn offset: <code>+ (-32400000)</code></li>
+          <li><strong>Resulting Milliseconds:</strong> <code>65217964400000</code></li>
         </ul>
       </li>
       <li><strong>Step 2: Convert to Days</strong>
         <ul>
-          <li>Divide by the number of milliseconds in a day: `65217964400000 / 86400000`</li>
-          <li><strong>Result in Days (`days_since`):</strong> `754837.550925926`</li>
-          <li><strong>Integer part (`days`):</strong> `754837`</li>
+          <li>Divide by the number of milliseconds in a day: <code>65217964400000 / 86400000</code></li>
+          <li><strong>Result in Days (<code>days_since</code>):</strong> <code>754837.550925926</code></li>
+          <li><strong>Integer part (<code>days</code>):</strong> <code>754837</code></li>
         </ul>
       </li>
       <li><strong>Step 3: Calculate Time Components</strong>
         <ul>
-          <li><strong>Year:</strong> To find the number of years, we take the whole number part of the total days divided by the number of days in a year: `754837 / 365.2425` gives us `2066`</li>
-          <li><strong>Day of Year:</strong> The day of the year is the remainder of the same division, which is `245`</li>
-          <li><strong>Day of Week:</strong> The day of the week is the remainder when the total days are divided by 8: `754837 / 8` leaves a remainder of `5`</li>
-          <li><strong>Week of Year:</strong> To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: `(245 - 5) / 8` gives us `30`</li>
-          <li><strong>Fractional Part:</strong> To get the fractional part of the day, we multiply the decimal part of the `days_since` value by 8 to the power of 4 (4096): `0.550925926 * 4096` gives us `2256`</li>
+          <li><strong>Year:</strong> To find the number of years, we take the whole number part of the total days divided by the number of days in a year: <code>754837 / 365.2425</code> gives us <code>2066</code></li>
+          <li><strong>Day of Year:</strong> The day of the year is the remainder of the same division, which is <code>245</code></li>
+          <li><strong>Day of Week:</strong> The day of the week is the remainder when the total days are divided by 8: <code>754837 / 8</code> leaves a remainder of <code>5</code></li>
+          <li><strong>Week of Year:</strong> To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: <code>(245 - 5) / 8</code> gives us <code>30</code></li>
+          <li><strong>Fractional Part:</strong> To get the fractional part of the day, we multiply the decimal part of the <code>days_since</code> value by 8 to the power of 4 (4096): <code>0.550925926 * 4096</code> gives us <code>2256</code></li>
         </ul>
       </li>
       <li><strong>Step 4: Convert to Octal</strong>
         <ul>
-          <li>Year `2066` = `4022`</li>
-          <li>Week `30` = `36`</li>
-          <li>Day `5` = `5`</li>
-          <li>Fraction `2256` = `4320`</li>
+          <li>Year <code>2066</code> = <code>4022</code></li>
+          <li>Week <code>30</code> = <code>36</code></li>
+          <li>Day <code>5</code> = <code>5</code></li>
+          <li>Fraction <code>2256</code> = <code>4320</code></li>
         </ul>
       </li>
       <li><strong>Step 5: Combine and Finalize</strong>
         <ul>
-          <li>Concatenate the octal values: `4022` + `36` + `5` + `4320` = `40223654320`</li>
-          <li>Reverse the string: `02345632204`</li>
-          <li>Truncate to the first 8 characters: `02345632`</li>
+          <li>Concatenate the octal values: <code>4022</code> + <code>36</code> + <code>5</code> + <code>4320</code> = <code>40223654320</code></li>
+          <li>Reverse the string: <code>02345632204</code></li>
+          <li>Truncate to the first 8 characters: <code>02345632</code></li>
         </ul>
       </li>
-      <li><strong>Final Output:</strong> `02345632`</li>
+      <li><strong>Final Output:</strong> <code>02345632</code></li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
