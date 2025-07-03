@@ -1,8 +1,6 @@
 import json
 import argparse
 from datetime import datetime, timezone
-from contextlib import redirect_stdout, redirect_stderr
-from io import StringIO
 from orbeat_time import to_orbeat8
 
 
@@ -34,23 +32,7 @@ def format_output(orbeat, iso, output_format):
     return orbeat
 
 
-def run_cli(*cli_args, is_test=False):
-    if is_test:
-        stdout = StringIO()
-        stderr = StringIO()
-        with redirect_stdout(stdout), redirect_stderr(stderr):
-            try:
-                args = parse_args(cli_args)
-                orbeat, iso = get_orbeat_time()
-                print(format_output(orbeat, iso, args.output))
-            except SystemExit:
-                pass
-        return stdout.getvalue().strip(), stderr.getvalue().strip()
-    else:
-        args = parse_args()
-        orbeat, iso = get_orbeat_time()
-        print(format_output(orbeat, iso, args.output))
-
-
 if __name__ == "__main__":
-    run_cli()
+    args = parse_args()
+    orbeat, iso = get_orbeat_time()
+    print(format_output(orbeat, iso, args.output))

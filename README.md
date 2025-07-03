@@ -63,15 +63,15 @@ The encoding process involves the following steps:
 
 - **Step 2: Convert to Days**
   - Divide by the number of milliseconds in a day: `65217964400000 / 86400000`
-  - **Result in Days (`days_since`):** `754837.5509259259`
+  - **Result in Days (`days_since`):** `754837.550925926`
   - **Integer part (`days`):** `754837`
 
 - **Step 3: Calculate Time Components**
-  - **Year:** `floor(754837 / 365.2425)` = `2066`
-  - **Day of Year:** `floor(754837 % 365.2425)` = `245`
-  - **Day of Week:** `floor(754837) % 8` = `5`
-  - **Week of Year:** `max(0, floor((245 - 5) / 8))` = `30`
-  - **Fractional Part:** `floor(0.5509259259 * 8**4)` = `2256`
+  - **Year:** To find the number of years, we take the whole number part of the total days divided by the number of days in a year: `754837 / 365.2425` gives us `2066`
+  - **Day of Year:** The day of the year is the remainder of the same division, which is `245`
+  - **Day of Week:** The day of the week is the remainder when the total days are divided by 8: `754837 / 8` leaves a remainder of `5`
+  - **Week of Year:** To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: `(245 - 5) / 8` gives us `30`
+  - **Fractional Part:** To get the fractional part of the day, we multiply the decimal part of the `days_since` value by 8 to the power of 4 (4096): `0.550925926 * 4096` gives us `2256`
 
 - **Step 4: Convert to Octal**
   - Year `2066` = `4022`
