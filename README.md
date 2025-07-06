@@ -26,7 +26,7 @@ My design decisions include:
 - 8-day week structure following the Roman nundinal market cycle
 - Fixed Eastern timezone Dawn adjustment for natural day boundaries
 - The precision is ~21 seconds roughly in the scale of seconds
-- Used 365.2425 days per year, which is the Gregorian calendar standard
+- Used 365.24219 days per year, which is the tropical year standard
 - Reversal and truncation to 8 characters for cryptic output
 
 ## Format
@@ -57,31 +57,31 @@ The encoding process involves the following steps:
 
 - **Step 1: Adjust for Epoch and Timezone**
   - Start with the input timestamp: `1700000000000`
-  - Add the Datum offset: `+ 63517996800000`
+  - Add the Datum offset: `+ 63517392000000`
   - Add the Dawn offset: `+ (-32400000)`
-  - **Resulting Milliseconds:** `65217964400000`
+  - **Resulting Milliseconds:** `65217359600000`
 
 - **Step 2: Convert to Days**
-  - Divide by the number of milliseconds in a day: `65217964400000 / 86400000`
-  - **Result in Days (`days_since`):** `754837.550925926`
-  - **Integer part (`days`):** `754837`
+  - Divide by the number of milliseconds in a day: `65217359600000 / 86400000`
+  - **Result in Days (`days_since`):** `754830.550925926`
+  - **Integer part (`days`):** `754830`
 
 - **Step 3: Calculate Time Components**
-  - **Year:** To find the number of years, we take the whole number part of the total days divided by the number of days in a year: `754837 / 365.2425` gives us `2066`
-  - **Day of Year:** The day of the year is the remainder of the same division, which is `245`
-  - **Day of Week:** The day of the week is the remainder when the total days are divided by 8: `754837 / 8` leaves a remainder of `5`
-  - **Week of Year:** To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: `(245 - 5) / 8` gives us `30`
+  - **Year:** To find the number of years, we take the whole number part of the total days divided by the number of days in a year: `754830 / 365.24219` gives us `2066`
+  - **Day of Year:** The day of the year is the remainder of the same division, which is `239`
+  - **Day of Week:** The day of the week is the remainder when the total days are divided by 8: `754830 / 8` leaves a remainder of `6`
+  - **Week of Year:** To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: `(239 - 6) / 8` gives us `29`
   - **Fractional Part:** To get the fractional part of the day, we multiply the decimal part of the `days_since` value by 8 to the power of 4 (4096): `0.550925926 * 4096` gives us `2256`
 
 - **Step 4: Convert to Octal**
   - Year `2066` = `4022`
-  - Week `30` = `36`
-  - Day `5` = `5`
+  - Week `29` = `35`
+  - Day `6` = `6`
   - Fraction `2256` = `4320`
 
 - **Step 5: Combine and Finalize**
-  - Concatenate the octal values: `4022` + `36` + `5` + `4320` = `40223654320`
-  - Reverse the string: `02345632204`
-  - Truncate to the first 8 characters: `02345632`
+  - Concatenate the octal values: `4022` + `35` + `6` + `4320` = `40223564320`
+  - Reverse the string: `02346532204`
+  - Truncate to the first 8 characters: `02346532`
 
-- **Final Output:** `02345632`
+- **Final Output:** `02346532`
