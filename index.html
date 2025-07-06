@@ -321,11 +321,11 @@
 </div>
 <script>
 const UNIX_JDN = 2440588;
-const DATUM_JDN = 1705426;
+const DATUM_JDN = 1705433;
 const MS_PER_DAY = 86400000;
 const DAWN_MS = -9 * 60 * 60 * 1000;
 const OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS;
-const DAYS_PER_YEAR = 365.2425;
+const DAYS_PER_YEAR = 365.24219;
 
 function toPartsFromMs(unix_ms) {
     unix_ms = unix_ms || Date.now();
