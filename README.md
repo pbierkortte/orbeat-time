@@ -26,6 +26,8 @@ My design decisions include:
 -   **Astronomical Accuracy:** The **Mean Tropical Year of 365.24219 days prevents seasonal drift** and ensures perpetual accuracy
 -   **Octal Encoding:** Dates use **octal encoding** for mathematical harmony and to **require explanation to decode**
 -   **Cryptic Output:** The output is made **cryptic** via **reversal and truncation to 8 characters** for a compact code
+-   **Leap Year Alignment:** The leap years **align with the Gregorian calendar** for practical synchronization for the foreseeable future
+-   **Millennium Stability:** The 365/366 day system **maintains stability for over a millennium** ensuring long-term reliability
 
 ## Format
 
