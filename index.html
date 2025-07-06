@@ -244,7 +244,7 @@
       <li>8-day week structure following the Roman nundinal market cycle</li>
       <li>Fixed Eastern timezone Dawn adjustment for natural day boundaries</li>
       <li>The precision is ~21 seconds roughly in the scale of seconds</li>
-      <li>Used 365.2425 days per year, which is the Gregorian calendar standard</li>
+      <li>Used 365.24219 days per year, which is the tropical year standard</li>
       <li>Reversal and truncation to 8 characters for cryptic output</li>
     </ul>
 
@@ -277,43 +277,43 @@
       <li><strong>Step 1: Adjust for Epoch and Timezone</strong>
         <ul>
           <li>Start with the input timestamp: <code>1700000000000</code></li>
-          <li>Add the Datum offset: <code>+ 63517996800000</code></li>
+          <li>Add the Datum offset: <code>+ 63517392000000</code></li>
           <li>Add the Dawn offset: <code>+ (-32400000)</code></li>
-          <li><strong>Resulting Milliseconds:</strong> <code>65217964400000</code></li>
+          <li><strong>Resulting Milliseconds:</strong> <code>65217359600000</code></li>
         </ul>
       </li>
       <li><strong>Step 2: Convert to Days</strong>
         <ul>
-          <li>Divide by the number of milliseconds in a day: <code>65217964400000 / 86400000</code></li>
-          <li><strong>Result in Days (<code>days_since</code>):</strong> <code>754837.550925926</code></li>
-          <li><strong>Integer part (<code>days</code>):</strong> <code>754837</code></li>
+          <li>Divide by the number of milliseconds in a day: <code>65217359600000 / 86400000</code></li>
+          <li><strong>Result in Days (<code>days_since</code>):</strong> <code>754830.550925926</code></li>
+          <li><strong>Integer part (<code>days</code>):</strong> <code>754830</code></li>
         </ul>
       </li>
       <li><strong>Step 3: Calculate Time Components</strong>
         <ul>
-          <li><strong>Year:</strong> To find the number of years, we take the whole number part of the total days divided by the number of days in a year: <code>754837 / 365.2425</code> gives us <code>2066</code></li>
-          <li><strong>Day of Year:</strong> The day of the year is the remainder of the same division, which is <code>245</code></li>
-          <li><strong>Day of Week:</strong> The day of the week is the remainder when the total days are divided by 8: <code>754837 / 8</code> leaves a remainder of <code>5</code></li>
-          <li><strong>Week of Year:</strong> To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: <code>(245 - 5) / 8</code> gives us <code>30</code></li>
+          <li><strong>Year:</strong> To find the number of years, we take the whole number part of the total days divided by the number of days in a year: <code>754830 / 365.24219</code> gives us <code>2066</code></li>
+          <li><strong>Day of Year:</strong> The day of the year is the remainder of the same division, which is <code>239</code></li>
+          <li><strong>Day of Week:</strong> The day of the week is the remainder when the total days are divided by 8: <code>754830 / 8</code> leaves a remainder of <code>6</code></li>
+          <li><strong>Week of Year:</strong> To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: <code>(239 - 6) / 8</code> gives us <code>29</code></li>
           <li><strong>Fractional Part:</strong> To get the fractional part of the day, we multiply the decimal part of the <code>days_since</code> value by 8 to the power of 4 (4096): <code>0.550925926 * 4096</code> gives us <code>2256</code></li>
         </ul>
       </li>
       <li><strong>Step 4: Convert to Octal</strong>
         <ul>
           <li>Year <code>2066</code> = <code>4022</code></li>
-          <li>Week <code>30</code> = <code>36</code></li>
-          <li>Day <code>5</code> = <code>5</code></li>
+          <li>Week <code>29</code> = <code>35</code></li>
+          <li>Day <code>6</code> = <code>6</code></li>
           <li>Fraction <code>2256</code> = <code>4320</code></li>
         </ul>
       </li>
       <li><strong>Step 5: Combine and Finalize</strong>
         <ul>
-          <li>Concatenate the octal values: <code>4022</code> + <code>36</code> + <code>5</code> + <code>4320</code> = <code>40223654320</code></li>
-          <li>Reverse the string: <code>02345632204</code></li>
-          <li>Truncate to the first 8 characters: <code>02345632</code></li>
+          <li>Concatenate the octal values: <code>4022</code> + <code>35</code> + <code>6</code> + <code>4320</code> = <code>40223564320</code></li>
+          <li>Reverse the string: <code>02346532204</code></li>
+          <li>Truncate to the first 8 characters: <code>02346532</code></li>
         </ul>
       </li>
-      <li><strong>Final Output:</strong> <code>02345632</code></li>
+      <li><strong>Final Output:</strong> <code>02346532</code></li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
