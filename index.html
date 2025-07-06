@@ -226,32 +226,30 @@
   <button onclick="updateTime()">Refresh Time</button>
   <div class="documentation">
     <h2>Summary</h2>
-    <p>Orbeat is an octal time system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle.</p>
+    <p>Orbeat is an octal-based cryptic timestamping system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle based on a rational underlying calendar foundation.</p>
 
     <h2>Background</h2>
-    <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming, and the 8-day market week nundinal cycle was used alongside the Roman calendar. It also draws inspiration from batch codes used in retail and manufacturing industries for date codes and competitive intelligence.</p>
+    <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming, and batch codes used in retail and manufacturing industries for date codes and competitive intelligence. The underlying system draws from proven historical precedents like the Roman 8-day nundinal market cycle and astronomical precision.</p>
 
     <h2>Motivation</h2>
-    <p>I created this project out of intellectual curiosity and as a practical tool. It was a stimulating exercise that allowed me to combine various concepts across multiple disciplines. I needed an efficient and cryptic timestamping method, like batch codes, to manage public-facing personal documents. I sought to devise an innovative way to balance precision with obscurity by crafting a compact yet noteworthy date time code, which would be meaningful to me while remaining ambiguous for others.</p>
+    <p>I created this project out of intellectual curiosity and as a practical tool. It was a stimulating exercise that allowed me to combine various concepts across multiple disciplines. I needed an efficient and cryptic timestamping method, like batch codes, to manage public-facing personal documents. I sought to devise an innovative way to balance precision with obscurity by crafting a compact yet noteworthy timestamp code based on rational principles, which would be meaningful to me while remaining ambiguous for others.</p>
 
     <h2>Design Decisions</h2>
     <p>My design decisions include:</p>
     <ul>
-      <li>Using Caesar's death as the Datum (March 15, 44 BCE) for historical certainty and spring alignment</li>
-      <li>Using little-endian ordering, which is more common in modern computing systems</li>
-      <li>Adopting a base-8 (octal) number system to avoid rounding issues common in decimal to floating-point arithmetic</li>
-      <li>Week increments on day rollover or year-end for consistency</li>
-      <li>8-day week structure following the Roman nundinal market cycle</li>
-      <li>Fixed Eastern timezone Dawn adjustment for natural day boundaries</li>
-      <li>The precision is ~21 seconds roughly in the scale of seconds</li>
-      <li>Used 365.24219 days per year, which is the tropical year standard</li>
-      <li>Reversal and truncation to 8 characters for cryptic output</li>
+      <li><strong>Spring Equinox Foundation:</strong> The year begins on the <strong>Spring Equinox</strong> for practical alignment with natural cycles</li>
+      <li><strong>8-day Nundinal Cycle:</strong> The <strong>proven Roman 8-day week structure</strong> is a practical foundation for the calendar's rhythm</li>
+      <li><strong>Historical Certainty Epoch:</strong> The epoch is an <strong>indisputable historical anchor point</strong> to guarantee absolute certainty</li>
+      <li><strong>Scientific Precision:</strong> The epoch time is fixed with <strong>scientific precision</strong> for an unambiguous temporal reference</li>
+      <li><strong>Astronomical Accuracy:</strong> The <strong>Mean Tropical Year of 365.24219 days prevents seasonal drift</strong> and ensures perpetual accuracy</li>
+      <li><strong>Octal Encoding:</strong> Dates use <strong>octal encoding</strong> for mathematical harmony and to <strong>require explanation to decode</strong></li>
+      <li><strong>Cryptic Output:</strong> The output is made <strong>cryptic</strong> via <strong>reversal and truncation to 8 characters</strong> for a compact code</li>
     </ul>
 
     <h2>Format</h2>
     <p>A concatenated string consisting of:</p>
     <ul>
-      <li>Years since Datum formatted in octal</li>
+      <li>Years since Epoch formatted in octal</li>
       <li>Weeks within the year formatted in octal (2 digits)</li>
       <li>Days within the 8-day week formatted in octal</li>
       <li>Fractional day component formatted in octal (4 digits)</li>
@@ -261,59 +259,52 @@
     <h2>Implementation</h2>
     <p>The encoding process involves the following steps:</p>
     <ol start="0">
-      <li>Convert Unix timestamp to fractional days since Datum (with timezone adjustment)</li>
+      <li>Convert input timestamp to fractional days since Epoch (March 21, 44 BCE at 09:00 UTC)</li>
       <li>Calculate the <strong>Year</strong> (`year_int`) and <strong>Day of the 8-day Week</strong> (`day_int`) from the total day count</li>
-      <li>Calculate the <strong>Day of the Year</strong> (`day_in_year`), which is the day count within the current Orbeat year</li>
-      <li>Calculate the <strong>Week of the Year</strong> (`week_int`) by aligning the `day_in_year` with the `day_int`</li>
+      <li>Calculate the <strong>Day of the Year</strong> (`day_in_year`) using the Mean Tropical Year length (365.24219 days)</li>
+      <li>Calculate the <strong>Week of the Year</strong> (`week_int`) by aligning the `day_in_year` with the 8-day cycle</li>
       <li>Extract the <strong>Fractional Part</strong> of the day for sub-day precision</li>
       <li>Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations</li>
       <li>Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters</li>
-      <li>Output the final 8-character string</li>
+      <li>Output the final 8-character cryptic timestamp</li>
     </ol>
 
     <h2>Example</h2>
     <ul>
       <li><strong>Input Milliseconds:</strong> <code>1700000000000</code></li>
-      <li><strong>Step 1: Adjust for Epoch and Timezone</strong>
+      <li><strong>Step 1: Adjust for Epoch</strong>
         <ul>
           <li>Start with the input timestamp: <code>1700000000000</code></li>
-          <li>Add the Datum offset: <code>+ 63517392000000</code></li>
-          <li>Add the Dawn offset: <code>+ (-32400000)</code></li>
-          <li><strong>Resulting Milliseconds:</strong> <code>65217359600000</code></li>
+          <li>Convert to days since March 21, 44 BCE at 09:00 UTC</li>
+          <li><strong>Resulting Days Since Epoch:</strong> <code>755179.509722</code></li>
         </ul>
       </li>
-      <li><strong>Step 2: Convert to Days</strong>
+      <li><strong>Step 2: Calculate Time Components</strong>
         <ul>
-          <li>Divide by the number of milliseconds in a day: <code>65217359600000 / 86400000</code></li>
-          <li><strong>Result in Days (<code>days_since</code>):</strong> <code>754830.550925926</code></li>
-          <li><strong>Integer part (<code>days</code>):</strong> <code>754830</code></li>
+          <li><strong>Year:</strong> Total days divided by Mean Tropical Year: <code>755179.509722 / 365.24219 = 2067.956</code></li>
+          <li><strong>Year Integer:</strong> <code>2067</code></li>
+          <li><strong>Day of Year:</strong> Remainder from year calculation: <code>349</code></li>
+          <li><strong>Day of Week:</strong> Total days modulo 8: <code>755179 % 8 = 3</code></li>
+          <li><strong>Week of Year:</strong> <code>(349 - 3) / 8 = 43</code></li>
+          <li><strong>Fractional Part:</strong> <code>0.509722 × 4096 = 2087</code></li>
         </ul>
       </li>
-      <li><strong>Step 3: Calculate Time Components</strong>
+      <li><strong>Step 3: Convert to Octal</strong>
         <ul>
-          <li><strong>Year:</strong> To find the number of years, we take the whole number part of the total days divided by the number of days in a year: <code>754830 / 365.24219</code> gives us <code>2066</code></li>
-          <li><strong>Day of Year:</strong> The day of the year is the remainder of the same division, which is <code>239</code></li>
-          <li><strong>Day of Week:</strong> The day of the week is the remainder when the total days are divided by 8: <code>754830 / 8</code> leaves a remainder of <code>6</code></li>
-          <li><strong>Week of Year:</strong> To find the week of the year, we subtract the day of the week from the day of the year and divide by 8: <code>(239 - 6) / 8</code> gives us <code>29</code></li>
-          <li><strong>Fractional Part:</strong> To get the fractional part of the day, we multiply the decimal part of the <code>days_since</code> value by 8 to the power of 4 (4096): <code>0.550925926 * 4096</code> gives us <code>2256</code></li>
+          <li>Year <code>2067</code> = <code>4023</code></li>
+          <li>Week <code>43</code> = <code>53</code></li>
+          <li>Day <code>3</code> = <code>3</code></li>
+          <li>Fraction <code>2087</code> = <code>4047</code></li>
         </ul>
       </li>
-      <li><strong>Step 4: Convert to Octal</strong>
+      <li><strong>Step 4: Combine and Finalize</strong>
         <ul>
-          <li>Year <code>2066</code> = <code>4022</code></li>
-          <li>Week <code>29</code> = <code>35</code></li>
-          <li>Day <code>6</code> = <code>6</code></li>
-          <li>Fraction <code>2256</code> = <code>4320</code></li>
+          <li>Concatenate the octal values: <code>4023</code> + <code>53</code> + <code>3</code> + <code>4047</code> = <code>402353340447</code></li>
+          <li>Reverse the string: <code>744043535204</code></li>
+          <li>Truncate to the first 8 characters: <code>74404353</code></li>
         </ul>
       </li>
-      <li><strong>Step 5: Combine and Finalize</strong>
-        <ul>
-          <li>Concatenate the octal values: <code>4022</code> + <code>35</code> + <code>6</code> + <code>4320</code> = <code>40223564320</code></li>
-          <li>Reverse the string: <code>02346532204</code></li>
-          <li>Truncate to the first 8 characters: <code>02346532</code></li>
-        </ul>
-      </li>
-      <li><strong>Final Output:</strong> <code>02346532</code></li>
+      <li><strong>Final Output:</strong> <code>74404353</code></li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
