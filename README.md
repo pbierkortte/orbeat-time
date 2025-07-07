@@ -19,15 +19,16 @@ I created this project out of intellectual curiosity and as a practical tool. It
 
 My design decisions include:
 
--   **Spring Equinox Foundation:** The year begins on the **Spring Equinox** for practical alignment with natural cycles
--   **8-day Nundinal Cycle:** The **proven Roman 8-day week structure** is a practical foundation for the calendar's rhythm
--   **Historical Certainty Epoch:** The epoch is an **indisputable historical anchor point** to guarantee absolute certainty
--   **Scientific Precision:** The epoch time is fixed with **scientific precision** for an unambiguous temporal reference
--   **Astronomical Accuracy:** The **Mean Tropical Year of 365.24219 days prevents seasonal drift** and ensures perpetual accuracy
--   **Octal Encoding:** Dates use **octal encoding** for mathematical harmony and to **require explanation to decode**
--   **Cryptic Output:** The output is made **cryptic** via **reversal and truncation to 8 characters** for a compact code
--   **Leap Year Alignment:** The leap years **align with the Gregorian calendar** for practical synchronization for the foreseeable future
--   **Millennium Stability:** The 365/366 day system **maintains stability for over a millennium** ensuring long-term reliability
+-   Spring Equinox Foundation: The year begins on the **Spring Equinox** for practical alignment with natural cycles
+-   8-day Nundinal Cycle: The proven **Roman 8-day** week structure is a practical foundation for the calendar's rhythm
+-   Historical Certainty Epoch: The epoch is an indisputable **historical anchor** point to guarantee absolute certainty
+-   Scientific Precision: The epoch time is fixed with **scientific precision** for an unambiguous temporal reference
+-   Astronomical Accuracy: The **Mean Tropical Year** of 365.24219 days prevents seasonal drift and ensures perpetual accuracy
+-   Octal Encoding: Dates use **octal encoding** for mathematical harmony and to require explanation to decode
+-   Cryptic Output: The output is made cryptic via **reversal and truncation** to 8 characters for a compact code
+-   Leap Year Alignment: The leap years **align with the Gregorian calendar** for practical synchronization for the foreseeable future
+-   Millennium Stability: The 365/366 day system maintains stability for over a **millennium** ensuring long-term reliability
+-   Short Weeks: Last week of the new year and first week of new year may **discard days** to maintain both astronomical precision and continuous week cycles
 
 ## Format
 
