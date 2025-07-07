@@ -333,7 +333,7 @@ function toPartsFromMs(unix_ms) {
     const day_int = Math.trunc(days % 8);
     const frac_int = Math.trunc(frac * 8**4);
 
-    const week_int = Math.max(0, Math.trunc((day_in_year - day_int) / 8));
+    const week_int = Math.trunc((day_in_year + 7 - day_int) / 8);
 
     const year_oct = year_int.toString(8).replace("-", "0");
     const week_oct = week_int.toString(8).padStart(2, '0');
