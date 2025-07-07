@@ -220,10 +220,10 @@
 <div class="container">
   <h1>Orbeat Time</h1>
   <div class="time-display">
-    <div id="human-time"></div>
+    <div id="local-time"></div>
   </div>
   <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Orbeat Time</div>
-  <button onclick="updateTime()">Refresh Time</button>
+  <button id="action-button">Refresh Time</button>
   <div class="documentation">
     <h2>Summary</h2>
     <p>Orbeat is an octal-based cryptic timestamping system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle based on a rational underlying calendar foundation.</p>
@@ -356,7 +356,7 @@ function toOrbeat8(unix_ms) {
 
   function updateTime() {
     const now = new Date();
-    document.getElementById('human-time').textContent = `Human Date Time: ${now.toUTCString()}`;
+    document.getElementById('local-time').textContent = `Local Time: ${now.toLocaleString()}`;
     const octalTime = toOrbeat8();
     document.getElementById('octal-time').textContent = octalTime;
   }
@@ -372,6 +372,12 @@ function toOrbeat8(unix_ms) {
     const currentYear = new Date().getFullYear();
     document.getElementById('currentYear').textContent = currentYear;
   }
+
+  let timer;
+  const button = document.getElementById('action-button');
+  button.onmousedown = () => timer = setTimeout(() => document.getElementById('octal-time').textContent = `${toUcy()} UCY`, 20000);
+  button.onmouseup = () => { clearTimeout(timer); updateTime(); };
+  button.onclick = updateTime;
 
   updateTime();
   setCurrentYear();
