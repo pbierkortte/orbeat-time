@@ -2,6 +2,7 @@ import json
 import pytest
 import subprocess
 from datetime import datetime
+import orbeat_cli
 
 
 def run_cli(*args):
