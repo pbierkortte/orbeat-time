@@ -278,35 +278,35 @@
         <ul>
           <li>Start with the input timestamp: <code>1700000000000</code></li>
           <li>Convert to days since March 21, 44 BCE at 09:00 UTC</li>
-          <li><strong>Resulting Days Since Epoch:</strong> <code>755179.509722</code></li>
+          <li><strong>Resulting Days Since Epoch:</strong> <code>754830.550926</code></li>
         </ul>
       </li>
       <li><strong>Step 2: Calculate Time Components</strong>
         <ul>
-          <li><strong>Year:</strong> Total days divided by Mean Tropical Year: <code>755179.509722 / 365.24219 = 2067.956</code></li>
-          <li><strong>Year Integer:</strong> <code>2067</code></li>
-          <li><strong>Day of Year:</strong> Remainder from year calculation: <code>349</code></li>
-          <li><strong>Day of Week:</strong> Total days modulo 8: <code>755179 % 8 = 3</code></li>
-          <li><strong>Week of Year:</strong> <code>(349 - 3) / 8 = 43</code></li>
-          <li><strong>Fractional Part:</strong> <code>0.509722 × 4096 = 2087</code></li>
+          <li><strong>Year:</strong> Total days divided by Mean Tropical Year: <code>754830.550926 / 365.24219 = 2066.658</code></li>
+          <li><strong>Year Integer:</strong> <code>2066</code></li>
+          <li><strong>Day of Year:</strong> Remainder from year calculation: <code>239</code></li>
+          <li><strong>Day of Week:</strong> Total days modulo 8: <code>754830 % 8 = 6</code></li>
+          <li><strong>Week of Year:</strong> <code>(239 + 7 - 6) // 8 = 30</code></li>
+          <li><strong>Fractional Part:</strong> <code>0.550926 * 4096 = 2256</code></li>
         </ul>
       </li>
       <li><strong>Step 3: Convert to Octal</strong>
         <ul>
-          <li>Year <code>2067</code> = <code>4023</code></li>
-          <li>Week <code>43</code> = <code>53</code></li>
-          <li>Day <code>3</code> = <code>3</code></li>
-          <li>Fraction <code>2087</code> = <code>4047</code></li>
+          <li>Year <code>2066</code> = <code>4022</code></li>
+          <li>Week <code>30</code> = <code>36</code></li>
+          <li>Day <code>6</code> = <code>6</code></li>
+          <li>Fraction <code>2256</code> = <code>4320</code></li>
         </ul>
       </li>
       <li><strong>Step 4: Combine and Finalize</strong>
         <ul>
-          <li>Concatenate the octal values: <code>4023</code> + <code>53</code> + <code>3</code> + <code>4047</code> = <code>402353340447</code></li>
-          <li>Reverse the string: <code>744043535204</code></li>
-          <li>Truncate to the first 8 characters: <code>74404353</code></li>
+          <li>Concatenate the octal values: <code>4022</code> + <code>36</code> + <code>6</code> + <code>4320</code> = <code>40223664320</code></li>
+          <li>Reverse the string: <code>02346632204</code></li>
+          <li>Truncate to the first 8 characters: <code>02346632</code></li>
         </ul>
       </li>
-      <li><strong>Final Output:</strong> <code>74404353</code></li>
+      <li><strong>Final Output:</strong> <code>02346632</code></li>
     </ul>
   </div>
 <div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>

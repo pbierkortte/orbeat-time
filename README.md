@@ -58,25 +58,25 @@ The encoding process involves the following steps:
 - **Step 1: Adjust for Epoch**
   - Start with the input timestamp: `1700000000000`
   - Convert to days since March 21, 44 BCE at 09:00 UTC
-  - **Resulting Days Since Epoch:** `755179.509722`
+  - **Resulting Days Since Epoch:** `754830.550926`
 
 - **Step 2: Calculate Time Components**
-  - **Year:** Total days divided by Mean Tropical Year: `755179.509722 / 365.24219 = 2067.956`
-  - **Year Integer:** `2067`
-  - **Day of Year:** Remainder from year calculation: `349`
-  - **Day of Week:** Total days modulo 8: `755179 % 8 = 3`
-  - **Week of Year:** `(349 - 3) / 8 = 43`
-  - **Fractional Part:** `0.509722 × 4096 = 2087`
+  - **Year:** Total days divided by Mean Tropical Year: `754830.550926 / 365.24219 = 2066.658`
+  - **Year Integer:** `2066`
+  - **Day of Year:** Remainder from year calculation: `239`
+  - **Day of Week:** Total days modulo 8: `754830 % 8 = 6`
+  - **Week of Year:** `(239 + 7 - 6) // 8 = 30`
+  - **Fractional Part:** `0.550926 * 4096 = 2256`
 
 - **Step 3: Convert to Octal**
-  - Year `2067` = `4023`
-  - Week `43` = `53`
-  - Day `3` = `3`
-  - Fraction `2087` = `4047`
+  - Year `2066` = `4022`
+  - Week `30` = `36`
+  - Day `6` = `6`
+  - Fraction `2256` = `4320`
 
 - **Step 4: Combine and Finalize**
-  - Concatenate the octal values: `4023` + `53` + `3` + `4047` = `402353340447`
-  - Reverse the string: `744043535204`
-  - Truncate to the first 8 characters: `74404353`
+  - Concatenate the octal values: `4022` + `36` + `6` + `4320` = `40223664320`
+  - Reverse the string: `02346632204`
+  - Truncate to the first 8 characters: `02346632`
 
-- **Final Output:** `74404353`
+- **Final Output:** `02346632`
