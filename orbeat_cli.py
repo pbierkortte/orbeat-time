@@ -1,5 +1,4 @@
-import json
-import argparse
+import argparse, json
 from datetime import datetime, timezone
 from orbeat_time import to_orbeat8
 

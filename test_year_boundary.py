@@ -1,7 +1,6 @@
-import pytest
+import math, pytest
 from datetime import datetime
-from orbeat_time import to_parts_from_ms, DAYS_PER_YEAR
-import math
+from orbeat_time import DAYS_PER_YEAR, MS_PER_DAY, OFFSET_MS, to_parts_from_ms
 
 
 class TestYearBoundaryV2:
@@ -40,7 +39,6 @@ class TestYearBoundaryV2:
         Ensures the underlying day count is monotonically increasing and
         never resets across year boundaries, reflecting a continuous flow of time.
         """
-        from orbeat_time import OFFSET_MS, MS_PER_DAY
 
         test_dates = [
             datetime(2023, 3, 21, 9, 0, 0).timestamp() * 1000,

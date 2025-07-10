@@ -4,7 +4,7 @@ Tests that the epoch time is fixed with scientific precision for unambiguous tem
 """
 
 import pytest
-from orbeat_time import to_parts_from_ms, OFFSET_MS, MS_PER_DAY, DAWN_MS
+from orbeat_time import DAWN_MS, MS_PER_DAY, OFFSET_MS, to_parts_from_ms
 
 
 class TestScientificPrecision:

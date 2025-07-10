@@ -4,7 +4,8 @@ Tests the Mean Tropical Year of 365.24219 days prevents seasonal drift and ensur
 """
 
 import pytest
-from orbeat_time import to_parts_from_ms, DAYS_PER_YEAR
+from datetime import datetime
+from orbeat_time import DAYS_PER_YEAR, to_parts_from_ms
 
 
 class TestAstronomicalAccuracy:
@@ -58,7 +59,6 @@ class TestAstronomicalAccuracy:
 
     def test_seasonal_alignment_maintained_pass(self):
         """PASS: Verify seasonal alignment is maintained over long periods."""
-        from datetime import datetime
 
         march_21_2024 = datetime(2024, 3, 21, 9, 0, 0).timestamp() * 1000
         march_21_2025 = datetime(2025, 3, 21, 9, 0, 0).timestamp() * 1000
@@ -81,7 +81,6 @@ class TestAstronomicalAccuracy:
 
     def test_long_term_accuracy_pass(self):
         """PASS: Verify accuracy is maintained over centuries."""
-        from datetime import datetime
 
         march_21_1924 = datetime(1924, 3, 21, 9, 0, 0).timestamp() * 1000
         march_21_2024 = datetime(2024, 3, 21, 9, 0, 0).timestamp() * 1000

@@ -1,6 +1,6 @@
 import pytest, zoneinfo
 from datetime import datetime
-from orbeat_time import to_ucy, to_orbeat8, to_eastern
+from orbeat_time import to_eastern, to_orbeat8, to_ucy
 
 EDGE_TEST_CASES = [
     ("2021-03-07T08:59:59+00:00", "4017_54_7.7777", "77777457"),

@@ -4,9 +4,9 @@ Tests that last week of the new year and first week of new year may discard days
 to maintain both astronomical precision and continuous week cycles.
 """
 
-import pytest
 from datetime import datetime
-from orbeat_time import to_parts_from_ms, DAYS_PER_YEAR
+import pytest
+from orbeat_time import DAYS_PER_YEAR, to_parts_from_ms
 
 
 class TestShortWeeks:

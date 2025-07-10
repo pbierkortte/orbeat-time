@@ -6,7 +6,7 @@ age of the universe to the far future.
 """
 
 import pytest
-from orbeat_time import to_parts_from_ms, to_ucy, to_orbeat8
+from orbeat_time import to_orbeat8, to_parts_from_ms, to_ucy
 
 # Validated test vectors generated from debug_wide_time_range.py
 # Format: (Test Name, Unix MS, Expected Parts Tuple, Expected UCY, Expected Orbeat8)

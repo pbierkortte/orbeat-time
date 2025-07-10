@@ -4,6 +4,7 @@ Tests the proven Roman 8-day week structure as practical foundation.
 """
 
 import pytest
+
 from orbeat_time import to_parts_from_ms
 
 
