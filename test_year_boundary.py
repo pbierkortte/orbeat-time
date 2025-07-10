@@ -23,15 +23,17 @@ class TestYearBoundaryV2:
         not an artificial 365-day calendar year, ensuring astronomical precision.
         """
         tropical_year_days = 365.24219
-        assert abs(DAYS_PER_YEAR - tropical_year_days) < 0.001, \
-            "The system must use the true solar year length for astronomical accuracy."
+        assert (
+            abs(DAYS_PER_YEAR - tropical_year_days) < 0.001
+        ), "The system must use the true solar year length for astronomical accuracy."
 
         # Check that the time between two equinoxes reflects this value.
         mar_21_2024_ms = datetime(2024, 3, 21, 9, 0, 0).timestamp() * 1000
         mar_21_2025_ms = datetime(2025, 3, 20, 9, 0, 0).timestamp() * 1000
         time_diff_days = (mar_21_2025_ms - mar_21_2024_ms) / (24 * 60 * 60 * 1000)
-        assert abs(time_diff_days - DAYS_PER_YEAR) < 2, \
-            "The interval between consecutive equinoxes should approximate the tropical year."
+        assert (
+            abs(time_diff_days - DAYS_PER_YEAR) < 2
+        ), "The interval between consecutive equinoxes should approximate the tropical year."
 
     def test_continuous_time_day_count(self):
         """
@@ -39,6 +41,7 @@ class TestYearBoundaryV2:
         never resets across year boundaries, reflecting a continuous flow of time.
         """
         from orbeat_time import OFFSET_MS, MS_PER_DAY
+
         test_dates = [
             datetime(2023, 3, 21, 9, 0, 0).timestamp() * 1000,
             datetime(2024, 3, 20, 9, 0, 0).timestamp() * 1000,
@@ -47,8 +50,9 @@ class TestYearBoundaryV2:
         ]
         day_counts = [math.floor((ms + OFFSET_MS) / MS_PER_DAY) for ms in test_dates]
         for i in range(1, len(day_counts)):
-            assert day_counts[i] > day_counts[i-1], \
-                "The fundamental day count must never reset or decrease."
+            assert (
+                day_counts[i] > day_counts[i - 1]
+            ), "The fundamental day count must never reset or decrease."
 
     def test_intentional_short_weeks_as_feature(self):
         """
@@ -57,7 +61,8 @@ class TestYearBoundaryV2:
         with the fractional solar year.
         """
         boundary_dates = [
-            datetime(2024, 3, 20, 9, 0, 0).timestamp() * 1000 + (d * 24*60*60*1000)
+            datetime(2024, 3, 20, 9, 0, 0).timestamp() * 1000
+            + (d * 24 * 60 * 60 * 1000)
             for d in range(-10, 11)
         ]
         week_day_counts = {}
@@ -69,8 +74,9 @@ class TestYearBoundaryV2:
             week_day_counts[week_key].add(int(day_oct, 8))
 
         short_weeks = {w for w, d in week_day_counts.items() if len(d) < 8}
-        assert len(short_weeks) > 0, \
-            "The year boundary must create 'short weeks' as a design feature."
+        assert (
+            len(short_weeks) > 0
+        ), "The year boundary must create 'short weeks' as a design feature."
 
     def test_astronomical_priority_over_neatness(self):
         """
@@ -79,12 +85,13 @@ class TestYearBoundaryV2:
         """
         equinox_ms = datetime(2024, 3, 20, 3, 6).timestamp() * 1000
         # Day before equinox
-        _, week_before, _, _ = to_parts_from_ms(equinox_ms - (24*60*60*1000))
+        _, week_before, _, _ = to_parts_from_ms(equinox_ms - (24 * 60 * 60 * 1000))
         # Day after equinox
-        _, week_after, _, _ = to_parts_from_ms(equinox_ms + (24*60*60*1000))
+        _, week_after, _, _ = to_parts_from_ms(equinox_ms + (24 * 60 * 60 * 1000))
         # The week number should be low after the equinox, showing a year change.
-        assert int(week_after, 8) <= 5, \
-            "The year should turn over in close alignment with the actual equinox."
+        assert (
+            int(week_after, 8) <= 5
+        ), "The year should turn over in close alignment with the actual equinox."
 
     def test_unbroken_continuity_in_day_cycle(self):
         """
@@ -100,6 +107,7 @@ class TestYearBoundaryV2:
 
         # The day cycle must remain perfectly continuous, even as year/week change.
         for i in range(1, len(days)):
-            expected_day = (days[i-1] + 1) % 8
-            assert days[i] == expected_day, \
-                "The 8-day cycle must be unbroken, proving the deeper continuity."
+            expected_day = (days[i - 1] + 1) % 8
+            assert (
+                days[i] == expected_day
+            ), "The 8-day cycle must be unbroken, proving the deeper continuity."
