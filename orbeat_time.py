@@ -74,13 +74,16 @@ def to_eastern(unix_ms=None):
         unix_ms (int, optional): Unix timestamp in milliseconds. Defaults to current time.
 
     Returns:
-        str: Eastern time in format "YYYY-MM-DD HH:MM AM/PM TZ"
+        str: Eastern time in format "YYYY-MM-DD HH:MM AM/PM EST/EDT"
     """
     unix_ms = unix_ms or time.time() * 1000
 
     eastern = zoneinfo.ZoneInfo("America/New_York")
     dt = datetime.fromtimestamp(unix_ms / 1000, tz=eastern)
-    return dt.strftime("%Y-%m-%d %I:%M %p %Z")
+    
+    tz_name = "EDT" if dt.dst() else "EST"
+    
+    return dt.strftime(f"%Y-%m-%d %I:%M %p {tz_name}")
 
 
 if __name__ == "__main__":  # pragma: no cover
