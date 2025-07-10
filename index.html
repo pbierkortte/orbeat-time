@@ -6,15 +6,19 @@
   body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 10px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    align-items: flex-start;
+    min-height: 100svh; /* Small viewport height - excludes browser chrome */
+    min-height: 100vh; /* Fallback for older browsers */
     background: linear-gradient(135deg, #1c2331 0%, #24344d 100%);
     color: #ecf0f1;
     position: relative;
     overflow-x: hidden;
+    box-sizing: border-box;
+    padding-top: max(10px, env(safe-area-inset-top));
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
   }
 
   .container {
@@ -25,6 +29,11 @@
     max-width: 600px;
     width: 100%;
     z-index: 1;
+    margin: 0 auto;
+    box-sizing: border-box;
+    max-height: calc(100svh - 20px);
+    max-height: calc(100vh - 20px); /* Fallback */
+    overflow-y: auto;
   }
 
   h1 {
@@ -61,24 +70,24 @@
   }
 
   .copyable:hover {
-      background-color: #34495e;
-    }
+    background-color: #34495e;
+  }
 
-      button {
-        display: block;
-        margin: 20px auto;
-        padding: 10px 20px;
-        font-size: 1em;
-        background-color: #2980b9;
-        color: #ffffff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #2980b9;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-      button:hover {
-        background-color: #1c5a85;
+  button:hover {
+    background-color: #1c5a85;
   }
 
   .documentation {
@@ -166,6 +175,75 @@
   .octal-list li {
     text-indent: -20px;
     padding-left: 20px;
+  }
+
+  /* Universal mobile viewport and safe area fixes */
+  @media screen and (max-width: 768px) {
+    body {
+      padding: 5px;
+      padding-top: max(5px, env(safe-area-inset-top));
+      padding-bottom: max(5px, env(safe-area-inset-bottom));
+    }
+    
+    .container {
+      padding: 15px;
+      max-width: 100%;
+      margin-top: 0;
+      max-height: calc(100svh - 10px);
+      max-height: calc(100vh - 10px); /* Fallback */
+    }
+    
+    h1, h2 {
+      margin-top: 0;
+    }
+    
+    .time-display {
+      font-size: 1.2em;
+    }
+    
+    .copyable {
+      font-size: 1em;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    body {
+      padding: 2px;
+      padding-top: max(2px, env(safe-area-inset-top));
+    }
+    
+    .container {
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .documentation {
+      padding: 15px;
+    }
+  }
+
+  /* iOS Safari specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      min-height: -webkit-fill-available;
+    }
+  }
+
+  /* Additional fallback for browsers without svh support */
+  @supports not (height: 100svh) {
+    body {
+      min-height: calc(100vh - 20px);
+    }
+    
+    .container {
+      max-height: calc(100vh - 40px);
+    }
+    
+    @media screen and (max-width: 768px) {
+      .container {
+        max-height: calc(100vh - 20px);
+      }
+    }
   }
 </style>
 <title>Orbeat Time</title>
