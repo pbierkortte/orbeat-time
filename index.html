@@ -250,6 +250,33 @@
       }
     }
   }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  #background-art > g:nth-of-type(2) {
+    transform-origin: 500px 500px;
+    animation: rotate 480s linear infinite;
+  }
+
+  #background-art > circle {
+    animation: pulse 10s infinite;
+  }
 </style>
 <title>Orbeat Time</title>
 </head>
@@ -285,27 +312,24 @@
     </g>
   </g>
   <g>
-    <animateTransform attributeName="transform" type="rotate" from="0 500 500" to="360 500 500" dur="480s" repeatCount="indefinite" />
-    <g transform="translate(200,200)">
+    <g transform="translate(700,500)">
           <rect x="-20" y="-20" width="40" height="40" fill="none" stroke="#9b59b6" stroke-width="2" transform="rotate(45)" />
       <circle cx="0" cy="0" r="15" fill="none" stroke="#9b59b6" stroke-width="2" />
     </g>
-    <g transform="translate(800,800)">
+    <g transform="translate(500,250)">
           <polygon points="0,-20 17.3,-10 17.3,10 0,20 -17.3,10 -17.3,-10" fill="none" stroke="#f1c40f" stroke-width="2" />
       <circle cx="0" cy="0" r="10" fill="none" stroke="#f1c40f" stroke-width="2" />
     </g>
-    <g transform="translate(800,200)">
+    <g transform="translate(200,500)">
           <rect x="-15" y="-15" width="30" height="30" fill="none" stroke="#1abc9c" stroke-width="2" />
       <circle cx="0" cy="0" r="20" fill="none" stroke="#1abc9c" stroke-width="2" />
     </g>
-    <g transform="translate(200,800)">
+    <g transform="translate(500,850)">
           <polygon points="0,-25 21.7,-12.5 21.7,12.5 0,25 -21.7,12.5 -21.7,-12.5" fill="none" stroke="#e67e22" stroke-width="2" />
       <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#e67e22" stroke-width="2" transform="rotate(45)" />
     </g>
   </g>
-  <circle cx="500" cy="500" r="500" fill="url(#alienGlow)">
-    <animate attributeName="opacity" values="0.6;0.8;0.6" dur="10s" repeatCount="indefinite" />
-  </circle>
+  <circle cx="500" cy="500" r="500" fill="url(#alienGlow)"></circle>
 </svg>
 <div class="container">
   <h1>Orbeat Time</h1>
