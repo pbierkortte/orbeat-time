@@ -83,6 +83,6 @@ def to_eastern(unix_ms=None):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    print(f"{to_ucy()} UCY")
-    print(f"{to_orbeat8()} ORB")
-    print(to_eastern())
+    print(f"UCY Time: {to_ucy()}")
+    print(f"Orbeat Time: {to_orbeat8()}")
+    print(f"Eastern Time: {to_eastern()}")
