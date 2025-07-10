@@ -5,7 +5,7 @@ Tests that the 365/366 day system maintains stability for over a millennium ensu
 
 import pytest
 from datetime import datetime
-from orbeat_time import to_parts_from_ms, DAYS_PER_YEAR
+from orbeat_time import DAYS_PER_YEAR, to_parts_from_ms
 
 
 class TestMillenniumStability:

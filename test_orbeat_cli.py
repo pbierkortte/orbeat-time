@@ -1,6 +1,4 @@
-import json
-import pytest
-import subprocess
+import json, subprocess, pytest
 from datetime import datetime
 import orbeat_cli
 

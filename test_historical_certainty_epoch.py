@@ -4,7 +4,7 @@ Tests that the epoch is an indisputable historical anchor point for absolute cer
 """
 
 import pytest
-from orbeat_time import to_parts_from_ms, DATUM_JDN, UNIX_JDN, OFFSET_MS, MS_PER_DAY
+from orbeat_time import DATUM_JDN, MS_PER_DAY, OFFSET_MS, UNIX_JDN, to_parts_from_ms
 
 
 class TestHistoricalCertaintyEpoch:

@@ -3,8 +3,8 @@ Tests for Cryptic Output design decision.
 Tests that the output is made cryptic via reversal and truncation to 8 characters for a compact code.
 """
 
-import pytest
-from orbeat_time import to_parts_from_ms, to_orbeat8
+import pytest, re
+from orbeat_time import to_orbeat8, to_parts_from_ms
 
 
 class TestCrypticOutput:
@@ -124,8 +124,6 @@ class TestCrypticOutput:
             r"\d{2}/\d{2}/\d{4}",
             r"\d{4}_\d{2}_\d",
         ]
-
-        import re
 
         for pattern in human_readable_patterns:
             with pytest.raises(AssertionError):
