@@ -1,7 +1,11 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Orbeat Time - An innovative octal-based cryptic timestamping system inspired by astronomical cycles. Convert current time to 8-character cryptic codes based on Roman nundinal cycles and spring equinox foundation.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+<meta http-equiv="X-Frame-Options" content="DENY">
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -13,7 +17,7 @@
     min-height: 100svh; /* Small viewport height - excludes browser chrome */
     min-height: 100vh; /* Fallback for older browsers */
     background: linear-gradient(135deg, #1c2331 0%, #24344d 100%);
-    color: #ecf0f1;
+    color: #ffffff;
     position: relative;
     overflow-x: hidden;
     box-sizing: border-box;
@@ -22,7 +26,7 @@
   }
 
   .container {
-    background-color: rgba(44, 62, 80, 0.95);
+    background-color: rgba(30, 40, 60, 0.95);
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -37,12 +41,12 @@
   }
 
   h1 {
-    color: #3498db;
+    color: #5dade2;
     text-align: center;
   }
 
   h2 {
-    color: #3498db;
+    color: #5dade2;
     text-align: center;
   }
 
@@ -50,13 +54,14 @@
     font-size: 1.5em;
     text-align: center;
     margin: 20px 0;
-    background-color: #2c3e50;
+    background-color: #1e2a3c;
     padding: 10px;
     border-radius: 5px;
+    color: #ffffff;
   }
 
   .copyable {
-    background-color: #34495e;
+    background-color: #2c4055;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -64,13 +69,13 @@
     margin: 10px 0;
     font-size: 1.2em;
     font-weight: bold;
-    color: #2ecc71;
-    border: 1px solid #3498db;
+    color: #58d68d;
+    border: 1px solid #5dade2;
     transition: background-color 0.3s, transform 0.3s;
   }
 
   .copyable:hover {
-    background-color: #34495e;
+    background-color: #364f6b;
   }
 
   button {
@@ -78,7 +83,7 @@
     margin: 20px auto;
     padding: 10px 20px;
     font-size: 1em;
-    background-color: #2980b9;
+    background-color: #3498db;
     color: #ffffff;
     border: none;
     border-radius: 5px;
@@ -87,26 +92,26 @@
   }
 
   button:hover {
-    background-color: #1c5a85;
+    background-color: #2980b9;
   }
 
   .documentation {
     margin-top: 30px;
     text-align: left;
-    background-color: #2c3e50;
+    background-color: #1e2a3c;
     padding: 20px;
     border-radius: 5px;
-    color: #ecf0f1;
+    color: #ffffff;
   }
 
   .documentation h1 {
-    color: #3498db;
+    color: #5dade2;
     text-align: center;
     margin-bottom: 20px;
   }
 
   .documentation h2 {
-    color: #3498db;
+    color: #5dade2;
     text-align: left;
     margin-top: 20px;
     margin-bottom: 10px;
@@ -121,26 +126,27 @@
   }
 
   .documentation code {
-    background-color: #34495e;
+    background-color: #2c4055;
     padding: 2px 4px;
     border-radius: 3px;
     font-family: monospace;
+    color: #ffffff;
   }
 
   .documentation strong {
     font-weight: bold;
-    color: #2ecc71;
+    color: #58d68d;
   }
 
   .footer-made-with {
     text-align: center;
     margin-top: 20px;
     font-size: 0.9em;
-    color: #bdc3c7;
+    color: #d5dbdb;
   }
 
   .footer-made-with a {
-    color: #bdc3c7;
+    color: #5dade2;
     text-decoration: none;
   }
 
@@ -148,14 +154,14 @@
     text-align: center;
     margin-top: 10px;
     font-size: 0.9em;
-    color: #bdc3c7;
+    color: #d5dbdb;
   }
 
   .footer-last-updated {
     text-align: center;
     margin-top: 10px;
     font-size: 0.9em;
-    color: #bdc3c7;
+    color: #d5dbdb;
   }
 
   #background-art {
