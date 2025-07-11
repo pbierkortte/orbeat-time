@@ -1,4 +1,4 @@
-name: Github Pages Deploy
+name: Test and Update Last Modified
 
 on:
   push:
@@ -7,15 +7,12 @@ on:
   pull_request:
     branches:
       - master
-  workflow_dispatch: null
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
@@ -38,7 +35,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: '${{ runner.os }}-pip-${{ hashFiles(''**/requirements.txt'') }}'
+          key: "${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}"
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Install dependencies
@@ -53,6 +50,7 @@ jobs:
       - name: Lint with black
         run: |
           black --check .
+
   update-docs:
     runs-on: ubuntu-24.04
     needs: test
@@ -86,28 +84,3 @@ jobs:
             git commit -m "docs: auto-update last modified timestamp"
             git push
           fi
-  deploy-pages:
-    runs-on: ubuntu-24.04
-    needs:
-      - test
-      - update-docs
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    environment:
-      name: github-pages
-      url: '${{ steps.deployment.outputs.page_url }}'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: master
-      - name: Pull latest master
-        run: git pull origin master
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
