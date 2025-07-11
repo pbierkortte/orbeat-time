@@ -62,9 +62,8 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Update timestamps in documentation
-      id: update_timestamps
-      run: python scripts/update_docs.py
+    - name: Update last updated
+      run: bash -e .github/workflows/last-updated.sh
 
     - name: Commit and push changes
       run: |
