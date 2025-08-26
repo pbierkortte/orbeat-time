@@ -32,6 +32,8 @@ My design decisions include:
 
 ## Format
 
+**Components:** `<fraction of day><day of week><week of year><digit of year>`
+
 A concatenated string consisting of:
 - Years since Epoch formatted in octal
 - Weeks within the year formatted in octal (2 digits)
