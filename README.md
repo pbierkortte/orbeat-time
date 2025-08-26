@@ -32,7 +32,7 @@ My design decisions include:
 
 ## Format
 
-**Components:** `<fraction of day><day of week><week of year><digit of year>`
+**Reversed:** `<digit of year><week of year><day of week><fraction of day>`
 
 A concatenated string consisting of:
 - Years since Epoch formatted in octal
