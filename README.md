@@ -32,7 +32,7 @@ My design decisions include:
 
 ## Format
 
-**Reversed:** `<digit of year><week of year><day of week><fraction of day>`
+**Reversed:** `digit_of_year` `week_of_year` `day_of_week` `fraction_of_day`
 
 A concatenated string consisting of:
 - Years since Epoch formatted in octal
@@ -47,8 +47,8 @@ The encoding process involves the following steps:
 
 0. Convert input timestamp to fractional days since Epoch (March 21, 44 BCE at 09:00 UTC)
 1. Calculate the **Year** (`year_int`) and **Day of the 8-day Week** (`day_int`) from the total day count
-2. Calculate the **Day of the Year** (`day_in_year`) using the Mean Tropical Year length (365.24219 days)
-3. Calculate the **Week of the Year** (`week_int`) by aligning the `day_in_year` with the 8-day cycle
+2. Calculate the **Day of the Year** (`day_of_year`) using the Mean Tropical Year length (365.24219 days)
+3. Calculate the **Week of the Year** (`week_int`) by aligning the `day_of_year` with the 8-day cycle
 4. Extract the **Fractional Part** of the day for sub-day precision
 5. Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations
 6. Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters
