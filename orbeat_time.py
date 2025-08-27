@@ -25,13 +25,13 @@ def to_parts_from_ms(unix_ms=None):
 
     days = math.floor(days_since)
     frac = days_since - days
-    day_in_year = int(days % DAYS_PER_YEAR)
+    day_of_year = int(days % DAYS_PER_YEAR)
 
     year_int = int(days / DAYS_PER_YEAR)
     day_int = int(days % 8)
     frac_int = int(frac * 8**4)
 
-    week_int = (day_in_year + 7 - day_int) // 8
+    week_int = (day_of_year + 7 - day_int) // 8
 
     year_oct = f"{year_int:o}".replace("-", "0")
     week_oct = f"{week_int:02o}"
