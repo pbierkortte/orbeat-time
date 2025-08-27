@@ -363,7 +363,11 @@
 
     <h2>Format</h2>
     <p><strong>Reversed:</strong>
-      <code>&lt;digit of year&gt; &lt;week of year&gt; &lt;day of week&gt; &lt;fraction of day&gt;</code></p>
+      <code>digit_of_year</code>
+      <code>week_of_year</code>
+      <code>day_of_week</code>
+      <code>fraction_of_day</code>
+    </p>
     <p>A concatenated string consisting of:</p>
     <ul>
       <li>Years since Epoch formatted in octal</li>
@@ -378,8 +382,8 @@
     <ol start="0">
       <li>Convert input timestamp to fractional days since Epoch (March 21, 44 BCE at 09:00 UTC)</li>
       <li>Calculate the <strong>Year</strong> (<code>year_int</code>) and <strong>Day of the 8-day Week</strong> (<code>day_int</code>) from the total day count</li>
-      <li>Calculate the <strong>Day of the Year</strong> (<code>day_in_year</code>) using the Mean Tropical Year length (365.24219 days)</li>
-      <li>Calculate the <strong>Week of the Year</strong> (<code>week_int</code>) by aligning the <code>day_in_year</code> with the 8-day cycle</li>
+      <li>Calculate the <strong>Day of the Year</strong> (<code>day_of_year</code>) using the Mean Tropical Year length (365.24219 days)</li>
+      <li>Calculate the <strong>Week of the Year</strong> (<code>week_int</code>) by aligning the <code>day_of_year</code> with the 8-day cycle</li>
       <li>Extract the <strong>Fractional Part</strong> of the day for sub-day precision</li>
       <li>Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations</li>
       <li>Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters</li>
