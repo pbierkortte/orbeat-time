@@ -27,7 +27,7 @@ def to_parts_from_ms(unix_ms=None):
     day_int = int(days % 8)
     frac = days_since - days
     frac_int = int(frac * 8**4)
-    
+
     day_of_year = int(days % DAYS_PER_YEAR)
     year_int = int(days / DAYS_PER_YEAR)
     week_int = (day_of_year + 7 - day_int) // 8
