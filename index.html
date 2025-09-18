@@ -357,7 +357,8 @@
       <li>Cryptic Output: The output is made cryptic via <strong>reversal and truncation</strong> to 8 characters for a compact code</li>
       <li>Leap Year Alignment: The leap years <strong>align with the Gregorian calendar</strong> for practical synchronization for the foreseeable future</li>
       <li>Millennium Stability: The 365/366 day system maintains stability for over a <strong>millennium</strong> ensuring long-term reliability</li>
-      <li>Short Weeks: Last week of the new year and first week of new year may <strong>discard days</strong> to maintain both astronomical precision and continuous week cycles</li>
+      <li>Year Alignment: Shift the <strong>year start</strong> to sync year starts with week starts making the calculation simpler</li>
+      <li>Short Week: The fractional remainder forms the <strong>zero week</strong> of the next year ensuring all subsequent weeks are full 8-day cycles</li>
     </ul>
 
     <h2>Format</h2>
@@ -381,13 +382,13 @@
     <p>The encoding process involves the following steps:</p>
     <ol start="0">
       <li>Convert input timestamp to fractional days since Epoch (March 21, 44 BCE at 09:00 UTC)</li>
-      <li>Calculate the <strong>Year</strong> (<code>year_int</code>) and <strong>Day of the 8-day Week</strong> (<code>day_int</code>) from the total day count</li>
-      <li>Calculate the <strong>Day of the Year</strong> (<code>day_of_year</code>) using the Mean Tropical Year length (365.24219 days)</li>
-      <li>Calculate the <strong>Week of the Year</strong> (<code>week_int</code>) by aligning the <code>day_of_year</code> with the 8-day cycle</li>
-      <li>Extract the <strong>Fractional Part</strong> of the day for sub-day precision</li>
-      <li>Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations</li>
+      <li>Apply epoch alignment adjustment by adding <code>DAYS_PER_YEAR - 360</code> (~5.24 days) to synchronize year and week boundaries</li>
+      <li>Calculate the <strong>Year</strong> (<code>year_int</code>) from the adjusted day count using the Mean Tropical Year length (365.24219 days)</li>
+      <li>Calculate the <strong>Day of the 8-day Week</strong> (<code>day_int</code>) from the original day count using modulo 8 operation</li>
+      <li>Calculate the <strong>Adjusted Day of the Year</strong> (<code>adjusted_day_of_year</code>) from the adjusted day count</li>
+      <li>Calculate the <strong>Week of the Year</strong> (<code>week_int</code>) using simplified division: <code>adjusted_day_of_year // 8</code></li>
+      <li>Extract the <strong>Fractional Part</strong> of the day for sub-day precision and convert all components to octal format</li>
       <li>Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters</li>
-      <li>Output the final 8-character cryptic timestamp</li>
     </ol>
 
     <h2>Example</h2>
@@ -400,13 +401,14 @@
           <li><strong>Resulting Days Since Epoch:</strong> <code>754830.550926</code></li>
         </ul>
       </li>
-      <li><strong>Step 2: Calculate Time Components</strong>
+      <li><strong>Step 2: Apply Epoch Alignment and Calculate Components</strong>
         <ul>
-          <li><strong>Year:</strong> Total days divided by Mean Tropical Year: <code>754830.550926 / 365.24219 = 2066.658</code></li>
-          <li><strong>Year Integer:</strong> <code>2066</code></li>
-          <li><strong>Day of Year:</strong> Remainder from year calculation: <code>239</code></li>
-          <li><strong>Day of Week:</strong> Total days modulo 8: <code>754830 % 8 = 6</code></li>
-          <li><strong>Week of Year:</strong> <code>(239 + 7 - 6) // 8 = 30</code></li>
+          <li><strong>Epoch Alignment:</strong> Add <code>DAYS_PER_YEAR - 360</code> = <code>5.24219</code> days</li>
+          <li><strong>Adjusted Days:</strong> <code>754830 + 5.24219 = 754835.24219</code></li>
+          <li><strong>Year Integer:</strong> <code>int(754835.24219 / 365.24219) = 2066</code></li>
+          <li><strong>Adjusted Day of Year:</strong> <code>754835.24219 % 365.24219 = 244.88</code></li>
+          <li><strong>Day of Week:</strong> Original days modulo 8: <code>754830 % 8 = 6</code></li>
+          <li><strong>Week of Year:</strong> <code>int(244.88 / 8) = 30</code></li>
           <li><strong>Fractional Part:</strong> <code>0.550926 * 4096 = 2256</code></li>
         </ul>
       </li>
@@ -432,7 +434,7 @@
 <div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
 <div class="footer-last-updated" id="last-updated">
 <!-- LAST_UPDATED_START -->
-<span>Last Updated: 4024_26_7.7063 UCY | 2025-09-18 02:18 AM EDT</span>
+<span>Last Updated: 4024_24_2.3076 UCY | 2025-09-18 07:59 AM UTC (updated for epoch alignment)</span>
 <!-- LAST_UPDATED_END -->
 </div>
 </div>
@@ -451,13 +453,13 @@ function toPartsFromMs(unix_ms) {
 
     const days = Math.floor(days_since);
     const frac = days_since - days;
-    const day_of_year = Math.trunc(days % DAYS_PER_YEAR);
-
-    const year_int = Math.trunc(days / DAYS_PER_YEAR);
     const day_int = Math.trunc(days % 8);
     const frac_int = Math.trunc(frac * 8**4);
 
-    const week_int = Math.trunc((day_of_year + 7 - day_int) / 8);
+    const adjusted_days = days + DAYS_PER_YEAR - 360;
+    const adjusted_day_of_year = adjusted_days % DAYS_PER_YEAR;
+    const year_int = Math.trunc(adjusted_days / DAYS_PER_YEAR);
+    const week_int = Math.trunc(adjusted_day_of_year / 8);
 
     const year_oct = year_int.toString(8).replace("-", "0");
     const week_oct = week_int.toString(8).padStart(2, '0');

@@ -28,7 +28,8 @@ My design decisions include:
 -   Cryptic Output: The output is made cryptic via **reversal and truncation** to 8 characters for a compact code
 -   Leap Year Alignment: The leap years **align with the Gregorian calendar** for practical synchronization for the foreseeable future
 -   Millennium Stability: The 365/366 day system maintains stability for over a **millennium** ensuring long-term reliability
--   Short Weeks: Last week of the new year and first week of new year may **discard days** to maintain both astronomical precision and continuous week cycles
+-   Year Alignment: Shift the **year start** to sync year starts with week starts making the calculation simpler
+-   Short Week: The fractional remainder forms the **zero week** of the next year ensuring all subsequent weeks are full 8-day cycles
 
 ## Format
 
@@ -46,13 +47,13 @@ A concatenated string consisting of:
 The encoding process involves the following steps:
 
 0. Convert input timestamp to fractional days since Epoch (March 21, 44 BCE at 09:00 UTC)
-1. Calculate the **Year** (`year_int`) and **Day of the 8-day Week** (`day_int`) from the total day count
-2. Calculate the **Day of the Year** (`day_of_year`) using the Mean Tropical Year length (365.24219 days)
-3. Calculate the **Week of the Year** (`week_int`) by aligning the `day_of_year` with the 8-day cycle
-4. Extract the **Fractional Part** of the day for sub-day precision
-5. Convert all calculated components (Year, Week, Day, Fraction) to their formatted octal string representations
-6. Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters
-7. Output the final 8-character cryptic timestamp
+1. Apply epoch alignment adjustment by adding `DAYS_PER_YEAR - 360` (~5.24 days) to synchronize year and week boundaries
+2. Calculate the **Year** (`year_int`) from the adjusted day count using the Mean Tropical Year length (365.24219 days)
+3. Calculate the **Day of the 8-day Week** (`day_int`) from the original day count using modulo 8 operation
+4. Calculate the **Adjusted Day of the Year** (`adjusted_day_of_year`) from the adjusted day count
+5. Calculate the **Week of the Year** (`week_int`) using simplified division: `adjusted_day_of_year // 8`
+6. Extract the **Fractional Part** of the day for sub-day precision and convert all components to octal format
+7. Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters
 
 ## Example
 
@@ -63,12 +64,13 @@ The encoding process involves the following steps:
   - Convert to days since March 21, 44 BCE at 09:00 UTC
   - **Resulting Days Since Epoch:** `754830.550926`
 
-- **Step 2: Calculate Time Components**
-  - **Year:** Total days divided by Mean Tropical Year: `754830.550926 / 365.24219 = 2066.658`
-  - **Year Integer:** `2066`
-  - **Day of Year:** Remainder from year calculation: `239`
-  - **Day of Week:** Total days modulo 8: `754830 % 8 = 6`
-  - **Week of Year:** `(239 + 7 - 6) // 8 = 30`
+- **Step 2: Apply Epoch Alignment and Calculate Components**
+  - **Epoch Alignment:** Add `DAYS_PER_YEAR - 360` = `5.24219` days
+  - **Adjusted Days:** `754830 + 5.24219 = 754835.24219`
+  - **Year Integer:** `int(754835.24219 / 365.24219) = 2066`
+  - **Adjusted Day of Year:** `754835.24219 % 365.24219 = 244.88`
+  - **Day of Week:** Original days modulo 8: `754830 % 8 = 6`
+  - **Week of Year:** `int(244.88 / 8) = 30`
   - **Fractional Part:** `0.550926 * 4096 = 2256`
 
 - **Step 3: Convert to Octal**
@@ -87,5 +89,5 @@ The encoding process involves the following steps:
 ---
 
 <!-- LAST_UPDATED_START -->
-**Last Updated:** 4024_26_7.7063 UCY | 2025-09-18 02:18 AM EDT
+**Last Updated:** 4024_24_2.3076 UCY | 2025-09-18 07:59 AM UTC (updated for epoch alignment)
 <!-- LAST_UPDATED_END -->
