@@ -444,38 +444,74 @@ const DATUM_JDN = 1705433;
 const MS_PER_DAY = 86400000;
 const DAWN_MS = -9 * 60 * 60 * 1000;
 const OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS;
-const DAYS_PER_YEAR = 365.24219;
+const DAYS_PER_YEAR = 365.2421875;  // 365.24219 = 0o555.147 + 2.5e-6
+const STANDARD_YEAR = 368;
+const SHORT_YEAR = 360;
 
 function toPartsFromMs(unix_ms) {
     unix_ms = unix_ms || Date.now();
     const ms_since = unix_ms + OFFSET_MS;
-    const days_since = ms_since / MS_PER_DAY;
+    const days = ms_since / MS_PER_DAY;
+    const day_of_week = Math.trunc(days % 8);
+    const fracs = (ms_since % MS_PER_DAY) / MS_PER_DAY;
 
-    const days = Math.floor(days_since);
-    const frac = days_since - days;
-    const day_int = Math.trunc(days % 8);
-    const frac_int = Math.trunc(frac * 8**4);
+    // Linear estimate for year
+    const Y0 = 0.0027379093329411184;
+    const Y1 = -4.211716108814683e-06;
+    let years = Math.trunc(Y0 * days + Y1 + 0.5);
 
-    const adjusted_days = days + DAYS_PER_YEAR - 360;
-    const adjusted_day_of_year = adjusted_days % DAYS_PER_YEAR;
-    const year_int = Math.trunc(adjusted_days / DAYS_PER_YEAR);
-    const week_int = Math.trunc(adjusted_day_of_year / 8);
+    // Calculate year boundaries using the pattern
+    const rho = (DAYS_PER_YEAR - SHORT_YEAR) / 8.0;
+    const longsBefore = (y) => Math.trunc(rho * y + 0.5);
+    const isLong = (y) => longsBefore(y + 1) - longsBefore(y) === 1;
+    const yearLength = (y) => isLong(y) ? STANDARD_YEAR : SHORT_YEAR;
+    const startOfYear = (y) => SHORT_YEAR * y + 8 * longsBefore(y);
 
-    const year_oct = year_int.toString(8).replace("-", "0");
-    const week_oct = week_int.toString(8).padStart(2, '0');
-    const day_oct = day_int.toString(8).padStart(1, '0');
-    const frac_oct = frac_int.toString(8).padStart(4, '0');
+    // Find exact year and day within year
+    let c_y = startOfYear(years);
+    let y_len = yearLength(years);
+    let d_in_y = days - c_y;
 
-    return [year_oct, week_oct, day_oct, frac_oct];
+    // Adjust year if needed
+    if (d_in_y < 0) {
+        years -= 1;
+        c_y = startOfYear(years);
+        y_len = yearLength(years);
+        d_in_y = days - c_y;
+    } else if (d_in_y >= y_len) {
+        years += 1;
+        c_y = startOfYear(years);
+        y_len = yearLength(years);
+        d_in_y = days - c_y;
+    }
+
+    // Calculate week (short years start at week 1)
+    const weeks = (y_len === STANDARD_YEAR ? 0 : 1) + Math.trunc(d_in_y / 8);
+
+    return [years, weeks, day_of_week, fracs];
 }
 
 function toUcy(unix_ms) {
-    const [year_oct, week_oct, day_oct, frac_oct] = toPartsFromMs(unix_ms);
+    const [year, week, day, frac] = toPartsFromMs(unix_ms);
+    const frac_int = Math.trunc(frac * 8**4);
+
+    const year_oct = year.toString(8).replace("-", "0");
+    const week_oct = week.toString(8).padStart(2, '0');
+    const day_oct = day.toString(8).padStart(1, '0');
+    const frac_oct = frac_int.toString(8).padStart(4, '0');
+
     return `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`;
 }
 
 function toOrbeat8(unix_ms) {
-    const [year_oct, week_oct, day_oct, frac_oct] = toPartsFromMs(unix_ms);
+    const [year, week, day, frac] = toPartsFromMs(unix_ms);
+    const frac_int = Math.trunc(frac * 8**4);
+
+    const year_oct = year.toString(8).replace("-", "0");
+    const week_oct = week.toString(8).padStart(2, '0');
+    const day_oct = day.toString(8).padStart(1, '0');
+    const frac_oct = frac_int.toString(8).padStart(4, '0');
+
     const concatenated = `${year_oct}${week_oct}${day_oct}${frac_oct}`;
     return concatenated.split('').reverse().join('').substring(0, 8);
 }
