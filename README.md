@@ -27,7 +27,7 @@ My design decisions include:
 -   Octal Encoding: Dates use **octal encoding** for mathematical harmony and to require explanation to decode
 -   Cryptic Output: The output is made cryptic via **reversal and truncation** to 8 characters for a compact code
 -   Spring Equinox: The years **align with spring equinox** for practical synchronization for the foreseeable future
--   Generational Stability: Pattern runs are **~27 years long** providing consistent calendar behavior across generations
+-   Generational Stability: Pattern runs are **~27 years long** providing consistent calendar behavior
 -   Week Zero: The first week **hides** in short years to maintain year-end alignment
 
 ## Format
