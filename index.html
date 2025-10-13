@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Orbeat Time - An innovative octal-based cryptic timestamping system inspired by astronomical cycles. Convert current time to 8-character cryptic codes based on Roman nundinal cycles and spring equinox foundation.">
+<meta name="description" content="Orbeat - An innovative octal-based cryptic timestamping system inspired by astronomical cycles. Convert current time to 8-character cryptic codes based on Roman nundinal cycles and spring equinox foundation.">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
 <style>
   body {
@@ -275,7 +275,7 @@
     animation: pulse 10s infinite;
   }
 </style>
-<title>Orbeat Time</title>
+<title>Orbeat</title>
 </head>
 <body>
 <svg id="background-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
@@ -329,15 +329,20 @@
   <circle cx="500" cy="500" r="500" fill="url(#alienGlow)"></circle>
 </svg>
 <div class="container">
-  <h1>Orbeat Time</h1>
+  <h1>Orbeat</h1>
   <div class="time-display">
     <div id="local-time"></div>
   </div>
-  <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Orbeat Time</div>
+  <div class="copyable" id="octal-time" onclick="copyToClipboard()">Click to copy Orbeat</div>
   <button id="action-button">Refresh Time</button>
   <div class="documentation">
     <h2>Summary</h2>
     <p>Orbeat is an octal-based cryptic timestamping system. It gets its name from a combination of octal, orbit, and beat. This naming reflects the system's structure, which utilizes an octal (base-8) representation to measure time in a continuous, orbit-like cycle based on a rational underlying calendar foundation.</p>
+
+    <h2>Links</h2>
+    <ul>
+      <li>UCY Project: <a href="https://github.com/pbierkortte/UCY">https://github.com/pbierkortte/UCY</a></li>
+    </ul>
 
     <h2>Background</h2>
     <p>Loosely inspired by Swatch Internet Time (.beat time), a decimal time system introduced in 1998 used on ICQ and in the game Phantasy Star Online to facilitate cross-continent gaming, and batch codes used in retail and manufacturing industries for date codes and competitive intelligence. The underlying system draws from proven historical precedents like the Roman 8-day nundinal market cycle and astronomical precision.</p>
@@ -348,17 +353,15 @@
     <h2>Design Decisions</h2>
     <p>My design decisions include:</p>
     <ul>
-      <li>Spring Equinox Foundation: The year begins on the <strong>Spring Equinox</strong> for practical alignment with natural cycles</li>
-      <li>8-day Nundinal Cycle: The proven <strong>Roman 8-day</strong> week structure is a practical foundation for the calendar's rhythm</li>
-      <li>Historical Certainty Epoch: The epoch is an indisputable <strong>historical anchor</strong> point to guarantee absolute certainty</li>
+      <li>Nundinal Cycle: The proven <strong>Roman 8-day</strong> week structure is a practical foundation for the calendar's rhythm</li>
+      <li>Historical Certainty: The epoch is an indisputable <strong>historical anchor</strong> point to guarantee absolute certainty</li>
       <li>Scientific Precision: The epoch time is fixed with <strong>scientific precision</strong> for an unambiguous temporal reference</li>
-      <li>Astronomical Accuracy: The <strong>Mean Tropical Year</strong> of 365.24219 days prevents seasonal drift and ensures perpetual accuracy</li>
+      <li>Astronomical Accuracy: The <strong>Mean Tropical Year</strong> of ~365.2422 days prevents seasonal drift and ensures ~200 year accuracy</li>
       <li>Octal Encoding: Dates use <strong>octal encoding</strong> for mathematical harmony and to require explanation to decode</li>
       <li>Cryptic Output: The output is made cryptic via <strong>reversal and truncation</strong> to 8 characters for a compact code</li>
-      <li>Year Alignment: The years <strong>align with spring equinox</strong> for practical synchronization for the foreseeable future</li>
-      <li>Millennium Stability: The 360/366 day system maintains stability for over atleast <strong>10 millennia</strong> ensuring long-term reliability</li>
-      <li>Year Alignment: Shift the <strong>year start</strong> to sync year starts with week starts making the calculation simpler</li>
-      <li>Short Week: The fractional remainder forms the <strong>zero week</strong> of the next year ensuring all subsequent weeks are full 8-day cycles</li>
+      <li>Spring Equinox: The years <strong>align with spring equinox</strong> for practical synchronization for the foreseeable future</li>
+      <li>Generational Stability: Pattern runs are <strong>~27 years long</strong> providing consistent calendar behavior across generations</li>
+      <li>Week Zero: The first week <strong>hides</li>strong> in short years to maintain year-end alignment</li>
     </ul>
 
     <h2>Format</h2>
@@ -377,173 +380,113 @@
       <li>Fractional day component formatted in octal (4 digits)</li>
       <li>The concatenated string is then reversed and truncated to 8 characters</li>
     </ul>
-
-    <h2>Implementation</h2>
-    <p>The encoding process involves the following steps:</p>
-    <ol start="0">
-      <li>Convert input timestamp to fractional days since Epoch (March 21, 44 BCE at 09:00 UTC)</li>
-      <li>Apply epoch alignment adjustment by adding <code>DAYS_PER_YEAR - 360</code> (~5.24 days) to synchronize year and week boundaries</li>
-      <li>Calculate the <strong>Year</strong> (<code>year_int</code>) from the adjusted day count using the Mean Tropical Year length (365.24219 days)</li>
-      <li>Calculate the <strong>Day of the 8-day Week</strong> (<code>day_int</code>) from the original day count using modulo 8 operation</li>
-      <li>Calculate the <strong>Adjusted Day of the Year</strong> (<code>adjusted_day_of_year</code>) from the adjusted day count</li>
-      <li>Calculate the <strong>Week of the Year</strong> (<code>week_int</code>) using simplified division: <code>adjusted_day_of_year // 8</code></li>
-      <li>Extract the <strong>Fractional Part</strong> of the day for sub-day precision and convert all components to octal format</li>
-      <li>Concatenate the octal strings in order, reverse the resulting string, and truncate to 8 characters</li>
-    </ol>
-
-    <h2>Example</h2>
-    <ul>
-      <li><strong>Input Milliseconds:</strong> <code>1700000000000</code></li>
-      <li><strong>Step 1: Adjust for Epoch</strong>
-        <ul>
-          <li>Start with the input timestamp: <code>1700000000000</code></li>
-          <li>Convert to days since March 21, 44 BCE at 09:00 UTC</li>
-          <li><strong>Resulting Days Since Epoch:</strong> <code>754830.550926</code></li>
-        </ul>
-      </li>
-      <li><strong>Step 2: Apply Epoch Alignment and Calculate Components</strong>
-        <ul>
-          <li><strong>Epoch Alignment:</strong> Add <code>DAYS_PER_YEAR - 360</code> = <code>5.24219</code> days</li>
-          <li><strong>Adjusted Days:</strong> <code>754830 + 5.24219 = 754835.24219</code></li>
-          <li><strong>Year Integer:</strong> <code>int(754835.24219 / 365.24219) = 2066</code></li>
-          <li><strong>Adjusted Day of Year:</strong> <code>754835.24219 % 365.24219 = 244.88</code></li>
-          <li><strong>Day of Week:</strong> Original days modulo 8: <code>754830 % 8 = 6</code></li>
-          <li><strong>Week of Year:</strong> <code>int(244.88 / 8) = 30</code></li>
-          <li><strong>Fractional Part:</strong> <code>0.550926 * 4096 = 2256</code></li>
-        </ul>
-      </li>
-      <li><strong>Step 3: Convert to Octal</strong>
-        <ul>
-          <li>Year <code>2066</code> = <code>4022</code></li>
-          <li>Week <code>30</code> = <code>36</code></li>
-          <li>Day <code>6</code> = <code>6</code></li>
-          <li>Fraction <code>2256</code> = <code>4320</code></li>
-        </ul>
-      </li>
-      <li><strong>Step 4: Combine and Finalize</strong>
-        <ul>
-          <li>Concatenate the octal values: <code>4022</code> + <code>36</code> + <code>6</code> + <code>4320</code> = <code>40223664320</code></li>
-          <li>Reverse the string: <code>02346632204</code></li>
-          <li>Truncate to the first 8 characters: <code>02346632</code></li>
-        </ul>
-      </li>
-      <li><strong>Final Output:</strong> <code>02346632</code></li>
-    </ul>
   </div>
-<div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat-time">source</a></div>
+<div class="footer-made-with">Made with ✨ <a href="https://github.com/pbierkortte/orbeat">source</a></div>
 <div class="footer-copyright">© <span id="currentYear"></span> Pat Bierkortte. All rights reserved.</div>
-<div class="footer-last-updated" id="last-updated">
-<!-- LAST_UPDATED_START -->
-<span>Last Updated: 4024_27_0.0057 UCY | 2025-09-18 05:16 AM EDT</span>
-<!-- LAST_UPDATED_END -->
-</div>
 </div>
 <script>
-const UNIX_JDN = 2440588;
-const DATUM_JDN = 1705433;
-const MS_PER_DAY = 86400000;
-const DAWN_MS = -9 * 60 * 60 * 1000;
-const OFFSET_MS = (UNIX_JDN - DATUM_JDN) * MS_PER_DAY + DAWN_MS;
-const DAYS_PER_YEAR = 365.2421875;  // 365.24219 = 0o555.147 + 2.5e-6
-const STANDARD_YEAR = 368;
-const SHORT_YEAR = 360;
+const TROPICAL_YEAR_DAYS = 365.24224853515625;
+const DAY_NS = 86400000000000;
+const WEEK_DAYS = 8.0;
+const DATUM_TT = 1705433.878337198;
+const UNIX_EPOCH_TT = 2440587.5;
 
-function toPartsFromMs(unix_ms) {
-    unix_ms = unix_ms || Date.now();
-    const ms_since = unix_ms + OFFSET_MS;
-    const days = ms_since / MS_PER_DAY;
-    const day_of_week = Math.trunc(days % 8);
-    const fracs = (ms_since % MS_PER_DAY) / MS_PER_DAY;
-
-    // Linear estimate for year
-    const Y0 = 0.0027379093329411184;
-    const Y1 = -4.211716108814683e-06;
-    let years = Math.trunc(Y0 * days + Y1 + 0.5);
-
-    // Calculate year boundaries using the pattern
-    const rho = (DAYS_PER_YEAR - SHORT_YEAR) / 8.0;
-    const longsBefore = (y) => Math.trunc(rho * y + 0.5);
-    const isLong = (y) => longsBefore(y + 1) - longsBefore(y) === 1;
-    const yearLength = (y) => isLong(y) ? STANDARD_YEAR : SHORT_YEAR;
-    const startOfYear = (y) => SHORT_YEAR * y + 8 * longsBefore(y);
-
-    // Find exact year and day within year
-    let c_y = startOfYear(years);
-    let y_len = yearLength(years);
-    let d_in_y = days - c_y;
-
-    // Adjust year if needed
-    if (d_in_y < 0) {
-        years -= 1;
-        c_y = startOfYear(years);
-        y_len = yearLength(years);
-        d_in_y = days - c_y;
-    } else if (d_in_y >= y_len) {
-        years += 1;
-        c_y = startOfYear(years);
-        y_len = yearLength(years);
-        d_in_y = days - c_y;
-    }
-
-    // Calculate week (short years start at week 1)
-    const weeks = (y_len === STANDARD_YEAR ? 0 : 1) + Math.trunc(d_in_y / 8);
-
-    return [years, weeks, day_of_week, fracs];
+function is_short_year(orbeat_year) {
+    const next_equinox = DATUM_TT + ((orbeat_year + 1) * TROPICAL_YEAR_DAYS);
+    const threshold = 4.0 - (368 - TROPICAL_YEAR_DAYS);
+    const phase = (next_equinox - DATUM_TT) % WEEK_DAYS;
+    const is_short = threshold <= phase && phase < 4.0;
+    const year_size = is_short ? 360 : 368;
+    const year_start_tt = next_equinox - phase - 360;
+    
+    return {is_short, year_start_tt, year_size};
 }
 
-function toUcy(unix_ms) {
-    const [year, week, day, frac] = toPartsFromMs(unix_ms);
-    const frac_int = Math.trunc(frac * 8**4);
+function to_parts(jd_tt) {
+    if (!jd_tt) {
+        const unix_ms = Date.now();
+        const unix_days = unix_ms / 86400000;
+        jd_tt = UNIX_EPOCH_TT + unix_days;
+    }
+    
+    const total_elapsed_days = jd_tt - DATUM_TT;
+    let year = Math.floor(total_elapsed_days / TROPICAL_YEAR_DAYS);
+    let {is_short, year_start_tt, year_size} = is_short_year(year);
+    
+    if (jd_tt < year_start_tt) {
+        year -= 1;
+        ({is_short, year_start_tt, year_size} = is_short_year(year));
+    } else if (jd_tt >= is_short_year(year + 1).year_start_tt) {
+        year += 1;
+        ({is_short, year_start_tt, year_size} = is_short_year(year));
+    }
+    
+    const days_into_year = jd_tt - year_start_tt;
+    let week = Math.floor(days_into_year / 8);
+    
+    if (is_short && week < 45) {
+        week += 1;
+    }
+    
+    if (!is_short && year >= 0) {
+        if (0.0 < (360.0 - days_into_year) && (360.0 - days_into_year) < (2.0 / 86400.0)) {
+            week = 45;
+        }
+    }
+    
+    week = Math.min(week, 45);
+    const day = Math.floor(total_elapsed_days % 8);
+    const nano = Math.floor((total_elapsed_days % 1) * DAY_NS);
+    
+    return {year, week, day, nano};
+}
 
-    const year_oct = year.toString(8).replace("-", "0");
+function to_orbeat(tt) {
+    const {year, week, day, nano} = to_parts(tt);
+    const frac = Math.floor((nano * (8**4)) / DAY_NS);
+    
+    let year_oct = year.toString(8);
+    if (year < 0) {
+        year_oct = Math.abs(year).toString(8).replace(/^/, '0');
+    }
     const week_oct = week.toString(8).padStart(2, '0');
-    const day_oct = day.toString(8).padStart(1, '0');
-    const frac_oct = frac_int.toString(8).padStart(4, '0');
-
+    const day_oct = day.toString(8);
+    const frac_oct = frac.toString(8).padStart(4, '0');
+    
     return `${year_oct}_${week_oct}_${day_oct}.${frac_oct}`;
 }
 
-function toOrbeat8(unix_ms) {
-    const [year, week, day, frac] = toPartsFromMs(unix_ms);
-    const frac_int = Math.trunc(frac * 8**4);
-
-    const year_oct = year.toString(8).replace("-", "0");
-    const week_oct = week.toString(8).padStart(2, '0');
-    const day_oct = day.toString(8).padStart(1, '0');
-    const frac_oct = frac_int.toString(8).padStart(4, '0');
-
-    const concatenated = `${year_oct}${week_oct}${day_oct}${frac_oct}`;
+function to_orbeat8(tt) {
+    const full = to_orbeat(tt);
+    const concatenated = full.replace(/[_\.]/g, '');
     return concatenated.split('').reverse().join('').substring(0, 8);
 }
 
-  function updateTime() {
+function updateTime() {
     const now = new Date();
     document.getElementById('local-time').textContent = `Local Time: ${now.toLocaleString()}`;
-    const octalTime = toOrbeat8();
+    const octalTime = to_orbeat8();
     document.getElementById('octal-time').textContent = octalTime;
-  }
+}
 
-  function copyToClipboard() {
+function copyToClipboard() {
     const text = document.getElementById('octal-time').textContent;
     navigator.clipboard.writeText(text).then(() => {
-      alert('Copied to clipboard!');
+        alert('Copied to clipboard!');
     });
-  }
+}
 
-  function setCurrentYear() {
+function setCurrentYear() {
     const currentYear = new Date().getFullYear();
     document.getElementById('currentYear').textContent = currentYear;
-  }
+}
 
-  let timer;
-  const button = document.getElementById('action-button');
-  button.onmousedown = () => timer = setTimeout(() => document.getElementById('octal-time').textContent = `${toUcy()} UCY`, 20000);
-  button.onmouseup = () => { clearTimeout(timer); updateTime(); };
-  button.onclick = updateTime;
+const button = document.getElementById('action-button');
+button.onclick = updateTime;
 
-  updateTime();
-  setCurrentYear();
-  window.onload = setCurrentYear;
+updateTime();
+setCurrentYear();
+window.onload = setCurrentYear;
 </script>
 </body>
 </html>
