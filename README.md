@@ -32,6 +32,9 @@ My design decisions include:
 
 ## Format
 
+**Reversed:**
+`digit_of_year` `week_of_year` `day_of_week` `fraction_of_day`
+
 A concatenated string consisting of:
 - Years since Epoch formatted in octal
 - Weeks within the year formatted in octal (2 digits)
